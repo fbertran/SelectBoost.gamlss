@@ -1,0 +1,58 @@
+---
+title: "Benchmark: Stepwise vs Grouped vs Glmnet Engines"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Benchmark: Stepwise vs Grouped vs Glmnet Engines}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette provides quick timing comparisons across engines on a synthetic dataset.
+Timings are indicative (single run) and depend on your machine and BLAS.
+
+```r
+library(gamlss)
+library(SelectBoost.gamlss)
+
+set.seed(123)
+n <- 800
+p <- 30
+X <- replicate(p, rnorm(n))
+colnames(X) <- paste0("x", 1:p)
+eta <- 1 + X[,1]*1.0 - X[,3]*1.2 + X[,5]*0.8
+y <- gamlss.dist::rNO(n, mu = eta, sigma = 1)
+dat <- data.frame(y, X)
+
+engines <- list(
+  list(name="stepGAIC", args=list(engine="stepGAIC")),
+  list(name="glmnet-lasso", args=list(engine="glmnet", glmnet_alpha=1)),
+  list(name="grpreg", args=list(engine="grpreg", grpreg_penalty="grLasso")),
+  list(name="sgl", args=list(engine="sgl", sgl_alpha=0.9))
+)
+
+res <- data.frame(engine=character(), elapsed=numeric(), stringsAsFactors = FALSE)
+
+for (e in engines) {
+  cat("Running", e$name, "...\n")
+  t <- system.time({
+    fit <- sb_gamlss(
+      y ~ 1, data = dat, family = gamlss.dist::NO(),
+      mu_scope = as.formula(paste("~", paste(colnames(X), collapse = " + "))), 
+      B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+    )
+    # merge engine-specific args and refit quickly with small B to avoid overuse
+    fit <- do.call(sb_gamlss, modifyList(list(
+      formula = y ~ 1, data = dat, family = gamlss.dist::NO(),
+      mu_scope = as.formula(paste("~", paste(colnames(X), collapse = " + "))), 
+      B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+    ), e$args))
+  })
+  res <- rbind(res, data.frame(engine=e$name, elapsed=t[["elapsed"]]))
+}
+
+print(res)
+
+# simple barplot
+op <- par(mar=c(8,4,2,1)); barplot(res$elapsed, names.arg = res$engine, las = 2,
+     ylab = "Elapsed (s)", main = "Engine wall time (n=800, p=30, B=40)"); par(op)
+```

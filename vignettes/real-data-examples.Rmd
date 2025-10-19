@@ -1,0 +1,155 @@
+---
+title: "Real Data Examples with Different Distributions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Real Data Examples with Different Distributions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette demonstrates **SelectBoost.gamlss** on real datasets using *different* distributions.
+We include a **growth** example (Dutch boys) and further count/continuous/binary cases.
+
+> You may want to install optional engines for best results:
+> `install.packages(c("glmnet","grpreg","SGL","future.apply"))`
+
+```r
+library(SelectBoost.gamlss)
+library(gamlss)
+library(gamlss.data)
+library(MASS)           # Insurance, quine
+set.seed(1)
+```
+
+## 1. Growth data (BCT) — Dutch boys
+
+We model **height** vs **age** with **BCT** (Box–Cox t). Grouped penalties select among smoothers and interactions with pubertal stage.
+
+```r
+data(boys, package = "gamlss.data")
+boys <- subset(boys, !is.na(height) & !is.na(age) & !is.na(tanner))
+boys$tanner <- factor(boys$tanner)
+
+fit_growth <- sb_gamlss(
+  height ~ 1, data = boys, family = gamlss.dist::BCT(),
+  mu_scope    = ~ pb(age) + pb(age):tanner,
+  sigma_scope = ~ pb(age),
+  nu_scope    = ~ pb(age),
+  engine = "grpreg", engine_sigma = "grpreg", engine_nu = "grpreg",
+  grpreg_penalty = "grLasso",
+  B = 80, pi_thr = 0.6, pre_standardize = TRUE,
+  parallel = "auto", trace = FALSE
+)
+
+selection_table(fit_growth)[1:12, ]
+
+# Effect plot for age on mu
+if (requireNamespace('ggplot2', quietly = TRUE)) {
+  print(effect_plot(fit_growth, 'age', boys, what = 'mu'))
+}
+# Stability curves for the most important terms (optional)
+# g <- sb_gamlss_c0_grid(height ~ 1, data = boys, family = gamlss.dist::BCT(),
+#                        mu_scope = ~ pb(age) + pb(age):tanner, sigma_scope = ~ pb(age),
+#                        nu_scope = ~ pb(age), c0_grid = seq(0.2, 0.8, by = 0.1),
+#                        B = 40, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto")
+# plot_stability_curves(g, terms = c("pb(age)", "pb(age):tanner"), parameter = "mu")
+```
+
+**Interpretation.** Expect `pb(age)` to be stably selected for μ and σ; interactions like `pb(age):tanner` often appear around puberty.
+
+---
+
+## 2. Count data (PO) — Insurance claims
+
+Fit **Poisson** with log-offset for exposure.
+
+```r
+data(Insurance, package = "MASS")
+ins <- transform(Insurance, logH = log(Holders))
+
+fit_po <- sb_gamlss(
+  Claims ~ offset(logH), data = ins, family = gamlss.dist::PO(),
+  mu_scope = ~ Age + District + Group,
+  engine = "glmnet", glmnet_alpha = 1,    # lasso
+  B = 100, pi_thr = 0.6, pre_standardize = FALSE,
+  parallel = "auto", trace = FALSE
+)
+
+selection_table(fit_po)
+```
+
+---
+
+## 3. Positive continuous (GA) — Old Faithful
+
+Use **Gamma** for positive waiting times vs eruption length.
+
+```r
+data(faithful)
+faith <- transform(faithful, eru2 = eruptions^2)
+
+fit_ga <- sb_gamlss(
+  waiting ~ 1, data = faith, family = gamlss.dist::GA(),
+  mu_scope    = ~ pb(eruptions) + eru2,
+  sigma_scope = ~ pb(eruptions),
+  engine = "glmnet", glmnet_alpha = 0.5,   # elastic-net
+  B = 60, pi_thr = 0.6, pre_standardize = TRUE,
+  parallel = "auto", trace = FALSE
+)
+
+selection_table(fit_ga)
+
+# Effect plot for eruptions on mu
+if (requireNamespace('ggplot2', quietly = TRUE)) {
+  print(effect_plot(fit_ga, 'eruptions', faith, what = 'mu'))
+}
+```
+
+---
+
+## 4. Binary (BI) — `mtcars` transmission
+
+Treat `am` (0/1) as Bernoulli.
+
+```r
+mt <- transform(mtcars,
+  am = as.integer(am),
+  cyl = factor(cyl), gear = factor(gear), carb = factor(carb), vs = factor(vs))
+
+fit_bin <- sb_gamlss(
+  am ~ 1, data = mt, family = gamlss.dist::BI(),
+  mu_scope = ~ wt + hp + qsec + cyl + gear + carb + vs,
+  engine = "grpreg", grpreg_penalty = "grLasso",
+  B = 80, pi_thr = 0.6, pre_standardize = TRUE,
+  parallel = "auto", trace = FALSE
+)
+
+selection_table(fit_bin)
+```
+
+---
+
+## 5. Overdispersed counts (NBII) — `quine` absences
+
+**Negative Binomial II** handles extra-Poisson variation.
+
+```r
+data(quine, package = "MASS")
+fit_nb2 <- sb_gamlss(
+  Days ~ 1, data = quine, family = gamlss.dist::NBII(),
+  mu_scope = ~ Eth + Sex + Lrn + Age,
+  engine = "grpreg", grpreg_penalty = "grLasso",
+  B = 80, pi_thr = 0.6, pre_standardize = FALSE,
+  parallel = "auto", trace = FALSE
+)
+
+selection_table(fit_nb2)
+```
+
+---
+
+### Tips
+- If you have many factor levels or smoothers, prefer `engine="grpreg"`/`"sgl"` (group-aware).
+- For very wide numeric designs, try `engine="glmnet"` with `glmnet_alpha` in \[0,1\].
+- Use `pre_standardize=TRUE` (fast C++ scaler) when predictors are numeric and on different scales.
+- For speed, enable parallel workers: `future::plan(multisession, workers = 4); parallel="auto"`.

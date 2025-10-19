@@ -1,0 +1,9 @@
+citHeader("To cite SelectBoost.gamlss in publications use:")
+
+citEntry(
+  entry = "Manual",
+  title = "SelectBoost.gamlss: Stability-Selection Boosting for GAMLSS Models",
+  author = person(given = "Your", family = "Name"),
+  year = "2025",
+  note = "R package version 0.1.0"
+)
