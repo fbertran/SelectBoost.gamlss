@@ -97,6 +97,18 @@ sb_gamlss <- function(
     if (is.null(tl)) character(0) else tl
   }
 
+  add_terms_formula <- function(base_formula, new_terms = character(0)) {
+    trm <- stats::terms(base_formula)
+    intercept <- isTRUE(attr(trm, "intercept") == 1L)
+    has_response <- isTRUE(attr(trm, "response") == 1L)
+    lhs <- if (has_response) paste(deparse(base_formula[[2L]]), collapse = "") else NULL
+    rhs_terms <- term_labels(base_formula)
+    rhs <- unique(c(rhs_terms, new_terms))
+    out <- stats::reformulate(rhs, response = lhs, intercept = intercept)
+    environment(out) <- environment(base_formula)
+    out
+  }
+  
   resp_name <- all.vars(formula)[1L]
 
   # Pre-standardization of numeric predictors (store scaler for later)
@@ -143,18 +155,24 @@ sb_gamlss <- function(
   base_nu    <- if (inherits(base_nu, "formula")) base_nu else ~ 1
   base_tau   <- if (inherits(base_tau, "formula")) base_tau else ~ 1
 
+  base_mu_norm    <- add_terms_formula(base_mu)
+  base_sigma_norm <- add_terms_formula(base_sigma)
+  base_nu_norm    <- add_terms_formula(base_nu)
+  base_tau_norm   <- add_terms_formula(base_tau)
+  
   build_upper <- function(base_rhs, scope_rhs) {
+    base_rhs <- add_terms_formula(base_rhs)
     if (is.null(scope_rhs)) return(base_rhs)
     cand <- term_labels(scope_rhs)
     if (length(cand) == 0) return(base_rhs)
-    update(base_rhs, paste(". ~ . +", paste(cand, collapse = " + ")))
+    add_terms_formula(base_rhs, cand)
   }
 
-  upper_mu    <- build_upper(update(base_mu,    . ~ .), mu_scope)
-  upper_sigma <- build_upper(update(base_sigma, . ~ .), sigma_scope)
-  upper_nu    <- build_upper(update(base_nu,    . ~ .), nu_scope)
-  upper_tau   <- build_upper(update(base_tau,   . ~ .), tau_scope)
-
+  upper_mu    <- build_upper(base_mu_norm,    mu_scope)
+  upper_sigma <- build_upper(base_sigma_norm, sigma_scope)
+  upper_nu    <- build_upper(base_nu_norm,    nu_scope)
+  upper_tau   <- build_upper(base_tau_norm,   tau_scope)
+  
   seen_terms <- list(
     mu    = unique(term_labels(upper_mu)),
     sigma = unique(term_labels(upper_sigma)),
@@ -197,13 +215,13 @@ sb_gamlss <- function(
       tl_tau   <- attr(stats::terms(upper_tau), "term.labels");   tl_tau   <- pick_one(tl_tau)
 
       rebuild <- function(base_rhs, terms) {
-        if (length(terms) == 0) return(base_rhs)
-        update(base_rhs, paste(". ~ . +", paste(terms, collapse = " + ")))
+        if (length(terms) == 0) return(add_terms_formula(base_rhs))
+        add_terms_formula(base_rhs, terms)
       }
-      upper_mu_b    <- rebuild(update(base_mu, . ~ .),    tl_mu)
-      upper_sigma_b <- rebuild(update(base_sigma, . ~ .), tl_sigma)
-      upper_nu_b    <- rebuild(update(base_nu, . ~ .),    tl_nu)
-      upper_tau_b   <- rebuild(update(base_tau, . ~ .),   tl_tau)
+      upper_mu_b    <- rebuild(base_mu,    tl_mu)
+      upper_sigma_b <- rebuild(base_sigma, tl_sigma)
+      upper_nu_b    <- rebuild(base_nu,    tl_nu)
+      upper_tau_b   <- rebuild(base_tau,   tl_tau)
     }
     idx <- sample.int(n, size = max(2L, floor(sample_fraction * n)), replace = FALSE)
     dat_b <- data[idx, , drop = FALSE]
@@ -234,10 +252,10 @@ sb_gamlss <- function(
       if (inherits(out, "try-error")) fit else out
     }
 
-    fit1 <- try_step(fit0, update(base_mu, . ~ .), upper_mu_b, what = "mu")
-    fit1 <- try_step(fit1, base_sigma, upper_sigma_b, what = "sigma")
-    fit1 <- try_step(fit1, base_nu,    upper_nu_b,    what = "nu")
-    fit1 <- try_step(fit1, base_tau,   upper_tau_b,   what = "tau")
+    fit1 <- try_step(fit0, base_mu_norm,    upper_mu_b,    what = "mu")
+    fit1 <- try_step(fit1, base_sigma_norm, upper_sigma_b, what = "sigma")
+    fit1 <- try_step(fit1, base_nu_norm,    upper_nu_b,    what = "nu")
+    fit1 <- try_step(fit1, base_tau_norm,   upper_tau_b,   what = "tau")
 
     get_param_terms <- function(fit, what) {
       f <- try(stats::formula(fit, what = what), silent = TRUE)
@@ -289,14 +307,14 @@ sb_gamlss <- function(
   tau_keep   <- keep_terms(counts$tau)
 
   add_keep <- function(base_rhs, keep) {
-    if (length(keep) == 0) return(base_rhs)
-    update(base_rhs, paste(". ~ . +", paste(keep, collapse = " + ")))
+    if (length(keep) == 0) return(add_terms_formula(base_rhs))
+    add_terms_formula(base_rhs, keep)
   }
 
-  final_mu    <- add_keep(update(base_mu, . ~ .),    mu_keep)
-  final_sigma <- add_keep(update(base_sigma, . ~ .), sigma_keep)
-  final_nu    <- add_keep(update(base_nu, . ~ .),    nu_keep)
-  final_tau   <- add_keep(update(base_tau, . ~ .),   tau_keep)
+  final_mu    <- add_keep(base_mu,    mu_keep)
+  final_sigma <- add_keep(base_sigma, sigma_keep)
+  final_nu    <- add_keep(base_nu,    nu_keep)
+  final_tau   <- add_keep(base_tau,   tau_keep)
 
   final_fit <- gamlss::gamlss(
     formula = final_mu,
