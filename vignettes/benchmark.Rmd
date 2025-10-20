@@ -10,7 +10,7 @@ vignette: >
 This vignette provides quick timing comparisons across engines on a synthetic dataset.
 Timings are indicative (single run) and depend on your machine and BLAS.
 
-```r
+```{r}
 library(gamlss)
 library(SelectBoost.gamlss)
 

@@ -9,7 +9,7 @@ vignette: >
 
 This vignette demonstrates bootstrap stability-selection for GAMLSS models.
 
-```r
+```{r}
 set.seed(1)
 library(gamlss)
 library(SelectBoost.gamlss)

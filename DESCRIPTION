@@ -1,17 +1,15 @@
 Package: SelectBoost.gamlss
 Type: Package
-Title: Stability-Selection via Correlated Resampling for GAMLSS Models
+Title: Stability-Selection via Correlated Resampling for 'GAMLSS' Models
 Version: 0.2.0
 Date: 2025-10-19
 Depends: 
     R (>= 4.1.0)
 Imports:
     gamlss,
-    gamlss.dist,
     Rcpp,
     rlang,
     SelectBoost,
-    splines,
     stats,
     utils
 Suggests:
@@ -20,6 +18,7 @@ Suggests:
     future,
     future.apply,
     gamlss.data,
+    gamlss.dist,
     ggplot2,
     glmnet,
     grpreg,
@@ -43,9 +42,9 @@ Author: Frederic Bertrand [cre, aut] (<https://orcid.org/0000-0002-0837-8281>)
 Maintainer: Frederic Bertrand <frederic.bertrand@lecnam.net>
 Description: Extends the 'SelectBoost' approach to Generalized Additive Models for
     Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection
-    across parameter-specific formulas (mu, sigma, nu, tau) via 'gamlss::stepGAIC'.
-    Includes optional pre-standardization of predictors and helper functions for
-    AICc calculation.
+    across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC().
+    Includes optional standardization of predictors and helper functions for
+    'AICc' calculation.
 License: GPL-3
 Encoding: UTF-8
 Classification/MSC: 62H11, 62J12, 62J99

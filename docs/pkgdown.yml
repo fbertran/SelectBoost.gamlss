@@ -1,0 +1,13 @@
+pandoc: 3.6.3
+pkgdown: 2.1.3
+pkgdown_sha: ~
+articles:
+  advanced-real-data-examples: advanced-real-data-examples.html
+  benchmark: benchmark.html
+  comparison: comparison.html
+  confidence-functionals: confidence-functionals.html
+  fast-deviance-benchmark: fast-deviance-benchmark.html
+  fast-deviance-equality: fast-deviance-equality.html
+  real-data-examples: real-data-examples.html
+  selectboost-gamlss: selectboost-gamlss.html
+last_built: 2025-10-20T21:40Z

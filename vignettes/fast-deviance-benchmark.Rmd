@@ -10,7 +10,7 @@ vignette: >
 This vignette compares the *fast deviance* evaluator (`loglik_gamlss_newdata_fast`) with the generic route
 for several common families. Results will vary by machine/BLAS and by R package versions.
 
-```r
+```{r}
 library(gamlss)
 library(SelectBoost.gamlss)
 

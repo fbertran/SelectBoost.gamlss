@@ -35,11 +35,9 @@
 #'   \item \code{scaler}: list with \code{center}, \code{scale}, \code{vars}, \code{response}.
 #' }
 #' @examples
-#' \dontrun{
 #' fit <- sb_gamlss(y ~ 1, data = dat, family = gamlss.dist::NO(),
 #'                  mu_scope = ~ x1 + x2 + pb(x3),
 #'                  engine = "grpreg", B = 60, pi_thr = 0.6)
-#' }
 #' @export
 sb_gamlss <- function(
   formula,

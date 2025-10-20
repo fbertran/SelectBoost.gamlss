@@ -13,7 +13,7 @@ We include a **growth** example (Dutch boys) and further count/continuous/binary
 > You may want to install optional engines for best results:
 > `install.packages(c("glmnet","grpreg","SGL","future.apply"))`
 
-```r
+```{r}
 library(SelectBoost.gamlss)
 library(gamlss)
 library(gamlss.data)
@@ -25,7 +25,7 @@ set.seed(1)
 
 We model **height** vs **age** with **BCT** (Box–Cox t). Grouped penalties select among smoothers and interactions with pubertal stage.
 
-```r
+```{r}
 data(boys, package = "gamlss.data")
 boys <- subset(boys, !is.na(height) & !is.na(age) & !is.na(tanner))
 boys$tanner <- factor(boys$tanner)
@@ -63,7 +63,7 @@ if (requireNamespace('ggplot2', quietly = TRUE)) {
 
 Fit **Poisson** with log-offset for exposure.
 
-```r
+```{r}
 data(Insurance, package = "MASS")
 ins <- transform(Insurance, logH = log(Holders))
 
@@ -84,7 +84,7 @@ selection_table(fit_po)
 
 Use **Gamma** for positive waiting times vs eruption length.
 
-```r
+```{r}
 data(faithful)
 faith <- transform(faithful, eru2 = eruptions^2)
 
@@ -111,7 +111,7 @@ if (requireNamespace('ggplot2', quietly = TRUE)) {
 
 Treat `am` (0/1) as Bernoulli.
 
-```r
+```{r}
 mt <- transform(mtcars,
   am = as.integer(am),
   cyl = factor(cyl), gear = factor(gear), carb = factor(carb), vs = factor(vs))
@@ -133,7 +133,7 @@ selection_table(fit_bin)
 
 **Negative Binomial II** handles extra-Poisson variation.
 
-```r
+```{r}
 data(quine, package = "MASS")
 fit_nb2 <- sb_gamlss(
   Days ~ 1, data = quine, family = gamlss.dist::NBII(),

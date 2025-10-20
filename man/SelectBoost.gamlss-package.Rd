@@ -4,9 +4,9 @@
 \name{SelectBoost.gamlss-package}
 \alias{SelectBoost.gamlss-package}
 \alias{SelectBoost.gamlss}
-\title{SelectBoost.gamlss: Stability-Selection via Correlated Resampling for GAMLSS Models}
+\title{SelectBoost.gamlss: Stability-Selection via Correlated Resampling for 'GAMLSS' Models}
 \description{
-Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via 'gamlss::stepGAIC'. Includes optional pre-standardization of predictors and helper functions for AICc calculation.
+Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for 'AICc' calculation.
 }
 \examples{
 

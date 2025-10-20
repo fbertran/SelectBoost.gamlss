@@ -12,7 +12,7 @@ This vignette demonstrates **SelectBoost.gamlss** on three additional *real* dat
 - **Semicontinuous** (`datasets::airquality` Ozone): ZAGA
 - **Longitudinal growth with random effects** (`nlme::Orthodont`): random intercepts
 
-```r
+```{r}
 library(SelectBoost.gamlss)
 library(gamlss)
 ```
@@ -21,7 +21,7 @@ library(gamlss)
 
 ## 1. Zero-inflated counts — `pscl::bioChemists` (ZIP/ZINB)
 
-```r
+```{r}
 if (requireNamespace("pscl", quietly = TRUE)) {
   data("bioChemists", package = "pscl")
   bc <- pscl::bioChemists
@@ -39,9 +39,14 @@ if (requireNamespace("pscl", quietly = TRUE)) {
     B = 80, pi_thr = 0.6, pre_standardize = FALSE, parallel = "auto", trace = FALSE
   )
   head(selection_table(fit_zip))
+} else {
+  cat("Package 'pscl' not installed; skipping bioChemists example.\n")
+}
+```
 
 ### Side-by-side metrics (ZIP vs ZINB)
-```r
+```{r}
+if (requireNamespace("pscl", quietly = TRUE)) {
 zip_g <- fit_zip$final_fit; zinb_g <- fit_zinb$final_fit
 if (inherits(zip_g, 'gamlss') && inherits(zinb_g, 'gamlss')) {
   met <- data.frame(
@@ -53,10 +58,14 @@ if (inherits(zip_g, 'gamlss') && inherits(zinb_g, 'gamlss')) {
   print(met)
 } else {
   cat('Final fits not found; metrics skipped.\n')
+}} else {
+  cat("Package 'pscl' not installed; skipping bioChemists example.\n")
 }
 ```
 
-  # ZINB often handles overdispersion better than ZIP
+### ZINB often handles overdispersion better than ZIP
+```{r}
+if (requireNamespace("pscl", quietly = TRUE)) {
   set.seed(11)
   fit_zinb <- sb_gamlss(
     art ~ 1, data = bc, family = gamlss.dist::ZINBI(),
@@ -78,7 +87,7 @@ if (inherits(zip_g, 'gamlss') && inherits(zinb_g, 'gamlss')) {
 
 `Ozone` is non-negative and has zeros; positive part is continuous — ideal for **ZAGA** (zero-adjusted Gamma).
 
-```r
+```{r}
 aq <- subset(airquality, !is.na(Ozone) & !is.na(Wind) & !is.na(Temp) & !is.na(Solar.R))
 aq$Month <- factor(aq$Month)
 
@@ -91,8 +100,10 @@ fit_zaga <- sb_gamlss(
   B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto", trace = FALSE
 )
 head(selection_table(fit_zaga))
+```
 
-# Effect plot for Temp on mu (ZAGA)
+### Effect plot for Temp on mu (ZAGA)
+```{r}
 if (requireNamespace('ggplot2', quietly = TRUE)) {
   print(effect_plot(fit_zaga, 'Temp', aq, what = 'mu'))
 }
@@ -106,7 +117,7 @@ if (requireNamespace('ggplot2', quietly = TRUE)) {
 
 Fit **random intercepts** by subject using `gamlss.random::random()`, while selecting fixed effects for μ.
 
-```r
+```{r}
 if (requireNamespace("nlme", quietly = TRUE) && requireNamespace("gamlss.random", quietly = TRUE)) {
   data(Orthodont, package = "nlme")       # distance ~ age, Sex, Subject
   od <- nlme::Orthodont
@@ -121,8 +132,10 @@ if (requireNamespace("nlme", quietly = TRUE) && requireNamespace("gamlss.random"
     B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto", trace = FALSE
   )
   head(selection_table(fit_long))
+```
 
-# Effect plot for age on mu by Sex (create separate curves)
+### Effect plot for age on mu by Sex (create separate curves)
+```{r}
 if (requireNamespace('ggplot2', quietly = TRUE)) {
   gg <- effect_plot(fit_long, 'age', od, what = 'mu')
   print(gg)
