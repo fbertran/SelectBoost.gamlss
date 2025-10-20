@@ -34,10 +34,24 @@
 #'   \item \code{B}, \code{sample_fraction}, \code{pi_thr}, \code{k}.
 #'   \item \code{scaler}: list with \code{center}, \code{scale}, \code{vars}, \code{response}.
 #' }
-#' @examples
-#' fit <- sb_gamlss(y ~ 1, data = dat, family = gamlss.dist::NO(),
-#'                  mu_scope = ~ x1 + x2 + pb(x3),
-#'                  engine = "grpreg", B = 60, pi_thr = 0.6)
+#' @examplesIf requireNamespace("gamlss.dist", quietly = TRUE)
+#' set.seed(1)
+#' dat <- data.frame(
+#'   y = gamlss.dist::rNO(60, mu = 0),
+#'   x1 = rnorm(60),
+#'   x2 = rnorm(60),
+#'   x3 = rnorm(60)
+#' )
+#' fit <- sb_gamlss(
+#'   y ~ 1,
+#'   data = dat,
+#'   family = gamlss.dist::NO(),
+#'   mu_scope = ~ x1 + x2 + gamlss::pb(x3),
+#'   B = 8,
+#'   pi_thr = 0.6,
+#'   trace = FALSE
+#' )
+#' fit$final_formula
 #' @export
 sb_gamlss <- function(
   formula,

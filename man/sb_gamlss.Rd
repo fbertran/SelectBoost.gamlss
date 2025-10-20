@@ -103,9 +103,23 @@ An object of class \code{"sb_gamlss"} with elements:
 SelectBoost for GAMLSS (stability selection)
 }
 \examples{
-\dontrun{
-fit <- sb_gamlss(y ~ 1, data = dat, family = gamlss.dist::NO(),
-                 mu_scope = ~ x1 + x2 + pb(x3),
-                 engine = "grpreg", B = 60, pi_thr = 0.6)
+if (requireNamespace("gamlss.dist", quietly = TRUE)) {
+set.seed(1)
+dat <- data.frame(
+  y = gamlss.dist::rNO(60, mu = 0),
+  x1 = rnorm(60),
+  x2 = rnorm(60),
+  x3 = rnorm(60)
+)
+fit <- sb_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + gamlss::pb(x3),
+  B = 8,
+  pi_thr = 0.6,
+  trace = FALSE
+)
+fit$final_formula
 }
 }

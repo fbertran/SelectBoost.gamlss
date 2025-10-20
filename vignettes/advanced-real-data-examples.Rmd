@@ -44,25 +44,6 @@ if (requireNamespace("pscl", quietly = TRUE)) {
 }
 ```
 
-### Side-by-side metrics (ZIP vs ZINB)
-```{r}
-if (requireNamespace("pscl", quietly = TRUE)) {
-zip_g <- fit_zip$final_fit; zinb_g <- fit_zinb$final_fit
-if (inherits(zip_g, 'gamlss') && inherits(zinb_g, 'gamlss')) {
-  met <- data.frame(
-    model = c('ZIP','ZINBI'),
-    AIC = c(AIC(zip_g), AIC(zinb_g)),
-    GAIC_k2 = c(gamlss::GAIC(zip_g, k = 2), gamlss::GAIC(zinb_g, k = 2)),
-    deviance = c(zip_g$deviance, zinb_g$deviance)
-  )
-  print(met)
-} else {
-  cat('Final fits not found; metrics skipped.\n')
-}} else {
-  cat("Package 'pscl' not installed; skipping bioChemists example.\n")
-}
-```
-
 ### ZINB often handles overdispersion better than ZIP
 ```{r}
 if (requireNamespace("pscl", quietly = TRUE)) {
@@ -74,6 +55,31 @@ if (requireNamespace("pscl", quietly = TRUE)) {
     B = 80, pi_thr = 0.6, pre_standardize = FALSE, parallel = "auto", trace = FALSE
   )
   head(selection_table(fit_zinb))
+} else {
+  cat("Package 'pscl' not installed; skipping bioChemists example.\n")
+}
+```
+
+### Side-by-side metrics (ZIP vs ZINB)
+```{r}
+if (requireNamespace("pscl", quietly = TRUE)) {
+  if (exists("fit_zip", inherits = FALSE) && exists("fit_zinb", inherits = FALSE)) {
+    zip_g <- fit_zip$final_fit
+    zinb_g <- fit_zinb$final_fit
+    if (inherits(zip_g, "gamlss") && inherits(zinb_g, "gamlss")) {
+      met <- data.frame(
+        model = c("ZIP", "ZINBI"),
+        AIC = c(AIC(zip_g), AIC(zinb_g)),
+        GAIC_k2 = c(gamlss::GAIC(zip_g, k = 2), gamlss::GAIC(zinb_g, k = 2)),
+        deviance = c(zip_g$deviance, zinb_g$deviance)
+      )
+      print(met)
+    } else {
+      cat("Final fits not found; metrics skipped.\n")
+    }
+  } else {
+    cat("Models not available; run the fitting chunks first.\n")
+  }
 } else {
   cat("Package 'pscl' not installed; skipping bioChemists example.\n")
 }
@@ -131,15 +137,11 @@ if (requireNamespace("nlme", quietly = TRUE) && requireNamespace("gamlss.random"
     engine = "grpreg", grpreg_penalty = "grLasso",
     B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto", trace = FALSE
   )
-  head(selection_table(fit_long))
-```
-
-### Effect plot for age on mu by Sex (create separate curves)
-```{r}
-if (requireNamespace('ggplot2', quietly = TRUE)) {
-  gg <- effect_plot(fit_long, 'age', od, what = 'mu')
-  print(gg)
-}
+  head(selection_table(fit_long))  
+  if (requireNamespace("ggplot2", quietly = TRUE)) {
+    gg <- effect_plot(fit_long, "age", od, what = "mu")
+    print(gg)
+  }
 } else {
   cat("Packages 'nlme' and/or 'gamlss.random' not installed; skipping longitudinal example.\n")
 }

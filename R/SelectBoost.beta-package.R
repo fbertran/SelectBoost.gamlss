@@ -6,9 +6,23 @@
 #' @author This package was written by Frédéric Bertrand.
 #' Maintainer: Frédéric Bertrand <frederic.bertrand@@lecnam.net>
 #'
-#' @examples
-#'
-#' "TODO"
+#' @examplesIf requireNamespace("gamlss.dist", quietly = TRUE)
+#' set.seed(1)
+#' dat <- data.frame(
+#'   y = gamlss.dist::rNO(80, mu = 0),
+#'   x1 = rnorm(80),
+#'   x2 = rnorm(80)
+#' )
+#' fit <- SelectBoost_gamlss(
+#'   y ~ 1,
+#'   data = dat,
+#'   family = gamlss.dist::NO(),
+#'   mu_scope = ~ x1 + x2,
+#'   B = 10,
+#'   pi_thr = 0.6,
+#'   trace = FALSE
+#' )
+#' fit$final_formula
 #'
 "_PACKAGE"
 

@@ -9,9 +9,24 @@
 Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for 'AICc' calculation.
 }
 \examples{
-
-"TODO"
-
+if (requireNamespace("gamlss.dist", quietly = TRUE)) {
+set.seed(1)
+dat <- data.frame(
+  y = gamlss.dist::rNO(80, mu = 0),
+  x1 = rnorm(80),
+  x2 = rnorm(80)
+)
+fit <- SelectBoost_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2,
+  B = 10,
+  pi_thr = 0.6,
+  trace = FALSE
+)
+fit$final_formula
+}
 }
 \references{
 TODO
