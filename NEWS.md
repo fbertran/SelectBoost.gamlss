@@ -1,4 +1,4 @@
-# SelectBoost.gamlss 0.2.0 — 2025-10-17
+# SelectBoost.gamlss 0.2.0
 
 ### Highlights
 - **Grouped selection for all parameters (μ, σ, ν, τ)** with `engine = "grpreg"` (group lasso/MCP/SCAD) and `engine = "sgl"` (sparse group lasso), including **factors, splines (`pb()`/`cs()`), and interactions** treated as *single groups*.
@@ -36,3 +36,9 @@
 - Some grouped/knockoff features are optional and require packages in **Suggests** (`grpreg`, `SGL`, `knockoff`, `glmnet`, etc.).
 - Smooths are proxied with `splines::bs(df = df_smooth)` *for selection only*; the final `gamlss` fit remains as specified.
 
+# SelectBoost.gamlss 0.1.0
+
+- First draft: bootstrap stability-selection over GAMLSS parameters (mu/sigma/nu/tau).
+- Optional pre-standardization of numeric predictors (stored for prediction).
+- AICc helper.
+- Plotting + prediction helpers.
