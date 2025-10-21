@@ -16,7 +16,6 @@ We include a **growth** example (Dutch boys) and further count/continuous/binary
 ```{r}
 library(SelectBoost.gamlss)
 library(gamlss)
-library(gamlss.data)
 library(MASS)           # Insurance, quine
 set.seed(1)
 ```
@@ -26,33 +25,48 @@ set.seed(1)
 We model **height** vs **age** with **BCT** (Box–Cox t). Grouped penalties select among smoothers and interactions with pubertal stage.
 
 ```{r}
-data(boys, package = "gamlss.data")
-boys <- subset(boys, !is.na(height) & !is.na(age) & !is.na(tanner))
-boys$tanner <- factor(boys$tanner)
+if (requireNamespace("gamlss.data", quietly = TRUE)) {
+ boys <- NULL
+  load_ok <- tryCatch({
+    utils::data("boys", package = "gamlss.data", envir = environment())
+    TRUE
+  }, error = function(e) {
+    cat("Unable to load 'boys' dataset:", conditionMessage(e), "— skipping Dutch boys growth example.\n")
+    FALSE
+  })
+  if (!load_ok || is.null(boys)) {
+    cat("Dataset 'boys' unavailable; skipping Dutch boys growth example.\n")
+  } else {
+    boys <- subset(boys, !is.na(height) & !is.na(age) & !is.na(tanner))
+    boys$tanner <- factor(boys$tanner)
 
-fit_growth <- sb_gamlss(
-  height ~ 1, data = boys, family = gamlss.dist::BCT(),
-  mu_scope    = ~ pb(age) + pb(age):tanner,
-  sigma_scope = ~ pb(age),
-  nu_scope    = ~ pb(age),
-  engine = "grpreg", engine_sigma = "grpreg", engine_nu = "grpreg",
-  grpreg_penalty = "grLasso",
-  B = 80, pi_thr = 0.6, pre_standardize = TRUE,
-  parallel = "auto", trace = FALSE
-)
+    fit_growth <- sb_gamlss(
+      height ~ 1, data = boys, family = gamlss.dist::BCT(),
+      mu_scope    = ~ pb(age) + pb(age):tanner,
+      sigma_scope = ~ pb(age),
+      nu_scope    = ~ pb(age),
+      engine = "grpreg", engine_sigma = "grpreg", engine_nu = "grpreg",
+      grpreg_penalty = "grLasso",
+      B = 80, pi_thr = 0.6, pre_standardize = TRUE,
+      parallel = "auto", trace = FALSE
+    )
 
-selection_table(fit_growth)[1:12, ]
+    selection_table(fit_growth)[1:12, ]
 
-# Effect plot for age on mu
-if (requireNamespace('ggplot2', quietly = TRUE)) {
-  print(effect_plot(fit_growth, 'age', boys, what = 'mu'))
+    # Effect plot for age on mu
+    if (requireNamespace('ggplot2', quietly = TRUE)) {
+      print(effect_plot(fit_growth, 'age', boys, what = 'mu'))
+    }
+    # Stability curves for the most important terms (optional)
+    g <- sb_gamlss_c0_grid(height ~ 1, data = boys, family = gamlss.dist::BCT(),
+    mu_scope = ~ pb(age) + pb(age):tanner, sigma_scope = ~ pb(age),
+    nu_scope = ~ pb(age), c0_grid = seq(0.2, 0.8, by = 0.1),
+    B = 40, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto")
+    plot_stability_curves(g, terms = c("pb(age)", "pb(age):tanner"), parameter = "mu")
+  }
+} else {
+  cat("Package 'gamlss.data' not installed; skipping Dutch boys growth example.\n")
 }
-# Stability curves for the most important terms (optional)
-# g <- sb_gamlss_c0_grid(height ~ 1, data = boys, family = gamlss.dist::BCT(),
-#                        mu_scope = ~ pb(age) + pb(age):tanner, sigma_scope = ~ pb(age),
-#                        nu_scope = ~ pb(age), c0_grid = seq(0.2, 0.8, by = 0.1),
-#                        B = 40, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto")
-# plot_stability_curves(g, terms = c("pb(age)", "pb(age):tanner"), parameter = "mu")
 ```
 
 **Interpretation.** Expect `pb(age)` to be stably selected for μ and σ; interactions like `pb(age):tanner` often appear around puberty.

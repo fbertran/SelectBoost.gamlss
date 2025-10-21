@@ -27,7 +27,7 @@ b0 <- sb_gamlss(
   mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
   B = 50, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
-plot(b0)
+plot_sb_gamlss(b0)
 
 # SelectBoost integration (single c0)
 sb <- SelectBoost_gamlss(
@@ -52,7 +52,7 @@ ab <- autoboost_gamlss(
   c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
 attr(ab, "chosen_c0")
-plot(ab)
+plot_sb_gamlss(ab)
 
 # fastboost (lightweight)
 fb <- fastboost_gamlss(
@@ -60,7 +60,7 @@ fb <- fastboost_gamlss(
   mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
   B = 30, sample_fraction = 0.6, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
-plot(fb)
+plot_sb_gamlss(fb)
 ```
 
 
@@ -125,7 +125,8 @@ fit_grp <- sb_gamlss(
   B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
 
-plot(fit_step); plot(fit_grp)
+plot_sb_gamlss(fit_step)
+plot_sb_gamlss(fit_grp)
 selection_table(fit_step) |> head()
 selection_table(fit_grp)  |> head()
 ```
@@ -149,6 +150,17 @@ tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 30)
 tuned$best_config
 
 # Approximate group knockoffs for mu
-sel_mu <- knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1)
-sel_mu
+sel_mu <- NULL
+if (requireNamespace("knockoff", quietly = TRUE)) {
+  sel_mu <- tryCatch(
+    knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1),
+    error = function(e) {
+      cat("Knockoff filter failed:", conditionMessage(e), "— skipping example.\n")
+      NULL
+    }
+  )
+} else {
+  cat("Package 'knockoff' not installed; skipping knockoff example.\n")
+}
+if (!is.null(sel_mu)) sel_mu
 ```

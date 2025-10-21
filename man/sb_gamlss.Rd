@@ -103,7 +103,7 @@ An object of class \code{"sb_gamlss"} with elements:
 SelectBoost for GAMLSS (stability selection)
 }
 \examples{
-if (requireNamespace("gamlss.dist", quietly = TRUE)) {
+\dontshow{if (requireNamespace("gamlss.dist", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 set.seed(1)
 dat <- data.frame(
   y = gamlss.dist::rNO(60, mu = 0),
@@ -121,5 +121,5 @@ fit <- sb_gamlss(
   trace = FALSE
 )
 fit$final_formula
-}
+\dontshow{\}) # examplesIf}
 }

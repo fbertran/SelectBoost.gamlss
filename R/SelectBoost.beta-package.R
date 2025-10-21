@@ -3,8 +3,8 @@
 #'
 #' @references TODO
 #'
-#' @author This package was written by Frédéric Bertrand.
-#' Maintainer: Frédéric Bertrand <frederic.bertrand@@lecnam.net>
+#' @author This package was written by Frederic Bertrand.
+#' Maintainer: Frederic Bertrand <frederic.bertrand@@lecnam.net>
 #'
 #' @examplesIf requireNamespace("gamlss.dist", quietly = TRUE)
 #' set.seed(1)

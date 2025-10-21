@@ -87,7 +87,7 @@ fams <- c("NO","PO","LOGNO","GA","IG","LO","LOGITNO","GEOM","BE",
           "ZAIG","ZALG","BCT","BCPE","ZIPF","ZIPFmu","SICHEL","GLG",
           "BETA4","RS","WEI","GIG")
 n <- 3000
-tols <- .family_tolerance()
+tols <- SelectBoost.gamlss:::.family_tolerance()
 tol_default <- tols[['.default']]
 rows <- lapply(fams, function(fam) {
   # try generator

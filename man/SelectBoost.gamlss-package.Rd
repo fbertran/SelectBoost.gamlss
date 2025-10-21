@@ -9,7 +9,7 @@
 Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for 'AICc' calculation.
 }
 \examples{
-if (requireNamespace("gamlss.dist", quietly = TRUE)) {
+\dontshow{if (requireNamespace("gamlss.dist", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 set.seed(1)
 dat <- data.frame(
   y = gamlss.dist::rNO(80, mu = 0),
@@ -26,7 +26,7 @@ fit <- SelectBoost_gamlss(
   trace = FALSE
 )
 fit$final_formula
-}
+\dontshow{\}) # examplesIf}
 }
 \references{
 TODO
@@ -41,7 +41,7 @@ Useful links:
 
 }
 \author{
-This package was written by Frédéric Bertrand.
-Maintainer: Frédéric Bertrand \href{mailto:frederic.bertrand@lecnam.net}{frederic.bertrand@lecnam.net}
+This package was written by Frederic Bertrand.
+Maintainer: Frederic Bertrand \href{mailto:frederic.bertrand@lecnam.net}{frederic.bertrand@lecnam.net}
 }
 \keyword{internal}

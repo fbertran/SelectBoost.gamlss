@@ -2,9 +2,12 @@
 % Please edit documentation in R/effects.R
 \name{effect_plot}
 \alias{effect_plot}
+\alias{print.effect_plot_failure}
 \title{One-variable effect plot from an sb_gamlss (or gamlss) fit}
 \usage{
 effect_plot(fit, var, data, what = "mu", grid = 100)
+
+\method{print}{effect_plot_failure}(x, ...)
 }
 \arguments{
 \item{fit}{sb_gamlss object (or gamlss)}
@@ -16,9 +19,16 @@ effect_plot(fit, var, data, what = "mu", grid = 100)
 \item{what}{which parameter to predict ("mu","sigma","nu","tau")}
 
 \item{grid}{number of grid points for numeric variable}
+
+\item{x}{object returned by \code{effect_plot()} when prediction fails}
+
+\item{...}{unused}
 }
 \value{
-a ggplot object if ggplot2 present; otherwise draws base plot and returns NULL
+A ggplot object if ggplot2 present; otherwise draws a base plot and returns
+NULL. When prediction fails, returns an object of class
+\code{effect_plot_failure} that carries diagnostic information and prints a
+message describing the failure.
 }
 \description{
 Varies one variable and holds others at typical values (median/mode) to plot the
