@@ -1,11 +1,30 @@
 ---
 title: "Stability-Selection for GAMLSS with SelectBoost.gamlss"
+shorttitle: "Stability-Selection for GAMLSS"
+author: 
+- name: "Frédéric Bertrand"
+  affiliation: 
+  - Cnam, Paris
+  - Cedric
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Stability-Selection for GAMLSS with SelectBoost.gamlss}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 This vignette demonstrates bootstrap stability-selection for GAMLSS models.
 

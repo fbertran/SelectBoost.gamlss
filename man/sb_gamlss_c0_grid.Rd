@@ -24,6 +24,9 @@ sb_gamlss_c0_grid(
   pre_standardize = FALSE,
   trace = TRUE,
   progress = TRUE,
+  use_groups = TRUE,
+  corr_func = "cor",
+  group_fun = SelectBoost::group_func_2,
   ...
 )
 }
@@ -57,6 +60,12 @@ sb_gamlss_c0_grid(
 \item{trace}{Logical; print progress messages.}
 
 \item{progress}{Logical; show a progress bar across \code{c0_grid}.}
+
+\item{use_groups}{Logical; treat SelectBoost correlation groups during resampling.}
+
+\item{corr_func}{Correlation function passed to \code{SelectBoost::boost.compcorrs}.}
+
+\item{group_fun}{Grouping function passed to \code{SelectBoost::boost.findgroups}.}
 
 \item{...}{Passed to underlying engines (e.g., to \code{gamlss::gamlss}, \code{glmnet}, etc.).}
 }

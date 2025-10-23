@@ -1,0 +1,104 @@
+## ----setup, include = FALSE---------------------------------------------------
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+## -----------------------------------------------------------------------------
+library(gamlss)
+library(SelectBoost.gamlss)
+
+set.seed(2025)
+n <- 4000
+families <- list(
+  NO = gamlss.dist::NO(),
+  PO = gamlss.dist::PO(),
+  LOGNO = gamlss.dist::LOGNO(),
+  GA = gamlss.dist::GA(),
+  IG = gamlss.dist::IG(),
+  LO = gamlss.dist::LO(),
+  LOGITNO = gamlss.dist::LOGITNO(),
+  GEOM = gamlss.dist::GEOM(),
+  BE = gamlss.dist::BE()
+)
+gen_fun <- list(
+  NO = function(n) gamlss.dist::rNO(n, mu = 0, sigma = 1),
+  PO = function(n) gamlss.dist::rPO(n, mu = 2.5),
+  LOGNO = function(n) gamlss.dist::rLOGNO(n, mu = 0, sigma = 0.6),
+  GA = function(n) gamlss.dist::rGA(n, mu = 2, sigma = 0.5),
+  IG = function(n) gamlss.dist::rIG(n, mu = 2, sigma = 0.5),
+  LO = function(n) gamlss.dist::rLO(n, mu = 0, sigma = 1),
+  LOGITNO = function(n) gamlss.dist::rLOGITNO(n, mu = 0, sigma = 1),
+  GEOM = function(n) gamlss.dist::rGEOM(n, mu = 3),
+  BE = function(n) gamlss.dist::rBE(n, mu = 0.4, sigma = 0.2)
+)
+
+summ <- lapply(names(families), function(fname) {
+  fam <- families[[fname]]; gen <- gen_fun[[fname]]
+  y <- gen(n); dat <- data.frame(y = y)
+  fit <- try(gamlss::gamlss(y ~ 1, data = dat, family = fam), silent = TRUE)
+  if (inherits(fit, "try-error")) return(NULL)
+  chk <- check_fast_vs_generic(fit, dat, tol = 1e-6)
+  data.frame(family = fname, ll_fast = chk$ll_fast, ll_generic = chk$ll_generic,
+             abs_diff = chk$abs_diff, pass = chk$pass)
+})
+summ <- do.call(rbind, Filter(Negate(is.null), summ))
+summ
+
+## -----------------------------------------------------------------------------
+fams <- c("NO","PO","LOGNO","GA","IG","LO","LOGITNO","GEOM","BE",
+          "NBI","NBII","LOGLOG","DEL","ZAGA","ZIP","ZINBI","DPO","GPO",
+          "ZAIG","ZALG","BCT","BCPE","ZIPF","ZIPFmu","SICHEL","GLG",
+          "BETA4","RS","WEI","GIG")
+n <- 3000
+res <- lapply(fams, function(fam) {
+  y <- try(.gen_family(fam, n), silent = TRUE)
+  if (inherits(y, "try-error") || is.null(y)) return(NULL)
+  dat <- data.frame(y = y)
+  fam_obj <- try(getFromNamespace(fam, "gamlss.dist")(), silent = TRUE)
+  if (inherits(fam_obj, "try-error")) return(NULL)
+  fit <- try(gamlss::gamlss(y ~ 1, data = dat, family = fam_obj), silent = TRUE)
+  if (inherits(fit, "try-error")) return(NULL)
+  chk <- check_fast_vs_generic(fit, dat, tol = 1e-6)
+  data.frame(family = fam, abs_diff = chk$abs_diff, pass = chk$pass)
+})
+res <- do.call(rbind, Filter(Negate(is.null), res))
+res
+
+## -----------------------------------------------------------------------------
+fams <- c("NO","PO","LOGNO","GA","IG","LO","LOGITNO","GEOM","BE",
+          "NBI","NBII","LOGLOG","DEL","ZAGA","ZIP","ZINBI","DPO","GPO",
+          "ZAIG","ZALG","BCT","BCPE","ZIPF","ZIPFmu","SICHEL","GLG",
+          "BETA4","RS","WEI","GIG")
+n <- 3000
+tols <- SelectBoost.gamlss:::.family_tolerance()
+tol_default <- tols[['.default']]
+rows <- lapply(fams, function(fam) {
+  # try generator
+  y <- try(.gen_family(fam, n), silent = TRUE)
+  if (inherits(y, "try-error") || is.null(y)) {
+    return(data.frame(family=fam, status="skip", reason="generator missing/failed", abs_diff=NA_real_, pass=NA))
+  }
+  dat <- data.frame(y = y)
+  # try family object
+  fam_obj <- try(getFromNamespace(fam, "gamlss.dist")(), silent = TRUE)
+  if (inherits(fam_obj, "try-error")) {
+    return(data.frame(family=fam, status="skip", reason="family constructor missing", abs_diff=NA_real_, pass=NA))
+  }
+  # try fit
+  fit <- try(gamlss::gamlss(y ~ 1, data = dat, family = fam_obj), silent = TRUE)
+  if (inherits(fit, "try-error")) {
+    return(data.frame(family=fam, status="skip", reason="fit failed", abs_diff=NA_real_, pass=NA))
+  }
+  # evaluate
+  tol_fam <- tols[[fam]] %||% tol_default
+  chk <- check_fast_vs_generic(fit, dat, tol = tol_fam)
+  data.frame(family=fam, status="ok", reason="", abs_diff=chk$abs_diff, pass=chk$pass)
+})
+res <- do.call(rbind, rows)
+res
+

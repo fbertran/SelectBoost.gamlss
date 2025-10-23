@@ -1,11 +1,30 @@
 ---
 title: "Fast Deviance: Microbenchmarks"
+shorttitle: "Fast Deviance: Microbenchmarks"
+author: 
+- name: "Frédéric Bertrand"
+  affiliation: 
+  - Cnam, Paris
+  - Cedric
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Fast Deviance: Microbenchmarks}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 This vignette compares the *fast deviance* evaluator (`loglik_gamlss_newdata_fast`) with the generic route
 for several common families. Results will vary by machine/BLAS and by R package versions.

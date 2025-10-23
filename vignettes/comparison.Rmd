@@ -1,11 +1,30 @@
 ---
 title: "Comparing SelectBoost-GAMLSS Variants"
+shorttitle: "Comparing SelectBoost-GAMLSS Variants"
+author: 
+- name: "Frédéric Bertrand"
+  affiliation: 
+  - Cnam, Paris
+  - Cedric
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Comparing SelectBoost-GAMLSS Variants}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 This vignette compares: plain `sb_gamlss`, the SelectBoost-integrated `SelectBoost_gamlss`,
 grid-based `sb_gamlss_c0_grid` + `autoboost_gamlss`, and the lightweight `fastboost_gamlss`.

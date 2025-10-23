@@ -35,6 +35,8 @@ sb_gamlss(
   parallel = c("none", "auto", "multisession", "multicore"),
   workers = NULL,
   trace = TRUE,
+  corr_func = "cor",
+  group_fun = SelectBoost::group_func_2,
   ...
 )
 }
@@ -63,7 +65,7 @@ sb_gamlss(
 
 \item{pre_standardize}{Logical; standardize numeric predictors before penalized fits.}
 
-\item{use_groups}{Logical; treat all columns from the same term (factor dummies, spline bases) as one group.}
+\item{use_groups}{Logical; treat SelectBoost correlation groups during resampling.}
 
 \item{c0}{SelectBoost meta-parameter controlling reweighting/thresholding (see vignette).}
 
@@ -81,11 +83,15 @@ sb_gamlss(
 
 \item{glmnet_alpha}{Elastic-net mixing for glmnet (1 = lasso, 0 = ridge).}
 
-\item{parallel}{Parallel mode (\code{"none"}, \code{"auto"}, \code{"multisession"}, \code{"multicore"}).}
+\item{parallel}{Parallel mode (\code{"none"}, \code{"auto"}, \code{"multisession"}, `"multicore").}
 
 \item{workers}{Integer; number of workers if parallel.}
 
 \item{trace}{Logical; print progress messages.}
+
+\item{corr_func}{Correlation function passed to \code{SelectBoost::boost.compcorrs}.}
+
+\item{group_fun}{Grouping function passed to \code{SelectBoost::boost.findgroups}.}
 
 \item{...}{Passed to underlying engines (e.g., to \code{gamlss::gamlss}, \code{glmnet}, etc.).}
 }

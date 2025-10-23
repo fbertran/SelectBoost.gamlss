@@ -18,7 +18,8 @@ sb_gamlss_c0_grid <- function(
   c0_grid = seq(0.1, 0.9, by = 0.1),
   B = 60, sample_fraction = 0.7, pi_thr = 0.6, k = 2,
   direction = c("both","forward","backward"),
-  pre_standardize = FALSE, trace = TRUE, progress = TRUE, ...
+  pre_standardize = FALSE, trace = TRUE, progress = TRUE,
+  use_groups = TRUE, corr_func = "cor", group_fun = SelectBoost::group_func_2, ...
 ) {
   direction <- match.arg(direction)
   stopifnot(is.numeric(c0_grid), all(c0_grid > 0), all(c0_grid < 1))
@@ -34,7 +35,8 @@ sb_gamlss_c0_grid <- function(
       base_sigma = base_sigma, base_nu = base_nu, base_tau = base_tau,
       B = B, sample_fraction = sample_fraction, pi_thr = pi_thr, k = k,
       direction = direction, pre_standardize = pre_standardize,
-      use_groups = TRUE, c0 = c0, trace = trace, ...
+      use_groups = use_groups, c0 = c0, trace = trace,
+      corr_func = corr_func, group_fun = group_fun, ...
     )
     res_list[[as.character(c0)]] <- fit
     if (!is.null(pb)) { i_prog <- i_prog + 1; utils::setTxtProgressBar(pb, i_prog) }
@@ -135,7 +137,8 @@ autoboost_gamlss <- function(
   c0_grid = seq(0.1, 0.9, by = 0.1),
   B = 60, sample_fraction = 0.7, pi_thr = 0.6, k = 2,
   direction = c("both","forward","backward"),
-  pre_standardize = FALSE, trace = TRUE, progress = TRUE, ...
+  pre_standardize = FALSE, trace = TRUE, progress = TRUE,
+  use_groups = TRUE, corr_func = "cor", group_fun = SelectBoost::group_func_2, ...
 ) {
   direction <- match.arg(direction)
   grid <- sb_gamlss_c0_grid(
@@ -143,7 +146,8 @@ autoboost_gamlss <- function(
     mu_scope = mu_scope, sigma_scope = sigma_scope, nu_scope = nu_scope, tau_scope = tau_scope,
     base_sigma = base_sigma, base_nu = base_nu, base_tau = base_tau,
     c0_grid = c0_grid, B = B, sample_fraction = sample_fraction, pi_thr = pi_thr, k = k,
-    direction = direction, pre_standardize = pre_standardize, trace = trace, ...
+    direction = direction, pre_standardize = pre_standardize, trace = trace,
+    use_groups = use_groups, corr_func = corr_func, group_fun = group_fun, ...
   )
   conf <- confidence_table(grid)
   if (is.null(grid$table) || !NROW(grid$table) || !NROW(conf)) {
@@ -180,7 +184,8 @@ fastboost_gamlss <- function(
   base_sigma = ~ 1, base_nu = ~ 1, base_tau = ~ 1,
   B = 30, sample_fraction = 0.6, pi_thr = 0.6, k = 2,
   direction = c("both","forward","backward"),
-  pre_standardize = FALSE, use_groups = TRUE, c0 = 0.5, trace = TRUE, ...
+  pre_standardize = FALSE, use_groups = TRUE, c0 = 0.5, trace = TRUE,
+  corr_func = "cor", group_fun = SelectBoost::group_func_2, ...
 ) {
   sb_gamlss(
     formula = formula, data = data, family = family,
@@ -188,6 +193,7 @@ fastboost_gamlss <- function(
     base_sigma = base_sigma, base_nu = base_nu, base_tau = base_tau,
     B = B, sample_fraction = sample_fraction, pi_thr = pi_thr, k = k,
     direction = direction, pre_standardize = pre_standardize,
-    use_groups = use_groups, c0 = c0, trace = trace, ...
+    use_groups = use_groups, c0 = c0, trace = trace,
+    corr_func = corr_func, group_fun = group_fun, ...
   )
 }

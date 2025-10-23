@@ -1,66 +1,58 @@
-# SelectBoost.gamlss
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-An extension of the **SelectBoost** idea to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
+
+
+
+# SelectBoost.gamlss <img src="man/figures/logo.png" align="right" width="200"/>
+
+<!-- badges: start -->
+[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss)
+[![R-CMD-check](https://github.com/fbertran/SelectBoost.gamlss/workflows/R-CMD-check/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss)
+<!-- badges: end -->
+
+With the growth of big data, variable selection has become one of the major challenges in statistics. Although many methods have been proposed in the literature their performance in terms of recall and precision are limited in a context where the number of variables by far exceeds the number of observations or in a high correlated setting. 
+
+Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape) featuring:
 
 - Bootstrap subsampling + `gamlss::stepGAIC()` on each parameter (mu, sigma, nu, tau).
 - Selection frequencies aggregated; refit a final stable model using a threshold `pi_thr`.
 - Optional pre-standardization of numeric predictors.
 - Includes `AICc_gamlss()` helper.
 
-## Install (local)
-Build with `R CMD build` then `R CMD INSTALL`, or `devtools::install_local()`.
+The selectboost algorithm is a new general algorithm which improves the precision of any existing variable selection method. This algorithm is based on highly intensive simulations and takes into account the correlation structure of the data. Our algorithm can either produce a confidence index for variable selection or it can be used in an experimental design planning perspective.
+
+This website and these examples were created by F. Bertrand and M. Maumy.
+
+## Installation
+
+You can install the released version of SelectBoost.gamlss from [CRAN](https://CRAN.R-project.org) with:
+
+
+``` r
+install.packages("SelectBoost.gamlss")
+```
+
+You can install the development version of SelectBoost.gamlss from [github](https://github.com) with:
+
+
+``` r
+devtools::install_github("fbertran/SelectBoost.gamlss")
+```
+
+If you are a Linux/Unix or a Macos user, you can install a version of SelectBoost.gamlss with support for `doMC` from [github](https://github.com) with:
+
+
+``` r
+devtools::install_github("fbertran/SelectBoost.gamlss", ref = "doMC")
+```
+
 
 ## Quick start
 
 
 ``` r
 library(gamlss)
-```
-
-```
-## Loading required package: splines
-```
-
-```
-## Loading required package: gamlss.data
-```
-
-```
-## 
-## Attaching package: 'gamlss.data'
-```
-
-```
-## The following object is masked from 'package:datasets':
-## 
-##     sleep
-```
-
-```
-## Loading required package: gamlss.dist
-```
-
-```
-## Loading required package: nlme
-```
-
-```
-## Loading required package: parallel
-```
-
-```
-##  **********   GAMLSS Version 5.5-0  **********
-```
-
-```
-## For more on GAMLSS look at https://www.gamlss.com/
-```
-
-```
-## Type gamlssNews() to see new features/changes/bug fixes.
-```
-
-``` r
 library(SelectBoost.gamlss)
 
 set.seed(1)
@@ -83,52 +75,39 @@ res <- sb_gamlss(
   pre_standardize = TRUE,
   trace = FALSE
 )
-```
+#> GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264
 
-```
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648
-```
-
-``` r
 res$final_formula
-```
-
-```
-## $mu
-## y ~ 1
-## 
-## $sigma
-## ~1
-## <environment: 0x302d0aa70>
-## 
-## $nu
-## ~1
-## <environment: 0x302d0aa70>
-## 
-## $tau
-## ~1
-## <environment: 0x302d0aa70>
-```
-
-``` r
+#> $mu
+#> y ~ x1 + x2
+#> 
+#> $sigma
+#> ~x1
+#> <environment: 0x16b999238>
+#> 
+#> $nu
+#> ~1
+#> <environment: 0x16b999238>
+#> 
+#> $tau
+#> ~1
+#> <environment: 0x16b999238>
 head(selection_table(res))
-```
-
-```
-##   parameter term count prop
-## 1        mu   x1     0    0
-## 2        mu   x2     0    0
-## 3        mu   x3     0    0
-## 4     sigma   x1     0    0
-## 5     sigma   x2     0    0
-```
-
-``` r
+#>   parameter term count prop
+#> 1        mu   x1    50 1.00
+#> 2        mu   x2    37 0.74
+#> 3        mu   x3     5 0.10
+#> 4     sigma   x1    37 0.74
+#> 5     sigma   x2     6 0.12
 plot_sb_gamlss(res)
 ```
 
-![plot of chunk unnamed-chunk-1](figure/unnamed-chunk-1-1.png)
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-4-1.png" alt="plot of chunk unnamed-chunk-4" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-4</p>
+</div>
 
 
 ### SelectBoost integration
@@ -145,109 +124,76 @@ g <- sb_gamlss_c0_grid(
   mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
   c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
-```
-
-```
-##   |                                                                |                                                        |   0%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |==============                                          |  25%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |============================                            |  50%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |==========================================              |  75%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |========================================================| 100%
-```
-
-``` r
+#>   |                                                                                                    |                                                                                            |   0%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |=======================                                                                     |  25%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |==============================================                                              |  50%GAMLSS-RS iteration 1: Global Deviance = 1150.335 
+#> GAMLSS-RS iteration 2: Global Deviance = 1150.335 
+#>   |                                                                                                    |=====================================================================                       |  75%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |============================================================================================| 100%
 plot(g)                 # stable terms vs c0 + top confidence terms
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-5-1.png" alt="plot of chunk unnamed-chunk-5" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-5</p>
+</div>
 
 ``` r
 confidence_table(g)     # SelectBoost-like confidence summary
-```
+#>   parameter term conf_index cover
+#> 1        mu   x1     0.4000  1.00
+#> 2     sigma   x1     0.1000  0.75
+#> 3        mu   x2     0.0375  0.75
+#> 4     sigma   x2     0.0000  0.00
+#> 5        mu   x3     0.0000  0.00
 
-```
-##   parameter term conf_index cover
-## 1        mu   x1          0     0
-## 2     sigma   x1          0     0
-## 3        mu   x2          0     0
-## 4     sigma   x2          0     0
-## 5        mu   x3          0     0
-```
-
-``` r
 # autoboost: pick best c0 automatically
 ab <- autoboost_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
   c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
-```
-
-```
-##   |                                                                |                                                        |   0%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |==============                                          |  25%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |============================                            |  50%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |==========================================              |  75%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |========================================================| 100%
-```
-
-``` r
+#>   |                                                                                                    |                                                                                            |   0%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |=======================                                                                     |  25%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |==============================================                                              |  50%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |=====================================================================                       |  75%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
+#> GAMLSS-RS iteration 3: Global Deviance = 1146.264 
+#>   |                                                                                                    |============================================================================================| 100%
 attr(ab, "chosen_c0")
-```
-
-```
-## [1] 0.2
-```
-
-``` r
+#> [1] 0.8
 attr(ab, "confidence_table") |> head()
-```
-
-```
-##   parameter term conf_index cover
-## 1        mu   x1          0     0
-## 2     sigma   x1          0     0
-## 3        mu   x2          0     0
-## 4     sigma   x2          0     0
-## 5        mu   x3          0     0
-```
-
-``` r
+#>   parameter term conf_index cover
+#> 1        mu   x1     0.4000     1
+#> 2     sigma   x1     0.1375     1
+#> 3        mu   x2     0.1125     1
+#> 4     sigma   x2     0.0000     0
+#> 5        mu   x3     0.0000     0
 plot(ab)
-```
+#> Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
 
-```
-## Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
-```
-
-``` r
 # fastboost: lightweight stability selection
 fb <- fastboost_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
   B = 30, sample_fraction = 0.6, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
 )
-```
-
-```
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648
-```
-
-``` r
+#> GAMLSS-RS iteration 1: Global Deviance = 1150.317 
+#> GAMLSS-RS iteration 2: Global Deviance = 1150.317
 plot(fb)
-```
-
-```
-## Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
+#> Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
 ```
 
 
@@ -255,25 +201,25 @@ plot(fb)
 
 ``` r
 g <- sb_gamlss_c0_grid(...)
-```
-
-```
-## Error: '...' used in an incorrect context
-```
-
-``` r
+#> Error: '...' used in an incorrect context
 cf <- confidence_functionals(g, pi_thr = 0.6, weight_fun = function(c0) (1 - c0)^2,
                              conservative = TRUE, B = 60)
 plot(cf)  # scatter (area_pos vs cover) + top-N bars
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png)
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
+</div>
 
 ``` r
 plot_stability_curves(g, terms = c("x1","x3"), parameter = "mu")
 ```
 
-![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-2.png)
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-6-2.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
+</div>
 
 
 ### Performance: Rcpp and Parallel Bootstraps
@@ -299,11 +245,8 @@ fit <- sb_gamlss(
   B = 60, pi_thr = 0.6, pre_standardize = TRUE,
   parallel = "auto", trace = FALSE
 )
-```
-
-```
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648
+#> GAMLSS-RS iteration 1: Global Deviance = 1146.365 
+#> GAMLSS-RS iteration 2: Global Deviance = 1146.365
 ```
 
 
@@ -325,11 +268,7 @@ fit_gl <- sb_gamlss(
   B = 80, pi_thr = 0.6, pre_standardize = TRUE,
   parallel = "auto", trace = FALSE
 )
-```
-
-```
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648
+#> Error in eval(predvars, data, env): object 'f' not found
 ```
 
 
@@ -351,15 +290,7 @@ fit <- sb_gamlss(
   sgl_alpha = 0.9,
   B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto"
 )
-```
-
-```
-## Bootstrapping 80 replicates...
-```
-
-```
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648
+#> Error in eval(predvars, data, env): object 'f' not found
 ```
 Note: σ/ν/τ grouped engines use a **working response** from the current fit (on a link-like scale) for the penalized regression.
 
@@ -379,28 +310,10 @@ base <- list(
   pi_thr = 0.6, pre_standardize = TRUE, sample_fraction = 0.7, parallel = "auto", trace = FALSE
 )
 tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 30)
-```
-
-```
-##   |                                                                |                                                        |   0%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |===================                                     |  33%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |=====================================                   |  67%GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |========================================================| 100%
-```
-
-``` r
+#>   |                                                                                                    |                                                                                            |   0%
 tuned$best_config
-```
-
-```
-## $engine
-## [1] "stepGAIC"
-```
-
-``` r
+#> $engine
+#> [1] "stepGAIC"
 fit <- tuned$best_fit
 ```
 
@@ -409,29 +322,15 @@ fit <- tuned$best_fit
 ``` r
 # mu
 sel_mu <- knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1)
-```
+#> Error in model.frame.default(object, data, xlev = xlev): invalid type (language) for variable 'f'
 
-```
-## Error in model.frame.default(object, data, xlev = xlev): invalid type (language) for variable 'f'
-```
-
-``` r
 # sigma (using a working response)
 fit_tmp <- gamlss::gamlss(y ~ 1, data = dat, family = gamlss.dist::NO())
-```
-
-```
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648
-```
-
-``` r
+#> GAMLSS-RS iteration 1: Global Deviance = 1601.648 
+#> GAMLSS-RS iteration 2: Global Deviance = 1601.648
 ysig <- fitted(fit_tmp, what = "sigma")
 sel_sigma <- knockoff_filter_param(dat, sigma_scope, y_work = log(ysig), fdr = 0.1)
-```
-
-```
-## Error: object 'sigma_scope' not found
+#> Error: object 'sigma_scope' not found
 ```
 
 
@@ -449,34 +348,7 @@ base <- list(
   pi_thr = 0.6, pre_standardize = TRUE, sample_fraction = 0.7, parallel = "auto", trace = FALSE
 )
 tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 20, metric = "deviance", K = 3, progress = TRUE)
-```
-
-```
-##   |                                                                |                                                        |   0%GAMLSS-RS iteration 1: Global Deviance = 1074.104 
-## GAMLSS-RS iteration 2: Global Deviance = 1074.104 
-## GAMLSS-RS iteration 1: Global Deviance = 1072.832 
-## GAMLSS-RS iteration 2: Global Deviance = 1072.832 
-## GAMLSS-RS iteration 1: Global Deviance = 1055.643 
-## GAMLSS-RS iteration 2: Global Deviance = 1055.643 
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |===================                                     |  33%GAMLSS-RS iteration 1: Global Deviance = 1066.822 
-## GAMLSS-RS iteration 2: Global Deviance = 1066.822 
-## GAMLSS-RS iteration 1: Global Deviance = 1072.463 
-## GAMLSS-RS iteration 2: Global Deviance = 1072.463 
-## GAMLSS-RS iteration 1: Global Deviance = 1063.535 
-## GAMLSS-RS iteration 2: Global Deviance = 1063.535 
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |=====================================                   |  67%GAMLSS-RS iteration 1: Global Deviance = 1058.022 
-## GAMLSS-RS iteration 2: Global Deviance = 1058.022 
-## GAMLSS-RS iteration 1: Global Deviance = 1047.909 
-## GAMLSS-RS iteration 2: Global Deviance = 1047.909 
-## GAMLSS-RS iteration 1: Global Deviance = 1092.609 
-## GAMLSS-RS iteration 2: Global Deviance = 1092.609 
-## GAMLSS-RS iteration 1: Global Deviance = 1601.648 
-## GAMLSS-RS iteration 2: Global Deviance = 1601.648 
-##   |                                                                |========================================================| 100%
+#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%
 ```
 
 ### Progress bars

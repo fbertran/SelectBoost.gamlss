@@ -36,3 +36,5 @@ src/*.so
 src/*.dll
 
 cran_submit_text.txt
+/doc/
+/Meta/

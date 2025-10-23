@@ -1,11 +1,30 @@
 ---
 title: "Fast Deviance: Numerical Equality Checks"
+shorttitle: "Fast Deviance: Numerical Equality Checks"
+author: 
+- name: "Frédéric Bertrand"
+  affiliation: 
+  - Cnam, Paris
+  - Cedric
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Fast Deviance: Numerical Equality Checks}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 We validate that the fast deviance evaluator matches the generic `gamlss.dist` density route
 (up to floating-point tolerance) across common families.

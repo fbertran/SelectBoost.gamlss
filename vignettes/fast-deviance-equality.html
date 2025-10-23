@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2025-10-23" />
+
+<title>Fast Deviance: Numerical Equality Checks</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Fast Deviance: Numerical Equality
+Checks</h1>
+<h4 class="author">Frédéric Bertrand</h4>
+<address class="author_afil">
+CNAM, ParisCedric<br><a class="author_email" href="mailto:#"><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a></a>
+</address>
+<h4 class="date">2025-10-23</h4>
+
+
+
+<p>We validate that the fast deviance evaluator matches the generic
+<code>gamlss.dist</code> density route (up to floating-point tolerance)
+across common families.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(gamlss)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(SelectBoost.gamlss)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2025</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">4000</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>families <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  <span class="at">NO =</span> gamlss.dist<span class="sc">::</span><span class="fu">NO</span>(),</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>  <span class="at">PO =</span> gamlss.dist<span class="sc">::</span><span class="fu">PO</span>(),</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a>  <span class="at">LOGNO =</span> gamlss.dist<span class="sc">::</span><span class="fu">LOGNO</span>(),</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a>  <span class="at">GA =</span> gamlss.dist<span class="sc">::</span><span class="fu">GA</span>(),</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a>  <span class="at">IG =</span> gamlss.dist<span class="sc">::</span><span class="fu">IG</span>(),</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a>  <span class="at">LO =</span> gamlss.dist<span class="sc">::</span><span class="fu">LO</span>(),</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a>  <span class="at">LOGITNO =</span> gamlss.dist<span class="sc">::</span><span class="fu">LOGITNO</span>(),</span>
+<span id="cb1-14"><a href="#cb1-14" tabindex="-1"></a>  <span class="at">GEOM =</span> gamlss.dist<span class="sc">::</span><span class="fu">GEOM</span>(),</span>
+<span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>  <span class="at">BE =</span> gamlss.dist<span class="sc">::</span><span class="fu">BE</span>()</span>
+<span id="cb1-16"><a href="#cb1-16" tabindex="-1"></a>)</span>
+<span id="cb1-17"><a href="#cb1-17" tabindex="-1"></a>gen_fun <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb1-18"><a href="#cb1-18" tabindex="-1"></a>  <span class="at">NO =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rNO</span>(n, <span class="at">mu =</span> <span class="dv">0</span>, <span class="at">sigma =</span> <span class="dv">1</span>),</span>
+<span id="cb1-19"><a href="#cb1-19" tabindex="-1"></a>  <span class="at">PO =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rPO</span>(n, <span class="at">mu =</span> <span class="fl">2.5</span>),</span>
+<span id="cb1-20"><a href="#cb1-20" tabindex="-1"></a>  <span class="at">LOGNO =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rLOGNO</span>(n, <span class="at">mu =</span> <span class="dv">0</span>, <span class="at">sigma =</span> <span class="fl">0.6</span>),</span>
+<span id="cb1-21"><a href="#cb1-21" tabindex="-1"></a>  <span class="at">GA =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rGA</span>(n, <span class="at">mu =</span> <span class="dv">2</span>, <span class="at">sigma =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-22"><a href="#cb1-22" tabindex="-1"></a>  <span class="at">IG =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rIG</span>(n, <span class="at">mu =</span> <span class="dv">2</span>, <span class="at">sigma =</span> <span class="fl">0.5</span>),</span>
+<span id="cb1-23"><a href="#cb1-23" tabindex="-1"></a>  <span class="at">LO =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rLO</span>(n, <span class="at">mu =</span> <span class="dv">0</span>, <span class="at">sigma =</span> <span class="dv">1</span>),</span>
+<span id="cb1-24"><a href="#cb1-24" tabindex="-1"></a>  <span class="at">LOGITNO =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rLOGITNO</span>(n, <span class="at">mu =</span> <span class="dv">0</span>, <span class="at">sigma =</span> <span class="dv">1</span>),</span>
+<span id="cb1-25"><a href="#cb1-25" tabindex="-1"></a>  <span class="at">GEOM =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rGEOM</span>(n, <span class="at">mu =</span> <span class="dv">3</span>),</span>
+<span id="cb1-26"><a href="#cb1-26" tabindex="-1"></a>  <span class="at">BE =</span> <span class="cf">function</span>(n) gamlss.dist<span class="sc">::</span><span class="fu">rBE</span>(n, <span class="at">mu =</span> <span class="fl">0.4</span>, <span class="at">sigma =</span> <span class="fl">0.2</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" tabindex="-1"></a>)</span>
+<span id="cb1-28"><a href="#cb1-28" tabindex="-1"></a></span>
+<span id="cb1-29"><a href="#cb1-29" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">lapply</span>(<span class="fu">names</span>(families), <span class="cf">function</span>(fname) {</span>
+<span id="cb1-30"><a href="#cb1-30" tabindex="-1"></a>  fam <span class="ot">&lt;-</span> families[[fname]]; gen <span class="ot">&lt;-</span> gen_fun[[fname]]</span>
+<span id="cb1-31"><a href="#cb1-31" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">gen</span>(n); dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y)</span>
+<span id="cb1-32"><a href="#cb1-32" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">try</span>(gamlss<span class="sc">::</span><span class="fu">gamlss</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> dat, <span class="at">family =</span> fam), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-33"><a href="#cb1-33" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(fit, <span class="st">&quot;try-error&quot;</span>)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" tabindex="-1"></a>  chk <span class="ot">&lt;-</span> <span class="fu">check_fast_vs_generic</span>(fit, dat, <span class="at">tol =</span> <span class="fl">1e-6</span>)</span>
+<span id="cb1-35"><a href="#cb1-35" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">family =</span> fname, <span class="at">ll_fast =</span> chk<span class="sc">$</span>ll_fast, <span class="at">ll_generic =</span> chk<span class="sc">$</span>ll_generic,</span>
+<span id="cb1-36"><a href="#cb1-36" tabindex="-1"></a>             <span class="at">abs_diff =</span> chk<span class="sc">$</span>abs_diff, <span class="at">pass =</span> chk<span class="sc">$</span>pass)</span>
+<span id="cb1-37"><a href="#cb1-37" tabindex="-1"></a>})</span>
+<span id="cb1-38"><a href="#cb1-38" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11375.33 </span></span>
+<span id="cb1-39"><a href="#cb1-39" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11375.33 </span></span>
+<span id="cb1-40"><a href="#cb1-40" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 14782.83 </span></span>
+<span id="cb1-41"><a href="#cb1-41" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 14782.83 </span></span>
+<span id="cb1-42"><a href="#cb1-42" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 7267.968 </span></span>
+<span id="cb1-43"><a href="#cb1-43" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 7267.968 </span></span>
+<span id="cb1-44"><a href="#cb1-44" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10699.55 </span></span>
+<span id="cb1-45"><a href="#cb1-45" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10699.55 </span></span>
+<span id="cb1-46"><a href="#cb1-46" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11694.15 </span></span>
+<span id="cb1-47"><a href="#cb1-47" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11694.15 </span></span>
+<span id="cb1-48"><a href="#cb1-48" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 15982.17 </span></span>
+<span id="cb1-49"><a href="#cb1-49" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 15982.16 </span></span>
+<span id="cb1-50"><a href="#cb1-50" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 15982.16 </span></span>
+<span id="cb1-51"><a href="#cb1-51" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 18087.96 </span></span>
+<span id="cb1-52"><a href="#cb1-52" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = -7154.868 </span></span>
+<span id="cb1-53"><a href="#cb1-53" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = -7422.771 </span></span>
+<span id="cb1-54"><a href="#cb1-54" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = -7422.823 </span></span>
+<span id="cb1-55"><a href="#cb1-55" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = -7422.823</span></span>
+<span id="cb1-56"><a href="#cb1-56" tabindex="-1"></a>summ <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">Filter</span>(<span class="fu">Negate</span>(is.null), summ))</span>
+<span id="cb1-57"><a href="#cb1-57" tabindex="-1"></a>summ</span>
+<span id="cb1-58"><a href="#cb1-58" tabindex="-1"></a><span class="co">#&gt;   family    ll_fast ll_generic abs_diff pass</span></span>
+<span id="cb1-59"><a href="#cb1-59" tabindex="-1"></a><span class="co">#&gt; 1     NO  -5688.032  -5688.032        0 TRUE</span></span>
+<span id="cb1-60"><a href="#cb1-60" tabindex="-1"></a><span class="co">#&gt; 2     PO -10568.077 -10568.077        0 TRUE</span></span>
+<span id="cb1-61"><a href="#cb1-61" tabindex="-1"></a><span class="co">#&gt; 3  LOGNO  -4398.621  -4398.621        0 TRUE</span></span>
+<span id="cb1-62"><a href="#cb1-62" tabindex="-1"></a><span class="co">#&gt; 4     GA  -8009.049  -8009.049        0 TRUE</span></span>
+<span id="cb1-63"><a href="#cb1-63" tabindex="-1"></a><span class="co">#&gt; 5     IG  -8144.880  -8144.880        0 TRUE</span></span>
+<span id="cb1-64"><a href="#cb1-64" tabindex="-1"></a><span class="co">#&gt; 6     LO  -7991.389  -7991.389        0 TRUE</span></span>
+<span id="cb1-65"><a href="#cb1-65" tabindex="-1"></a><span class="co">#&gt; 7   GEOM  -9326.121  -9326.121        0 TRUE</span></span>
+<span id="cb1-66"><a href="#cb1-66" tabindex="-1"></a><span class="co">#&gt; 8     BE   1678.217   1678.217        0 TRUE</span></span></code></pre></div>
+<div id="wide-family-sweep-auto" class="section level2">
+<h2>Wide family sweep (auto)</h2>
+<p>Below we attempt an automatic sweep across many families; those
+without installed densities or generators will be skipped
+gracefully.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>fams <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;NO&quot;</span>,<span class="st">&quot;PO&quot;</span>,<span class="st">&quot;LOGNO&quot;</span>,<span class="st">&quot;GA&quot;</span>,<span class="st">&quot;IG&quot;</span>,<span class="st">&quot;LO&quot;</span>,<span class="st">&quot;LOGITNO&quot;</span>,<span class="st">&quot;GEOM&quot;</span>,<span class="st">&quot;BE&quot;</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>          <span class="st">&quot;NBI&quot;</span>,<span class="st">&quot;NBII&quot;</span>,<span class="st">&quot;LOGLOG&quot;</span>,<span class="st">&quot;DEL&quot;</span>,<span class="st">&quot;ZAGA&quot;</span>,<span class="st">&quot;ZIP&quot;</span>,<span class="st">&quot;ZINBI&quot;</span>,<span class="st">&quot;DPO&quot;</span>,<span class="st">&quot;GPO&quot;</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>          <span class="st">&quot;ZAIG&quot;</span>,<span class="st">&quot;ZALG&quot;</span>,<span class="st">&quot;BCT&quot;</span>,<span class="st">&quot;BCPE&quot;</span>,<span class="st">&quot;ZIPF&quot;</span>,<span class="st">&quot;ZIPFmu&quot;</span>,<span class="st">&quot;SICHEL&quot;</span>,<span class="st">&quot;GLG&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>          <span class="st">&quot;BETA4&quot;</span>,<span class="st">&quot;RS&quot;</span>,<span class="st">&quot;WEI&quot;</span>,<span class="st">&quot;GIG&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">3000</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">lapply</span>(fams, <span class="cf">function</span>(fam) {</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">.gen_family</span>(fam, n), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(y, <span class="st">&quot;try-error&quot;</span>) <span class="sc">||</span> <span class="fu">is.null</span>(y)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y)</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>  fam_obj <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">getFromNamespace</span>(fam, <span class="st">&quot;gamlss.dist&quot;</span>)(), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(fam_obj, <span class="st">&quot;try-error&quot;</span>)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">try</span>(gamlss<span class="sc">::</span><span class="fu">gamlss</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> dat, <span class="at">family =</span> fam_obj), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(fit, <span class="st">&quot;try-error&quot;</span>)) <span class="fu">return</span>(<span class="cn">NULL</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>  chk <span class="ot">&lt;-</span> <span class="fu">check_fast_vs_generic</span>(fit, dat, <span class="at">tol =</span> <span class="fl">1e-6</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">family =</span> fam, <span class="at">abs_diff =</span> chk<span class="sc">$</span>abs_diff, <span class="at">pass =</span> chk<span class="sc">$</span>pass)</span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a>})</span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8615.228 </span></span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8615.228 </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10988.5 </span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10988.5 </span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 5327.758 </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 5327.758 </span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 7943.186 </span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 7943.186 </span></span>
+<span id="cb2-25"><a href="#cb2-25" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8701.265 </span></span>
+<span id="cb2-26"><a href="#cb2-26" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8701.265 </span></span>
+<span id="cb2-27"><a href="#cb2-27" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11876.4 </span></span>
+<span id="cb2-28"><a href="#cb2-28" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11876.4 </span></span>
+<span id="cb2-29"><a href="#cb2-29" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11876.4 </span></span>
+<span id="cb2-30"><a href="#cb2-30" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 13655.01 </span></span>
+<span id="cb2-31"><a href="#cb2-31" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = -5375.158 </span></span>
+<span id="cb2-32"><a href="#cb2-32" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = -5578.084 </span></span>
+<span id="cb2-33"><a href="#cb2-33" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = -5578.124 </span></span>
+<span id="cb2-34"><a href="#cb2-34" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = -5578.124 </span></span>
+<span id="cb2-35"><a href="#cb2-35" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11283.26 </span></span>
+<span id="cb2-36"><a href="#cb2-36" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11283.26 </span></span>
+<span id="cb2-37"><a href="#cb2-37" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11023 </span></span>
+<span id="cb2-38"><a href="#cb2-38" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11023 </span></span>
+<span id="cb2-39"><a href="#cb2-39" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11023 </span></span>
+<span id="cb2-40"><a href="#cb2-40" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10670 </span></span>
+<span id="cb2-41"><a href="#cb2-41" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10669.65 </span></span>
+<span id="cb2-42"><a href="#cb2-42" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10669.34 </span></span>
+<span id="cb2-43"><a href="#cb2-43" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10669.07 </span></span>
+<span id="cb2-44"><a href="#cb2-44" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10668.83 </span></span>
+<span id="cb2-45"><a href="#cb2-45" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10668.61 </span></span>
+<span id="cb2-46"><a href="#cb2-46" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10668.42 </span></span>
+<span id="cb2-47"><a href="#cb2-47" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10668.24 </span></span>
+<span id="cb2-48"><a href="#cb2-48" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10668.09 </span></span>
+<span id="cb2-49"><a href="#cb2-49" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10667.95 </span></span>
+<span id="cb2-50"><a href="#cb2-50" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10667.82 </span></span>
+<span id="cb2-51"><a href="#cb2-51" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10667.71 </span></span>
+<span id="cb2-52"><a href="#cb2-52" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 10667.6 </span></span>
+<span id="cb2-53"><a href="#cb2-53" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 10667.51 </span></span>
+<span id="cb2-54"><a href="#cb2-54" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 10667.43 </span></span>
+<span id="cb2-55"><a href="#cb2-55" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 10667.35 </span></span>
+<span id="cb2-56"><a href="#cb2-56" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 10667.28 </span></span>
+<span id="cb2-57"><a href="#cb2-57" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 10667.22 </span></span>
+<span id="cb2-58"><a href="#cb2-58" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 10667.17 </span></span>
+<span id="cb2-59"><a href="#cb2-59" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 10667.12</span></span>
+<span id="cb2-60"><a href="#cb2-60" tabindex="-1"></a><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span id="cb2-61"><a href="#cb2-61" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9320.173 </span></span>
+<span id="cb2-62"><a href="#cb2-62" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9320.173 </span></span>
+<span id="cb2-63"><a href="#cb2-63" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10312.69 </span></span>
+<span id="cb2-64"><a href="#cb2-64" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10311.55 </span></span>
+<span id="cb2-65"><a href="#cb2-65" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10311.48 </span></span>
+<span id="cb2-66"><a href="#cb2-66" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10311.44 </span></span>
+<span id="cb2-67"><a href="#cb2-67" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10311.41 </span></span>
+<span id="cb2-68"><a href="#cb2-68" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10311.4 </span></span>
+<span id="cb2-69"><a href="#cb2-69" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10311.39 </span></span>
+<span id="cb2-70"><a href="#cb2-70" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10311.38 </span></span>
+<span id="cb2-71"><a href="#cb2-71" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10311.38 </span></span>
+<span id="cb2-72"><a href="#cb2-72" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10311.38 </span></span>
+<span id="cb2-73"><a href="#cb2-73" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10311.38 </span></span>
+<span id="cb2-74"><a href="#cb2-74" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10311.38 </span></span>
+<span id="cb2-75"><a href="#cb2-75" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11566.28 </span></span>
+<span id="cb2-76"><a href="#cb2-76" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11566.18 </span></span>
+<span id="cb2-77"><a href="#cb2-77" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11566.18 </span></span>
+<span id="cb2-78"><a href="#cb2-78" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12274.44 </span></span>
+<span id="cb2-79"><a href="#cb2-79" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12274.44 </span></span>
+<span id="cb2-80"><a href="#cb2-80" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9841.625 </span></span>
+<span id="cb2-81"><a href="#cb2-81" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9841.625 </span></span>
+<span id="cb2-82"><a href="#cb2-82" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12231.44 </span></span>
+<span id="cb2-83"><a href="#cb2-83" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12229.24 </span></span>
+<span id="cb2-84"><a href="#cb2-84" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 12228.23 </span></span>
+<span id="cb2-85"><a href="#cb2-85" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 12227.59 </span></span>
+<span id="cb2-86"><a href="#cb2-86" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 12227.14 </span></span>
+<span id="cb2-87"><a href="#cb2-87" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 12226.81 </span></span>
+<span id="cb2-88"><a href="#cb2-88" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 12226.55 </span></span>
+<span id="cb2-89"><a href="#cb2-89" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 12226.34 </span></span>
+<span id="cb2-90"><a href="#cb2-90" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 12226.17 </span></span>
+<span id="cb2-91"><a href="#cb2-91" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 12226.02 </span></span>
+<span id="cb2-92"><a href="#cb2-92" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 12225.9 </span></span>
+<span id="cb2-93"><a href="#cb2-93" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 12225.79 </span></span>
+<span id="cb2-94"><a href="#cb2-94" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 12225.7 </span></span>
+<span id="cb2-95"><a href="#cb2-95" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 12225.62 </span></span>
+<span id="cb2-96"><a href="#cb2-96" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 12225.56 </span></span>
+<span id="cb2-97"><a href="#cb2-97" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 12225.5 </span></span>
+<span id="cb2-98"><a href="#cb2-98" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 12225.44 </span></span>
+<span id="cb2-99"><a href="#cb2-99" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 12225.4 </span></span>
+<span id="cb2-100"><a href="#cb2-100" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 12225.35 </span></span>
+<span id="cb2-101"><a href="#cb2-101" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 12225.32</span></span>
+<span id="cb2-102"><a href="#cb2-102" tabindex="-1"></a><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span id="cb2-103"><a href="#cb2-103" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10091.85 </span></span>
+<span id="cb2-104"><a href="#cb2-104" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10091.37 </span></span>
+<span id="cb2-105"><a href="#cb2-105" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10091.36 </span></span>
+<span id="cb2-106"><a href="#cb2-106" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10091.36 </span></span>
+<span id="cb2-107"><a href="#cb2-107" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9563.572 </span></span>
+<span id="cb2-108"><a href="#cb2-108" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9505.614 </span></span>
+<span id="cb2-109"><a href="#cb2-109" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 9501.911 </span></span>
+<span id="cb2-110"><a href="#cb2-110" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 9501.197 </span></span>
+<span id="cb2-111"><a href="#cb2-111" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 9501.037 </span></span>
+<span id="cb2-112"><a href="#cb2-112" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 9500.992 </span></span>
+<span id="cb2-113"><a href="#cb2-113" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 9500.977 </span></span>
+<span id="cb2-114"><a href="#cb2-114" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 9500.971 </span></span>
+<span id="cb2-115"><a href="#cb2-115" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 9500.968 </span></span>
+<span id="cb2-116"><a href="#cb2-116" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 9500.967 </span></span>
+<span id="cb2-117"><a href="#cb2-117" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 9500.966</span></span>
+<span id="cb2-118"><a href="#cb2-118" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, <span class="fu">Filter</span>(<span class="fu">Negate</span>(is.null), res))</span>
+<span id="cb2-119"><a href="#cb2-119" tabindex="-1"></a>res</span>
+<span id="cb2-120"><a href="#cb2-120" tabindex="-1"></a><span class="co">#&gt;    family abs_diff pass</span></span>
+<span id="cb2-121"><a href="#cb2-121" tabindex="-1"></a><span class="co">#&gt; 1      NO        0 TRUE</span></span>
+<span id="cb2-122"><a href="#cb2-122" tabindex="-1"></a><span class="co">#&gt; 2      PO        0 TRUE</span></span>
+<span id="cb2-123"><a href="#cb2-123" tabindex="-1"></a><span class="co">#&gt; 3   LOGNO        0 TRUE</span></span>
+<span id="cb2-124"><a href="#cb2-124" tabindex="-1"></a><span class="co">#&gt; 4      GA        0 TRUE</span></span>
+<span id="cb2-125"><a href="#cb2-125" tabindex="-1"></a><span class="co">#&gt; 5      IG        0 TRUE</span></span>
+<span id="cb2-126"><a href="#cb2-126" tabindex="-1"></a><span class="co">#&gt; 6      LO        0 TRUE</span></span>
+<span id="cb2-127"><a href="#cb2-127" tabindex="-1"></a><span class="co">#&gt; 7    GEOM        0 TRUE</span></span>
+<span id="cb2-128"><a href="#cb2-128" tabindex="-1"></a><span class="co">#&gt; 8      BE        0 TRUE</span></span>
+<span id="cb2-129"><a href="#cb2-129" tabindex="-1"></a><span class="co">#&gt; 9     NBI        0 TRUE</span></span>
+<span id="cb2-130"><a href="#cb2-130" tabindex="-1"></a><span class="co">#&gt; 10   NBII        0 TRUE</span></span>
+<span id="cb2-131"><a href="#cb2-131" tabindex="-1"></a><span class="co">#&gt; 11    DEL        0 TRUE</span></span>
+<span id="cb2-132"><a href="#cb2-132" tabindex="-1"></a><span class="co">#&gt; 12   ZAGA        0 TRUE</span></span>
+<span id="cb2-133"><a href="#cb2-133" tabindex="-1"></a><span class="co">#&gt; 13  ZINBI        0 TRUE</span></span>
+<span id="cb2-134"><a href="#cb2-134" tabindex="-1"></a><span class="co">#&gt; 14    DPO        0 TRUE</span></span>
+<span id="cb2-135"><a href="#cb2-135" tabindex="-1"></a><span class="co">#&gt; 15    GPO        0 TRUE</span></span>
+<span id="cb2-136"><a href="#cb2-136" tabindex="-1"></a><span class="co">#&gt; 16   ZAIG        0 TRUE</span></span>
+<span id="cb2-137"><a href="#cb2-137" tabindex="-1"></a><span class="co">#&gt; 17 SICHEL        0 TRUE</span></span>
+<span id="cb2-138"><a href="#cb2-138" tabindex="-1"></a><span class="co">#&gt; 18    WEI        0 TRUE</span></span>
+<span id="cb2-139"><a href="#cb2-139" tabindex="-1"></a><span class="co">#&gt; 19    GIG        0 TRUE</span></span></code></pre></div>
+<div id="wide-family-sweep-with-skip-reasons" class="section level3">
+<h3>Wide family sweep with skip reasons</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>fams <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;NO&quot;</span>,<span class="st">&quot;PO&quot;</span>,<span class="st">&quot;LOGNO&quot;</span>,<span class="st">&quot;GA&quot;</span>,<span class="st">&quot;IG&quot;</span>,<span class="st">&quot;LO&quot;</span>,<span class="st">&quot;LOGITNO&quot;</span>,<span class="st">&quot;GEOM&quot;</span>,<span class="st">&quot;BE&quot;</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>          <span class="st">&quot;NBI&quot;</span>,<span class="st">&quot;NBII&quot;</span>,<span class="st">&quot;LOGLOG&quot;</span>,<span class="st">&quot;DEL&quot;</span>,<span class="st">&quot;ZAGA&quot;</span>,<span class="st">&quot;ZIP&quot;</span>,<span class="st">&quot;ZINBI&quot;</span>,<span class="st">&quot;DPO&quot;</span>,<span class="st">&quot;GPO&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>          <span class="st">&quot;ZAIG&quot;</span>,<span class="st">&quot;ZALG&quot;</span>,<span class="st">&quot;BCT&quot;</span>,<span class="st">&quot;BCPE&quot;</span>,<span class="st">&quot;ZIPF&quot;</span>,<span class="st">&quot;ZIPFmu&quot;</span>,<span class="st">&quot;SICHEL&quot;</span>,<span class="st">&quot;GLG&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>          <span class="st">&quot;BETA4&quot;</span>,<span class="st">&quot;RS&quot;</span>,<span class="st">&quot;WEI&quot;</span>,<span class="st">&quot;GIG&quot;</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">3000</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>tols <span class="ot">&lt;-</span> SelectBoost.gamlss<span class="sc">:::</span><span class="fu">.family_tolerance</span>()</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>tol_default <span class="ot">&lt;-</span> tols[[<span class="st">&#39;.default&#39;</span>]]</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>rows <span class="ot">&lt;-</span> <span class="fu">lapply</span>(fams, <span class="cf">function</span>(fam) {</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="co"># try generator</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">.gen_family</span>(fam, n), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(y, <span class="st">&quot;try-error&quot;</span>) <span class="sc">||</span> <span class="fu">is.null</span>(y)) {</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">data.frame</span>(<span class="at">family=</span>fam, <span class="at">status=</span><span class="st">&quot;skip&quot;</span>, <span class="at">reason=</span><span class="st">&quot;generator missing/failed&quot;</span>, <span class="at">abs_diff=</span><span class="cn">NA_real_</span>, <span class="at">pass=</span><span class="cn">NA</span>))</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>  }</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  dat <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">y =</span> y)</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="co"># try family object</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  fam_obj <span class="ot">&lt;-</span> <span class="fu">try</span>(<span class="fu">getFromNamespace</span>(fam, <span class="st">&quot;gamlss.dist&quot;</span>)(), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(fam_obj, <span class="st">&quot;try-error&quot;</span>)) {</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">data.frame</span>(<span class="at">family=</span>fam, <span class="at">status=</span><span class="st">&quot;skip&quot;</span>, <span class="at">reason=</span><span class="st">&quot;family constructor missing&quot;</span>, <span class="at">abs_diff=</span><span class="cn">NA_real_</span>, <span class="at">pass=</span><span class="cn">NA</span>))</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>  }</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>  <span class="co"># try fit</span></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>  fit <span class="ot">&lt;-</span> <span class="fu">try</span>(gamlss<span class="sc">::</span><span class="fu">gamlss</span>(y <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> dat, <span class="at">family =</span> fam_obj), <span class="at">silent =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">inherits</span>(fit, <span class="st">&quot;try-error&quot;</span>)) {</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">data.frame</span>(<span class="at">family=</span>fam, <span class="at">status=</span><span class="st">&quot;skip&quot;</span>, <span class="at">reason=</span><span class="st">&quot;fit failed&quot;</span>, <span class="at">abs_diff=</span><span class="cn">NA_real_</span>, <span class="at">pass=</span><span class="cn">NA</span>))</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>  }</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  <span class="co"># evaluate</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>  tol_fam <span class="ot">&lt;-</span> tols[[fam]] <span class="sc">%||%</span> tol_default</span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>  chk <span class="ot">&lt;-</span> <span class="fu">check_fast_vs_generic</span>(fit, dat, <span class="at">tol =</span> tol_fam)</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>  <span class="fu">data.frame</span>(<span class="at">family=</span>fam, <span class="at">status=</span><span class="st">&quot;ok&quot;</span>, <span class="at">reason=</span><span class="st">&quot;&quot;</span>, <span class="at">abs_diff=</span>chk<span class="sc">$</span>abs_diff, <span class="at">pass=</span>chk<span class="sc">$</span>pass)</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>})</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8484.742 </span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8484.742 </span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10872.98 </span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10872.98 </span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 5341.986 </span></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 5341.986 </span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8015.778 </span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8015.778 </span></span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8692.182 </span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8692.182 </span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11909.62 </span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11909.55 </span></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11909.55 </span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 13515 </span></span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = -5382.726 </span></span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = -5583.397 </span></span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = -5583.435 </span></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = -5583.435 </span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11308.87 </span></span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11308.87 </span></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11075.33 </span></span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11075.33 </span></span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11075.33 </span></span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10735.22 </span></span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10735.04 </span></span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10734.89 </span></span>
+<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10734.76 </span></span>
+<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10734.64 </span></span>
+<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10734.54 </span></span>
+<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10734.46 </span></span>
+<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10734.38 </span></span>
+<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10734.32 </span></span>
+<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10734.27 </span></span>
+<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10734.22 </span></span>
+<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10734.19 </span></span>
+<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 10734.15 </span></span>
+<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 10734.13 </span></span>
+<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 10734.11 </span></span>
+<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 10734.09 </span></span>
+<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 10734.08 </span></span>
+<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 10734.08 </span></span>
+<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 10734.07 </span></span>
+<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 10734.07 </span></span>
+<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9155.055 </span></span>
+<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9155.055 </span></span>
+<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10422.64 </span></span>
+<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10421.36 </span></span>
+<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10421.2 </span></span>
+<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10421.1 </span></span>
+<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10421.05 </span></span>
+<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10421.01 </span></span>
+<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10420.99 </span></span>
+<span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10420.98 </span></span>
+<span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10420.97 </span></span>
+<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10420.97 </span></span>
+<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10420.97 </span></span>
+<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10420.96 </span></span>
+<span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 10420.96 </span></span>
+<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11345.71 </span></span>
+<span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11345.63 </span></span>
+<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11345.63 </span></span>
+<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12225.98 </span></span>
+<span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12225.98 </span></span>
+<span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9806.759 </span></span>
+<span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9806.759 </span></span>
+<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12050.13 </span></span>
+<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12049.42 </span></span>
+<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 12049.14 </span></span>
+<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 12048.99 </span></span>
+<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 12048.9 </span></span>
+<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 12048.84 </span></span>
+<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 12048.8 </span></span>
+<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 12048.77 </span></span>
+<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 12048.75 </span></span>
+<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 12048.74 </span></span>
+<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 12048.72 </span></span>
+<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 12048.71 </span></span>
+<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 12048.71 </span></span>
+<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 12048.7 </span></span>
+<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 12048.7 </span></span>
+<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 12048.69 </span></span>
+<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 12048.69 </span></span>
+<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 12048.69 </span></span>
+<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 12048.69 </span></span>
+<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 12048.68</span></span>
+<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10251.6 </span></span>
+<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10251.24 </span></span>
+<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10251.24 </span></span>
+<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10251.24 </span></span>
+<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9539.068 </span></span>
+<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9504.096 </span></span>
+<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 9502.578 </span></span>
+<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 9502.384 </span></span>
+<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 9502.352 </span></span>
+<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 9502.346 </span></span>
+<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 9502.344 </span></span>
+<span id="cb3-127"><a href="#cb3-127" tabindex="-1"></a><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 9502.343</span></span>
+<span id="cb3-128"><a href="#cb3-128" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">do.call</span>(rbind, rows)</span>
+<span id="cb3-129"><a href="#cb3-129" tabindex="-1"></a>res</span>
+<span id="cb3-130"><a href="#cb3-130" tabindex="-1"></a><span class="co">#&gt;     family status                   reason abs_diff pass</span></span>
+<span id="cb3-131"><a href="#cb3-131" tabindex="-1"></a><span class="co">#&gt; 1       NO     ok                                 0 TRUE</span></span>
+<span id="cb3-132"><a href="#cb3-132" tabindex="-1"></a><span class="co">#&gt; 2       PO     ok                                 0 TRUE</span></span>
+<span id="cb3-133"><a href="#cb3-133" tabindex="-1"></a><span class="co">#&gt; 3    LOGNO     ok                                 0 TRUE</span></span>
+<span id="cb3-134"><a href="#cb3-134" tabindex="-1"></a><span class="co">#&gt; 4       GA     ok                                 0 TRUE</span></span>
+<span id="cb3-135"><a href="#cb3-135" tabindex="-1"></a><span class="co">#&gt; 5       IG     ok                                 0 TRUE</span></span>
+<span id="cb3-136"><a href="#cb3-136" tabindex="-1"></a><span class="co">#&gt; 6       LO     ok                                 0 TRUE</span></span>
+<span id="cb3-137"><a href="#cb3-137" tabindex="-1"></a><span class="co">#&gt; 7  LOGITNO   skip               fit failed       NA   NA</span></span>
+<span id="cb3-138"><a href="#cb3-138" tabindex="-1"></a><span class="co">#&gt; 8     GEOM     ok                                 0 TRUE</span></span>
+<span id="cb3-139"><a href="#cb3-139" tabindex="-1"></a><span class="co">#&gt; 9       BE     ok                                 0 TRUE</span></span>
+<span id="cb3-140"><a href="#cb3-140" tabindex="-1"></a><span class="co">#&gt; 10     NBI     ok                                 0 TRUE</span></span>
+<span id="cb3-141"><a href="#cb3-141" tabindex="-1"></a><span class="co">#&gt; 11    NBII     ok                                 0 TRUE</span></span>
+<span id="cb3-142"><a href="#cb3-142" tabindex="-1"></a><span class="co">#&gt; 12  LOGLOG   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-143"><a href="#cb3-143" tabindex="-1"></a><span class="co">#&gt; 13     DEL     ok                                 0 TRUE</span></span>
+<span id="cb3-144"><a href="#cb3-144" tabindex="-1"></a><span class="co">#&gt; 14    ZAGA     ok                                 0 TRUE</span></span>
+<span id="cb3-145"><a href="#cb3-145" tabindex="-1"></a><span class="co">#&gt; 15     ZIP   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-146"><a href="#cb3-146" tabindex="-1"></a><span class="co">#&gt; 16   ZINBI     ok                                 0 TRUE</span></span>
+<span id="cb3-147"><a href="#cb3-147" tabindex="-1"></a><span class="co">#&gt; 17     DPO     ok                                 0 TRUE</span></span>
+<span id="cb3-148"><a href="#cb3-148" tabindex="-1"></a><span class="co">#&gt; 18     GPO     ok                                 0 TRUE</span></span>
+<span id="cb3-149"><a href="#cb3-149" tabindex="-1"></a><span class="co">#&gt; 19    ZAIG     ok                                 0 TRUE</span></span>
+<span id="cb3-150"><a href="#cb3-150" tabindex="-1"></a><span class="co">#&gt; 20    ZALG   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-151"><a href="#cb3-151" tabindex="-1"></a><span class="co">#&gt; 21     BCT   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-152"><a href="#cb3-152" tabindex="-1"></a><span class="co">#&gt; 22    BCPE   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-153"><a href="#cb3-153" tabindex="-1"></a><span class="co">#&gt; 23    ZIPF   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-154"><a href="#cb3-154" tabindex="-1"></a><span class="co">#&gt; 24  ZIPFmu   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-155"><a href="#cb3-155" tabindex="-1"></a><span class="co">#&gt; 25  SICHEL     ok                                 0 TRUE</span></span>
+<span id="cb3-156"><a href="#cb3-156" tabindex="-1"></a><span class="co">#&gt; 26     GLG   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-157"><a href="#cb3-157" tabindex="-1"></a><span class="co">#&gt; 27   BETA4   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-158"><a href="#cb3-158" tabindex="-1"></a><span class="co">#&gt; 28      RS   skip generator missing/failed       NA   NA</span></span>
+<span id="cb3-159"><a href="#cb3-159" tabindex="-1"></a><span class="co">#&gt; 29     WEI     ok                                 0 TRUE</span></span>
+<span id="cb3-160"><a href="#cb3-160" tabindex="-1"></a><span class="co">#&gt; 30     GIG     ok                                 0 TRUE</span></span></code></pre></div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

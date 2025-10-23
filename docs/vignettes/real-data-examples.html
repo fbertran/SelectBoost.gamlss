@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Real Data Examples with Different Distributions</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Real Data Examples with Different
+Distributions</h1>
+
+
+
+<p>This vignette demonstrates <strong>SelectBoost.gamlss</strong> on
+real datasets using <em>different</em> distributions. We include a
+<strong>growth</strong> example (Dutch boys) and further
+count/continuous/binary cases.</p>
+<blockquote>
+<p>You may want to install optional engines for best results:
+<code>install.packages(c(&quot;glmnet&quot;,&quot;grpreg&quot;,&quot;SGL&quot;,&quot;future.apply&quot;))</code></p>
+</blockquote>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(SelectBoost.gamlss)</span></code></pre></div>
+<pre><code>## 
+## Attaching package: &#39;SelectBoost.gamlss&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:base&#39;:
+## 
+##     %||%</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(gamlss)</span></code></pre></div>
+<pre><code>## Loading required package: splines</code></pre>
+<pre><code>## Loading required package: gamlss.data</code></pre>
+<pre><code>## 
+## Attaching package: &#39;gamlss.data&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:datasets&#39;:
+## 
+##     sleep</code></pre>
+<pre><code>## Loading required package: gamlss.dist</code></pre>
+<pre><code>## Loading required package: nlme</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre><code>##  **********   GAMLSS Version 5.5-0  **********</code></pre>
+<pre><code>## For more on GAMLSS look at https://www.gamlss.com/</code></pre>
+<pre><code>## Type gamlssNews() to see new features/changes/bug fixes.</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="fu">library</span>(MASS)           <span class="co"># Insurance, quine</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span></code></pre></div>
+<div id="growth-data-bct-dutch-boys" class="section level2">
+<h2>1. Growth data (BCT) — Dutch boys</h2>
+<p>We model <strong>height</strong> vs <strong>age</strong> with
+<strong>BCT</strong> (Box–Cox t). Grouped penalties select among
+smoothers and interactions with pubertal stage.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">&quot;gamlss.data&quot;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a> boys <span class="ot">&lt;-</span> <span class="cn">NULL</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a>  load_ok <span class="ot">&lt;-</span> <span class="fu">tryCatch</span>({</span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a>    utils<span class="sc">::</span><span class="fu">data</span>(<span class="st">&quot;boys&quot;</span>, <span class="at">package =</span> <span class="st">&quot;gamlss.data&quot;</span>, <span class="at">envir =</span> <span class="fu">environment</span>())</span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a>    <span class="cn">TRUE</span></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>  }, <span class="at">error =</span> <span class="cf">function</span>(e) {</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Unable to load &#39;boys&#39; dataset:&quot;</span>, <span class="fu">conditionMessage</span>(e), <span class="st">&quot;— skipping Dutch boys growth example.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a>    <span class="cn">FALSE</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a>  })</span>
+<span id="cb16-10"><a href="#cb16-10" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span>load_ok <span class="sc">||</span> <span class="fu">is.null</span>(boys)) {</span>
+<span id="cb16-11"><a href="#cb16-11" tabindex="-1"></a>    <span class="fu">cat</span>(<span class="st">&quot;Dataset &#39;boys&#39; unavailable; skipping Dutch boys growth example.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb16-13"><a href="#cb16-13" tabindex="-1"></a>    boys <span class="ot">&lt;-</span> <span class="fu">subset</span>(boys, <span class="sc">!</span><span class="fu">is.na</span>(height) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(age) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">is.na</span>(tanner))</span>
+<span id="cb16-14"><a href="#cb16-14" tabindex="-1"></a>    boys<span class="sc">$</span>tanner <span class="ot">&lt;-</span> <span class="fu">factor</span>(boys<span class="sc">$</span>tanner)</span>
+<span id="cb16-15"><a href="#cb16-15" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" tabindex="-1"></a>    fit_growth <span class="ot">&lt;-</span> <span class="fu">sb_gamlss</span>(</span>
+<span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a>      height <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> boys, <span class="at">family =</span> gamlss.dist<span class="sc">::</span><span class="fu">BCT</span>(),</span>
+<span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a>      <span class="at">mu_scope    =</span> <span class="sc">~</span> <span class="fu">pb</span>(age) <span class="sc">+</span> <span class="fu">pb</span>(age)<span class="sc">:</span>tanner,</span>
+<span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a>      <span class="at">sigma_scope =</span> <span class="sc">~</span> <span class="fu">pb</span>(age),</span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a>      <span class="at">nu_scope    =</span> <span class="sc">~</span> <span class="fu">pb</span>(age),</span>
+<span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a>      <span class="at">engine =</span> <span class="st">&quot;grpreg&quot;</span>, <span class="at">engine_sigma =</span> <span class="st">&quot;grpreg&quot;</span>, <span class="at">engine_nu =</span> <span class="st">&quot;grpreg&quot;</span>,</span>
+<span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a>      <span class="at">grpreg_penalty =</span> <span class="st">&quot;grLasso&quot;</span>,</span>
+<span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a>      <span class="at">B =</span> <span class="dv">80</span>, <span class="at">pi_thr =</span> <span class="fl">0.6</span>, <span class="at">pre_standardize =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb16-24"><a href="#cb16-24" tabindex="-1"></a>      <span class="at">parallel =</span> <span class="st">&quot;auto&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span></span>
+<span id="cb16-25"><a href="#cb16-25" tabindex="-1"></a>    )</span>
+<span id="cb16-26"><a href="#cb16-26" tabindex="-1"></a></span>
+<span id="cb16-27"><a href="#cb16-27" tabindex="-1"></a>    <span class="fu">selection_table</span>(fit_growth)[<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, ]</span>
+<span id="cb16-28"><a href="#cb16-28" tabindex="-1"></a></span>
+<span id="cb16-29"><a href="#cb16-29" tabindex="-1"></a>    <span class="co"># Effect plot for age on mu</span></span>
+<span id="cb16-30"><a href="#cb16-30" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">&#39;ggplot2&#39;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb16-31"><a href="#cb16-31" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">effect_plot</span>(fit_growth, <span class="st">&#39;age&#39;</span>, boys, <span class="at">what =</span> <span class="st">&#39;mu&#39;</span>))</span>
+<span id="cb16-32"><a href="#cb16-32" tabindex="-1"></a>    }</span>
+<span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a>    <span class="co"># Stability curves for the most important terms (optional)</span></span>
+<span id="cb16-34"><a href="#cb16-34" tabindex="-1"></a>    g <span class="ot">&lt;-</span> <span class="fu">sb_gamlss_c0_grid</span>(height <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> boys, <span class="at">family =</span> gamlss.dist<span class="sc">::</span><span class="fu">BCT</span>(),</span>
+<span id="cb16-35"><a href="#cb16-35" tabindex="-1"></a>    <span class="at">mu_scope =</span> <span class="sc">~</span> <span class="fu">pb</span>(age) <span class="sc">+</span> <span class="fu">pb</span>(age)<span class="sc">:</span>tanner, <span class="at">sigma_scope =</span> <span class="sc">~</span> <span class="fu">pb</span>(age),</span>
+<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a>    <span class="at">nu_scope =</span> <span class="sc">~</span> <span class="fu">pb</span>(age), <span class="at">c0_grid =</span> <span class="fu">seq</span>(<span class="fl">0.2</span>, <span class="fl">0.8</span>, <span class="at">by =</span> <span class="fl">0.1</span>),</span>
+<span id="cb16-37"><a href="#cb16-37" tabindex="-1"></a>    <span class="at">B =</span> <span class="dv">40</span>, <span class="at">pi_thr =</span> <span class="fl">0.6</span>, <span class="at">pre_standardize =</span> <span class="cn">TRUE</span>, <span class="at">parallel =</span> <span class="st">&quot;auto&quot;</span>)</span>
+<span id="cb16-38"><a href="#cb16-38" tabindex="-1"></a>    <span class="fu">plot_stability_curves</span>(g, <span class="at">terms =</span> <span class="fu">c</span>(<span class="st">&quot;pb(age)&quot;</span>, <span class="st">&quot;pb(age):tanner&quot;</span>), <span class="at">parameter =</span> <span class="st">&quot;mu&quot;</span>)</span>
+<span id="cb16-39"><a href="#cb16-39" tabindex="-1"></a>  }</span>
+<span id="cb16-40"><a href="#cb16-40" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb16-41"><a href="#cb16-41" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">&quot;Package &#39;gamlss.data&#39; not installed; skipping Dutch boys growth example.</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb16-42"><a href="#cb16-42" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>## Warning in utils::data(&quot;boys&quot;, package = &quot;gamlss.data&quot;, envir = environment()):
+## data set &#39;boys&#39; not found</code></pre>
+<pre><code>## Dataset &#39;boys&#39; unavailable; skipping Dutch boys growth example.</code></pre>
+<p><strong>Interpretation.</strong> Expect <code>pb(age)</code> to be
+stably selected for μ and σ; interactions like
+<code>pb(age):tanner</code> often appear around puberty.</p>
+<hr />
+</div>
+<div id="count-data-po-insurance-claims" class="section level2">
+<h2>2. Count data (PO) — Insurance claims</h2>
+<p>Fit <strong>Poisson</strong> with log-offset for exposure.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">data</span>(Insurance, <span class="at">package =</span> <span class="st">&quot;MASS&quot;</span>)</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>ins <span class="ot">&lt;-</span> <span class="fu">transform</span>(Insurance, <span class="at">logH =</span> <span class="fu">log</span>(Holders))</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>fit_po <span class="ot">&lt;-</span> <span class="fu">sb_gamlss</span>(</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>  Claims <span class="sc">~</span> <span class="fu">offset</span>(logH), <span class="at">data =</span> ins, <span class="at">family =</span> gamlss.dist<span class="sc">::</span><span class="fu">PO</span>(),</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="at">mu_scope =</span> <span class="sc">~</span> Age <span class="sc">+</span> District <span class="sc">+</span> Group,</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="at">engine =</span> <span class="st">&quot;glmnet&quot;</span>, <span class="at">glmnet_alpha =</span> <span class="dv">1</span>,    <span class="co"># lasso</span></span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>  <span class="at">B =</span> <span class="dv">100</span>, <span class="at">pi_thr =</span> <span class="fl">0.6</span>, <span class="at">pre_standardize =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="st">&quot;auto&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span></span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## GAMLSS-RS iteration 1: Global Deviance = 438.6338 
+## GAMLSS-RS iteration 2: Global Deviance = 438.6338</code></pre>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a><span class="fu">selection_table</span>(fit_po)</span></code></pre></div>
+<pre><code>##   parameter     term count prop
+## 1        mu      Age   100    1
+## 2        mu District   100    1
+## 3        mu    Group   100    1</code></pre>
+<hr />
+</div>
+<div id="positive-continuous-ga-old-faithful" class="section level2">
+<h2>3. Positive continuous (GA) — Old Faithful</h2>
+<p>Use <strong>Gamma</strong> for positive waiting times vs eruption
+length.</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a><span class="fu">data</span>(faithful)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>faith <span class="ot">&lt;-</span> <span class="fu">transform</span>(faithful, <span class="at">eru2 =</span> eruptions<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>fit_ga <span class="ot">&lt;-</span> <span class="fu">sb_gamlss</span>(</span>
+<span id="cb23-5"><a href="#cb23-5" tabindex="-1"></a>  waiting <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> faith, <span class="at">family =</span> gamlss.dist<span class="sc">::</span><span class="fu">GA</span>(),</span>
+<span id="cb23-6"><a href="#cb23-6" tabindex="-1"></a>  <span class="at">mu_scope    =</span> <span class="sc">~</span> <span class="fu">pb</span>(eruptions) <span class="sc">+</span> eru2,</span>
+<span id="cb23-7"><a href="#cb23-7" tabindex="-1"></a>  <span class="at">sigma_scope =</span> <span class="sc">~</span> <span class="fu">pb</span>(eruptions),</span>
+<span id="cb23-8"><a href="#cb23-8" tabindex="-1"></a>  <span class="at">engine =</span> <span class="st">&quot;glmnet&quot;</span>, <span class="at">glmnet_alpha =</span> <span class="fl">0.5</span>,   <span class="co"># elastic-net</span></span>
+<span id="cb23-9"><a href="#cb23-9" tabindex="-1"></a>  <span class="at">B =</span> <span class="dv">60</span>, <span class="at">pi_thr =</span> <span class="fl">0.6</span>, <span class="at">pre_standardize =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb23-10"><a href="#cb23-10" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="st">&quot;auto&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span></span>
+<span id="cb23-11"><a href="#cb23-11" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## GAMLSS-RS iteration 1: Global Deviance = 1699.568 
+## GAMLSS-RS iteration 2: Global Deviance = 1699.992 
+## GAMLSS-RS iteration 3: Global Deviance = 1699.932 
+## GAMLSS-RS iteration 4: Global Deviance = 1699.931 
+## GAMLSS-RS iteration 5: Global Deviance = 1699.933 
+## GAMLSS-RS iteration 6: Global Deviance = 1699.934</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a><span class="fu">selection_table</span>(fit_ga)</span></code></pre></div>
+<pre><code>##   parameter          term count prop
+## 1        mu pb(eruptions)    60    1
+## 2        mu          eru2    60    1
+## 3     sigma pb(eruptions)    60    1</code></pre>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a><span class="co"># Effect plot for eruptions on mu</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">requireNamespace</span>(<span class="st">&#39;ggplot2&#39;</span>, <span class="at">quietly =</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">effect_plot</span>(fit_ga, <span class="st">&#39;eruptions&#39;</span>, faith, <span class="at">what =</span> <span class="st">&#39;mu&#39;</span>))</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>}</span></code></pre></div>
+<pre><code>## Warning in data.frame(data, source = namelist): row names were found from a
+## short variable and have been discarded</code></pre>
+<pre><code>## Prediction failed for parameter &#39;mu&#39;: arguments imply differing number of rows: 100, 101 (fallback failed at row 1: incompatible dimensions).</code></pre>
+<hr />
+</div>
+<div id="binary-bi-mtcars-transmission" class="section level2">
+<h2>4. Binary (BI) — <code>mtcars</code> transmission</h2>
+<p>Treat <code>am</code> (0/1) as Bernoulli.</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" tabindex="-1"></a>mt <span class="ot">&lt;-</span> <span class="fu">transform</span>(mtcars,</span>
+<span id="cb30-2"><a href="#cb30-2" tabindex="-1"></a>  <span class="at">am =</span> <span class="fu">as.integer</span>(am),</span>
+<span id="cb30-3"><a href="#cb30-3" tabindex="-1"></a>  <span class="at">cyl =</span> <span class="fu">factor</span>(cyl), <span class="at">gear =</span> <span class="fu">factor</span>(gear), <span class="at">carb =</span> <span class="fu">factor</span>(carb), <span class="at">vs =</span> <span class="fu">factor</span>(vs))</span>
+<span id="cb30-4"><a href="#cb30-4" tabindex="-1"></a></span>
+<span id="cb30-5"><a href="#cb30-5" tabindex="-1"></a>fit_bin <span class="ot">&lt;-</span> <span class="fu">sb_gamlss</span>(</span>
+<span id="cb30-6"><a href="#cb30-6" tabindex="-1"></a>  am <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> mt, <span class="at">family =</span> gamlss.dist<span class="sc">::</span><span class="fu">BI</span>(),</span>
+<span id="cb30-7"><a href="#cb30-7" tabindex="-1"></a>  <span class="at">mu_scope =</span> <span class="sc">~</span> wt <span class="sc">+</span> hp <span class="sc">+</span> qsec <span class="sc">+</span> cyl <span class="sc">+</span> gear <span class="sc">+</span> carb <span class="sc">+</span> vs,</span>
+<span id="cb30-8"><a href="#cb30-8" tabindex="-1"></a>  <span class="at">engine =</span> <span class="st">&quot;grpreg&quot;</span>, <span class="at">grpreg_penalty =</span> <span class="st">&quot;grLasso&quot;</span>,</span>
+<span id="cb30-9"><a href="#cb30-9" tabindex="-1"></a>  <span class="at">B =</span> <span class="dv">80</span>, <span class="at">pi_thr =</span> <span class="fl">0.6</span>, <span class="at">pre_standardize =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb30-10"><a href="#cb30-10" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="st">&quot;auto&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span></span>
+<span id="cb30-11"><a href="#cb30-11" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## GAMLSS-RS iteration 1: Global Deviance = 43.2297 
+## GAMLSS-RS iteration 2: Global Deviance = 43.2297</code></pre>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" tabindex="-1"></a><span class="fu">selection_table</span>(fit_bin)</span></code></pre></div>
+<pre><code>##   parameter term count prop
+## 1        mu   wt     0    0
+## 2        mu   hp     0    0
+## 3        mu qsec     0    0
+## 4        mu  cyl     0    0
+## 5        mu gear     0    0
+## 6        mu carb     0    0
+## 7        mu   vs     0    0</code></pre>
+<hr />
+</div>
+<div id="overdispersed-counts-nbii-quine-absences" class="section level2">
+<h2>5. Overdispersed counts (NBII) — <code>quine</code> absences</h2>
+<p><strong>Negative Binomial II</strong> handles extra-Poisson
+variation.</p>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" tabindex="-1"></a><span class="fu">data</span>(quine, <span class="at">package =</span> <span class="st">&quot;MASS&quot;</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" tabindex="-1"></a>fit_nb2 <span class="ot">&lt;-</span> <span class="fu">sb_gamlss</span>(</span>
+<span id="cb34-3"><a href="#cb34-3" tabindex="-1"></a>  Days <span class="sc">~</span> <span class="dv">1</span>, <span class="at">data =</span> quine, <span class="at">family =</span> gamlss.dist<span class="sc">::</span><span class="fu">NBII</span>(),</span>
+<span id="cb34-4"><a href="#cb34-4" tabindex="-1"></a>  <span class="at">mu_scope =</span> <span class="sc">~</span> Eth <span class="sc">+</span> Sex <span class="sc">+</span> Lrn <span class="sc">+</span> Age,</span>
+<span id="cb34-5"><a href="#cb34-5" tabindex="-1"></a>  <span class="at">engine =</span> <span class="st">&quot;grpreg&quot;</span>, <span class="at">grpreg_penalty =</span> <span class="st">&quot;grLasso&quot;</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" tabindex="-1"></a>  <span class="at">B =</span> <span class="dv">80</span>, <span class="at">pi_thr =</span> <span class="fl">0.6</span>, <span class="at">pre_standardize =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb34-7"><a href="#cb34-7" tabindex="-1"></a>  <span class="at">parallel =</span> <span class="st">&quot;auto&quot;</span>, <span class="at">trace =</span> <span class="cn">FALSE</span></span>
+<span id="cb34-8"><a href="#cb34-8" tabindex="-1"></a>)</span></code></pre></div>
+<pre><code>## GAMLSS-RS iteration 1: Global Deviance = 1118.276 
+## GAMLSS-RS iteration 2: Global Deviance = 1118.268 
+## GAMLSS-RS iteration 3: Global Deviance = 1118.267</code></pre>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" tabindex="-1"></a><span class="fu">selection_table</span>(fit_nb2)</span></code></pre></div>
+<pre><code>##   parameter term count prop
+## 1        mu  Eth     0    0
+## 2        mu  Sex     0    0
+## 3        mu  Lrn     0    0
+## 4        mu  Age     0    0</code></pre>
+<hr />
+<div id="tips" class="section level3">
+<h3>Tips</h3>
+<ul>
+<li>If you have many factor levels or smoothers, prefer
+<code>engine=&quot;grpreg&quot;</code>/<code>&quot;sgl&quot;</code> (group-aware).</li>
+<li>For very wide numeric designs, try <code>engine=&quot;glmnet&quot;</code> with
+<code>glmnet_alpha</code> in <span class="math display">\[0,1\]</span>.</li>
+<li>Use <code>pre_standardize=TRUE</code> (fast C++ scaler) when
+predictors are numeric and on different scales.</li>
+<li>For speed, enable parallel workers:
+<code>future::plan(multisession, workers = 4); parallel=&quot;auto&quot;</code>.</li>
+</ul>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

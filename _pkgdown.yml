@@ -12,61 +12,11 @@ template:
         .navbar-brand img { height: 28px; }
       </style>
 
-url: ~
+url: https://fbertran.github.io/SelectBoost.gamlss/
 title: "SelectBoost.gamlss"
 lang: en
 favicon: man/figures/logo.svg
 logo: man/figures/logo.svg
-
-home:
-  title: "SelectBoost for GAMLSS"
-  description: "Stability selection, grouped penalties, and fast deviance tooling for GAMLSS models."
-
-navbar:
-  structure:
-    left:  [reference, articles, news]
-    right: [search, github]
-  components:
-    github:
-      icon: fa-github
-      href: https://github.com/your-org/SelectBoost.gamlss
-
-articles:
-- title: Getting started
-  contents:
-  - vignettes/comparison.html
-  - vignettes/real-data-examples.html
-  - vignettes/advanced-real-data-examples.html
-- title: Performance & Benchmarks
-  contents:
-  - vignettes/benchmark.html
-  - vignettes/fast-deviance-benchmark.html
-- title: Accuracy & Validation
-  contents:
-  - vignettes/fast-deviance-equality.html
-
-reference:
-- title: Core
-  desc: "Main interfaces for SelectBoost-GAMLSS"
-  contents:
-  - sb_gamlss
-  - sb_gamlss_c0_grid
-  - selection_table
-  - plot.sb_gamlss
-  - plot_stability_curves
-- title: Confidence Functionals
-  contents:
-  - confidence_functionals
-  - plot.sb_confidence
-- title: Engines & Filters
-  contents:
-  - tune_sb_gamlss
-  - knockoff_filter_mu
-  - knockoff_filter_param
-- title: Fast Deviance Utilities
-  contents:
-  - fast_vs_generic_ll
-  - check_fast_vs_generic
 
 news:
   one_page: true

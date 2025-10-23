@@ -1,11 +1,30 @@
 ---
 title: "Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth"
+shorttitle: "Advanced Real Data Examples"
+author: 
+- name: "Frédéric Bertrand"
+  affiliation: 
+  - Cnam, Paris
+  - Cedric
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Advanced Real Data Examples}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 This vignette demonstrates **SelectBoost.gamlss** on three additional *real* datasets:
 - **Zero-inflated counts** (`pscl::bioChemists`): ZIP / ZINB

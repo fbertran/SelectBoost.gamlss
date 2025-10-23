@@ -1,0 +1,132 @@
+## -----------------------------------------------------------------------------
+library(gamlss)
+library(SelectBoost.gamlss)
+
+set.seed(1)
+n <- 500
+x1 <- rnorm(n); x2 <- rnorm(n); x3 <- rnorm(n); x4 <- rnorm(n)
+mu <- 0.5 + 1.2*x1 - 0.8*x3
+y  <- gamlss.dist::rNO(n, mu = mu, sigma = 1)
+dat <- data.frame(y, x1, x2, x3, x4)
+
+# Baseline
+b0 <- sb_gamlss(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
+  B = 50, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+)
+plot_sb_gamlss(b0)
+
+# SelectBoost integration (single c0)
+sb <- SelectBoost_gamlss(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
+  B = 50, pi_thr = 0.6, c0 = 0.5, pre_standardize = TRUE, trace = FALSE
+)
+summary(sb) |> plot()
+
+# c0 grid + autoboost
+g <- sb_gamlss_c0_grid(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
+  c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+)
+plot(g)
+confidence_table(g) |> head()
+
+ab <- autoboost_gamlss(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
+  c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+)
+attr(ab, "chosen_c0")
+plot_sb_gamlss(ab)
+
+# fastboost (lightweight)
+fb <- fastboost_gamlss(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3 + x4, sigma_scope = ~ x1 + x2,
+  B = 30, sample_fraction = 0.6, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+)
+plot_sb_gamlss(fb)
+
+## -----------------------------------------------------------------------------
+# Using the grid g created above
+cf <- confidence_functionals(
+  g, pi_thr = 0.6,
+  q = c(0.5, 0.8, 0.9),
+  weight_fun = function(c0) (1 - c0)^2,  # emphasize smaller c0
+  conservative = TRUE, B = 40,           # use lower bounds
+  method = "trapezoid"
+)
+head(cf)
+plot(cf, top = 12, label_top = 8)
+
+# Inspect stability curves of top terms
+top_terms <- head(cf[order(cf$rank_score, decreasing = TRUE), c("term","parameter")], 4)
+plot_stability_curves(g, terms = unique(top_terms$term), parameter = unique(top_terms$parameter)[1])
+
+## -----------------------------------------------------------------------------
+library(gamlss)
+library(SelectBoost.gamlss)
+
+set.seed(42)
+n <- 500
+f  <- factor(sample(letters[1:3], n, TRUE))
+x1 <- rnorm(n); x2 <- rnorm(n)
+y  <- gamlss.dist::rNO(n, mu = 0.3 + 1.2*x1 - 0.7*x2 + 0.5*(f=="c"), sigma = exp(0.1 + 0.2*(f=="b")))
+
+dat <- data.frame(y, f, x1, x2)
+
+# Stepwise baseline
+fit_step <- sb_gamlss(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ f + x1 + pb(x2) + x1:f,
+  sigma_scope = ~ f + x1 + pb(x2),
+  B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+)
+
+# Group lasso for μ and sparse group lasso for σ
+fit_grp <- sb_gamlss(
+  y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ f + x1 + pb(x2) + x1:f,
+  sigma_scope = ~ f + x1 + pb(x2),
+  engine = "grpreg", engine_sigma = "sgl",
+  B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+)
+
+plot_sb_gamlss(fit_step)
+plot_sb_gamlss(fit_grp)
+selection_table(fit_step) |> head()
+selection_table(fit_grp)  |> head()
+
+## -----------------------------------------------------------------------------
+# Tuning engines / penalties
+cfgs <- list(
+  list(engine="stepGAIC"),
+  list(engine="glmnet", glmnet_alpha=1),
+  list(engine="grpreg", grpreg_penalty="grLasso", engine_sigma="sgl", sgl_alpha=0.9)
+)
+base <- list(
+  formula = y ~ 1, data = dat, family = gamlss.dist::NO(),
+  mu_scope = ~ f + x1 + pb(x2) + x1:f, sigma_scope = ~ f + x1 + pb(x2),
+  pi_thr = 0.6, pre_standardize = TRUE, sample_fraction = 0.7, parallel = "auto", trace = FALSE
+)
+tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 30)
+tuned$best_config
+
+# Approximate group knockoffs for mu
+sel_mu <- NULL
+if (requireNamespace("knockoff", quietly = TRUE)) {
+  sel_mu <- tryCatch(
+    knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1),
+    error = function(e) {
+      cat("Knockoff filter failed:", conditionMessage(e), "— skipping example.\n")
+      NULL
+    }
+  )
+} else {
+  cat("Package 'knockoff' not installed; skipping knockoff example.\n")
+}
+if (!is.null(sel_mu)) sel_mu
+

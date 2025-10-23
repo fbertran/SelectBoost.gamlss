@@ -1,0 +1,97 @@
+
+template:
+  bootstrap: 5
+  bslib:
+    pkgdown-nav-height: 60px
+    base_font: {google: "Inter"}
+    heading_font: {google: "Inter"}
+  bootswatch: flatly
+  includes:
+    in_header: |
+      <style>
+        .navbar-brand img { height: 28px; }
+      </style>
+
+url: https://fbertran.github.io/SelectBoost.gamlss/
+title: "SelectBoost.gamlss"
+lang: en
+favicon: man/figures/logo.svg
+logo: man/figures/logo.svg
+
+home:
+  title: "SelectBoost for GAMLSS"
+  description: "Stability selection, grouped penalties, and fast deviance tooling for GAMLSS models."
+
+navbar:
+  structure:
+    left:  [reference, articles, news]
+    right: [search, github]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/fbertran/SelectBoost.gamlss
+
+articles:
+- title: Getting started
+  contents:
+  - vignettes/comparison.html
+  - vignettes/real-data-examples.html
+  - vignettes/advanced-real-data-examples.html
+- title: Performance & Benchmarks
+  contents:
+  - vignettes/benchmark.html
+  - vignettes/confidence-functionals.html
+  - vignettes/fast-deviance-benchmark.html
+- title: Accuracy & Validation
+  contents:
+  - vignettes/fast-deviance-equality.html
+  - vignettes/selectboost-gamlss.html
+
+reference:
+- title: Core
+  desc: "Main interfaces for SelectBoost-GAMLSS"
+  contents:
+  - autoboost_gamlss 
+  - fastboost_gamlss
+  - sb_gamlss
+  - sb_gamlss_c0_grid
+  - SelectBoost_gamlss
+- title: Confidence Functionals and Plots
+  contents:
+  - effect_plot
+  - confidence_functionals
+  - confidence_table
+  - plot_sb_gamlss
+  - plot.sb_confidence
+  - plot.SelectBoost_gamlss
+  - plot.SelectBoost_gamlss_grid
+  - plot_stability_curves
+  - selection_table
+- title: Engines & Filters
+  contents:
+  - AICc_gamlss
+  - cv_deviance_sb
+  - get_density_fun
+  - loglik_gamlss_newdata
+  - tune_sb_gamlss
+  - knockoff_filter_mu
+  - knockoff_filter_param
+  - predict_params
+- title: Fast Deviance Utilities
+  contents:
+  - fast_vs_generic_ll
+  - check_fast_vs_generic
+- title: Misc
+  contents:
+  - .family_defaults 
+  - .family_tolerance
+  - .gen_family
+  - "%||%"
+
+news:
+  one_page: true
+
+footer:
+  structure:
+    left: developed_by
+    right: built_with

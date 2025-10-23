@@ -10,4 +10,7 @@ articles:
   fast-deviance-equality: fast-deviance-equality.html
   real-data-examples: real-data-examples.html
   selectboost-gamlss: selectboost-gamlss.html
-last_built: 2025-10-20T23:10Z
+last_built: 2025-10-23T01:28Z
+urls:
+  reference: https://fbertran.github.io/SelectBoost.gamlss/reference
+  article: https://fbertran.github.io/SelectBoost.gamlss/articles

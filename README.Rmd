@@ -1,14 +1,58 @@
-# SelectBoost.gamlss
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-An extension of the **SelectBoost** idea to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%",
+  dpi=300,fig.width=7,
+  fig.keep="all"
+)
+```
+
+
+# SelectBoost.gamlss <img src="man/figures/logo.png" align="right" width="200"/>
+
+<!-- badges: start -->
+[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss)
+[![R-CMD-check](https://github.com/fbertran/SelectBoost.gamlss/workflows/R-CMD-check/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions)
+[![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss)
+<!-- badges: end -->
+
+With the growth of big data, variable selection has become one of the major challenges in statistics. Although many methods have been proposed in the literature their performance in terms of recall and precision are limited in a context where the number of variables by far exceeds the number of observations or in a high correlated setting. 
+
+Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape) featuring:
 
 - Bootstrap subsampling + `gamlss::stepGAIC()` on each parameter (mu, sigma, nu, tau).
 - Selection frequencies aggregated; refit a final stable model using a threshold `pi_thr`.
 - Optional pre-standardization of numeric predictors.
 - Includes `AICc_gamlss()` helper.
 
-## Install (local)
-Build with `R CMD build` then `R CMD INSTALL`, or `devtools::install_local()`.
+The selectboost algorithm is a new general algorithm which improves the precision of any existing variable selection method. This algorithm is based on highly intensive simulations and takes into account the correlation structure of the data. Our algorithm can either produce a confidence index for variable selection or it can be used in an experimental design planning perspective.
+
+This website and these examples were created by F. Bertrand and M. Maumy.
+
+## Installation
+
+You can install the released version of SelectBoost.gamlss from [CRAN](https://CRAN.R-project.org) with:
+
+```{r, eval = FALSE}
+install.packages("SelectBoost.gamlss")
+```
+
+You can install the development version of SelectBoost.gamlss from [github](https://github.com) with:
+
+```{r, eval = FALSE}
+devtools::install_github("fbertran/SelectBoost.gamlss")
+```
+
+If you are a Linux/Unix or a Macos user, you can install a version of SelectBoost.gamlss with support for `doMC` from [github](https://github.com) with:
+
+```{r, eval = FALSE}
+devtools::install_github("fbertran/SelectBoost.gamlss", ref = "doMC")
+```
+
 
 ## Quick start
 
@@ -49,7 +93,7 @@ plot_sb_gamlss(res)
 
 
 ## c0 grid + confidence + Auto/Fast
-```{r}
+```{r, cache=TRUE}
 # grid over c0 and plot
 g <- sb_gamlss_c0_grid(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
@@ -80,7 +124,7 @@ plot(fb)
 
 
 ### Confidence functionals + plots
-```{r}
+```{r, cache=TRUE}
 g <- sb_gamlss_c0_grid(...)
 cf <- confidence_functionals(g, pi_thr = 0.6, weight_fun = function(c0) (1 - c0)^2,
                              conservative = TRUE, B = 60)
@@ -103,7 +147,7 @@ Enable `engine = "glmnet"` and choose `glmnet_alpha`:
 - `glmnet_alpha = 0` → **ridge**
 - `0 < glmnet_alpha < 1` → **elastic-net**
 
-```{r}
+```{r, cache=TRUE}
 fit <- sb_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ x1 + x2 + x3,
@@ -123,7 +167,7 @@ For **factors**, **splines** (e.g., `pb(x)`, `bs(x)`), and **interactions**, use
 Groups are built from `mu_scope` term labels via `model.matrix(~ 0 + terms)` and the column `assign` mapping:
 all dummy columns for a factor are one group; all spline basis columns are one group; interaction columns form a group.
 
-```{r}
+```{r, cache=TRUE}
 fit_gl <- sb_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ f + x1 + pb(x2) + x1:f,   # factors, splines, interactions
@@ -140,7 +184,7 @@ You can choose different selection engines per parameter:
 - Engines: `"stepGAIC"`, `"glmnet"`, `"grpreg"` (group lasso / MCP / SCAD via `grpreg_penalty`), `"sgl"` (sparse group lasso with `sgl_alpha`).
 
 Example:
-```{r}
+```{r, cache=TRUE}
 fit <- sb_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope    = ~ f + x1 + pb(x2) + x1:f,
@@ -157,7 +201,7 @@ Note: σ/ν/τ grouped engines use a **working response** from the current fit (
 
 ### Tuning engines/penalties (lightweight)
 Use `tune_sb_gamlss()` to search over selection engines/penalties with a small B:
-```{r}
+```{r, cache=TRUE}
 cfgs <- list(
   list(engine="stepGAIC"),
   list(engine="glmnet", glmnet_alpha=1),
@@ -174,7 +218,7 @@ fit <- tuned$best_fit
 ```
 
 ### (Approximate) group knockoffs for FDR-style control
-```{r}
+```{r, cache=TRUE}
 # mu
 sel_mu <- knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1)
 
@@ -186,7 +230,7 @@ sel_sigma <- knockoff_filter_param(dat, sigma_scope, y_work = log(ysig), fdr = 0
 
 
 ### Tuning metric: stability or deviance (CV)
-```{r}
+```{r, cache=TRUE}
 cfgs <- list(
   list(engine="stepGAIC"),
   list(engine="glmnet", glmnet_alpha=1),

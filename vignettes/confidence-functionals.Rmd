@@ -1,11 +1,30 @@
 ---
 title: "Confidence Functionals for SelectBoost-GAMLSS"
+shorttitle: "Confidence Functionals"
+author: 
+- name: "Frédéric Bertrand"
+  affiliation: 
+  - Cnam, Paris
+  - Cedric
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Confidence Functionals for SelectBoost-GAMLSS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r setup, include = FALSE}
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
 
 We consider stability curves \(p_j(c0)\) for each term \(j\) across a grid of SelectBoost thresholds `c0`. The following
 functionals condense these curves into scalar confidences:

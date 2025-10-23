@@ -1,6 +1,11 @@
 
 # Internal helpers for generating synthetic data across many gamlss families
 
+#' Reasonable defaults
+#' 
+#' Adjust as needed per family docs
+#' 
+#' @export
 .family_defaults <- function() {
   # Reasonable defaults; adjust as needed per family docs
   list(
@@ -37,7 +42,11 @@
   )
 }
 
-# Try to generate y for a family; returns NULL if generator not available or fails
+#' Try to generate y for a family
+#' 
+#' Returns NULL if generator not available or fails
+#' 
+#' @export
 .gen_family <- function(fam, n) {
   rname <- paste0("r", fam)
   gen <- try(getFromNamespace(rname, "gamlss.dist"), silent = TRUE)
@@ -50,8 +59,9 @@
   y
 }
 
-
-# Per-family numeric tolerance for equality checks
+#' Per-family numeric tolerance for equality checks
+#' 
+#' @export
 .family_tolerance <- function() {
   # Defaults are conservative; heavier-tailed / complex families get looser tol
   tol <- list(
@@ -90,4 +100,7 @@
   tol
 }
 
+#' `%||%`
+#' 
+#' @export
 `%||%` <- function(a, b) if (is.null(a)) b else a
