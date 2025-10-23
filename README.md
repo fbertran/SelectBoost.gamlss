@@ -13,16 +13,18 @@
 
 With the growth of big data, variable selection has become one of the major challenges in statistics. Although many methods have been proposed in the literature their performance in terms of recall and precision are limited in a context where the number of variables by far exceeds the number of observations or in a high correlated setting. 
 
-Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape) featuring:
+Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
 
-- Bootstrap subsampling + `gamlss::stepGAIC()` on each parameter (mu, sigma, nu, tau).
-- Selection frequencies aggregated; refit a final stable model using a threshold `pi_thr`.
-- Optional pre-standardization of numeric predictors.
-- Includes `AICc_gamlss()` helper.
+## Key features
+- **Bootstrap stability-selection** for all distribution parameters (μ, σ, ν, τ) with optional SelectBoost grouping over correlation clusters.
+- **Multiple engines:** classical stepwise via `gamlss::stepGAIC()`, lasso/ridge/elastic-net via **glmnet**, grouped penalties via **grpreg**/**SGL** (group lasso / sparse group lasso), and per-parameter engine choices.
+- **Effect visualisation & summaries:** stability tables/plots, `effect_plot()` for partial effects, and grid-based confidence summaries.
+- **Automation helpers:** `sb_gamlss_c0_grid()`, `autoboost_gamlss()`, `fastboost_gamlss()`, and `tune_sb_gamlss()` for rapid c0/engine sweeps with progress bars.
+- **Fast deviance evaluation** for deviance-based tuning with optimized density shortcuts across many `gamlss.dist` families plus accuracy checks.
+- **Parallel + compiled speedups:** C++ scaling/correlation + optional `future.apply` parallelism for bootstrap replications.
+- **Additional tooling:** approximate knockoff filters, `AICc_gamlss()` helper, and reproducible benchmarking utilities.
 
-The selectboost algorithm is a new general algorithm which improves the precision of any existing variable selection method. This algorithm is based on highly intensive simulations and takes into account the correlation structure of the data. Our algorithm can either produce a confidence index for variable selection or it can be used in an experimental design planning perspective.
-
-This website and these examples were created by F. Bertrand and M. Maumy.
+The SelectBoost algorithm improves the precision of existing variable-selection methods by exploiting correlation-aware resampling. It can deliver confidence indices for variable inclusion or guide the design of future experiments. This website and these examples were created by F. Bertrand.
 
 ## Installation
 
@@ -85,15 +87,15 @@ res$final_formula
 #> 
 #> $sigma
 #> ~x1
-#> <environment: 0x16b999238>
+#> <environment: 0x146415d60>
 #> 
 #> $nu
 #> ~1
-#> <environment: 0x16b999238>
+#> <environment: 0x146415d60>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x16b999238>
+#> <environment: 0x146415d60>
 head(selection_table(res))
 #>   parameter term count prop
 #> 1        mu   x1    50 1.00
@@ -109,6 +111,17 @@ plot_sb_gamlss(res)
 <p class="caption">plot of chunk unnamed-chunk-4</p>
 </div>
 
+``` r
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  print(effect_plot(res, "x1", dat, what = "mu"))
+}
+#> Warning in data.frame(data, source = namelist): row names were found from a short variable and have
+#> been discarded
+#> Prediction failed for parameter 'mu': arguments imply differing number of rows: 100, 101 (fallback failed at row 1: incompatible dimensions).
+```
+
+`selection_table()` ranks the most stable terms per parameter, `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (falls back to base graphics if **ggplot2** is unavailable).
+
 
 ### SelectBoost integration
 - Uses `SelectBoost::group_func_2()` to form correlation groups (c0) and sample one representative per group in each bootstrap.
@@ -122,7 +135,8 @@ plot_sb_gamlss(res)
 g <- sb_gamlss_c0_grid(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
-  c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
+  c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE,
+  progress = TRUE
 )
 #>   |                                                                                                    |                                                                                            |   0%GAMLSS-RS iteration 1: Global Deviance = 1146.267 
 #> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
@@ -196,6 +210,7 @@ plot(fb)
 #> Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
 ```
 
+Use `progress = TRUE` on grid/autoboost helpers to monitor c0 sweeps, and pair `fastboost_gamlss()` with smaller `B`/`sample_fraction` for rapid diagnostics.
 
 ### Confidence functionals + plots
 
@@ -203,7 +218,7 @@ plot(fb)
 g <- sb_gamlss_c0_grid(...)
 #> Error: '...' used in an incorrect context
 cf <- confidence_functionals(g, pi_thr = 0.6, weight_fun = function(c0) (1 - c0)^2,
-                             conservative = TRUE, B = 60)
+                             conservative = TRUE, B = 30)
 plot(cf)  # scatter (area_pos vs cover) + top-N bars
 ```
 
@@ -221,6 +236,7 @@ plot_stability_curves(g, terms = c("x1","x3"), parameter = "mu")
 <p class="caption">plot of chunk unnamed-chunk-6</p>
 </div>
 
+Combine these summaries with `effect_plot()` outputs (shown in the quick start) or `selection_table()` to understand which effects drive the final refit.
 
 ### Performance: Rcpp and Parallel Bootstraps
 - Uses **RcppArmadillo** for fast scaling and correlations (grouping).

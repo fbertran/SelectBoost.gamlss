@@ -29,6 +29,10 @@ knitr::opts_chunk$set(
 This vignette compares the *fast deviance* evaluator (`loglik_gamlss_newdata_fast`) with the generic route
 for several common families. Results will vary by machine/BLAS and by R package versions.
 
+Recent releases added optimized shortcuts for additional families (`LOGITNO`, `GEOM`, `LO`, `BE`) and
+automatic routing through native `gamlss.dist` densities for zero-adjusted/zero-inflated variants (e.g., `ZAGA`, `ZIPF`, `BETA4`).
+Pair this benchmark with `check_fast_vs_generic()` for numerical validation and `fast_vs_generic_ll()` for micro-timing comparisons.
+
 ```{r}
 library(gamlss)
 library(SelectBoost.gamlss)
