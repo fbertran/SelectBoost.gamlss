@@ -46,6 +46,13 @@
 #' 
 #' Returns NULL if generator not available or fails
 #' 
+#' @param fam Character scalar naming the family. This should correspond to a
+#'   distribution available in the \code{gamlss.dist} package, as used when
+#'   constructing \code{r<family>} generator functions (for example, ``NO'' or
+#'   ``LOGNO'').
+#' @param n Positive integer giving the number of observations to generate for
+#'   the requested family.
+#'   
 #' @export
 .gen_family <- function(fam, n) {
   rname <- paste0("r", fam)
