@@ -275,6 +275,31 @@ sb_gamlss <- function(
   environment(upper_formulas_internal$nu)    <- environment(base_nu)
   environment(upper_formulas_internal$tau)   <- environment(base_tau)
 
+  dots_original <- list(...)
+  weights_full <- NULL
+  if ("weights" %in% names(dots_original)) {
+    weights_full <- dots_original$weights
+    dots_original$weights <- NULL
+    if (!is.null(weights_full)) {
+      if (is.matrix(weights_full) || (!is.null(dim(weights_full)) && length(dim(weights_full)) >= 2L)) {
+        if (nrow(weights_full) != n) {
+          stop("`weights` must have the same number of rows as `data`.", call. = FALSE)
+        }
+      } else if (is.data.frame(weights_full)) {
+        if (nrow(weights_full) != n) {
+          stop("`weights` data frame must have the same number of rows as `data`.", call. = FALSE)
+        }
+      } else if (length(weights_full) != n) {
+        stop("`weights` must have length equal to `nrow(data)`.", call. = FALSE)
+      }
+    }
+  }
+  if ("trace" %in% names(dots_original)) {
+    dots_original$trace <- NULL
+  }
+  drop_final <- c("formula","sigma.formula","nu.formula","tau.formula","data","family")
+  dots_original <- dots_original[setdiff(names(dots_original), drop_final)]
+  
   selector_globals <- list(
     base_data = base_data,
     base_formulas = base_formulas_internal,
@@ -288,7 +313,8 @@ sb_gamlss <- function(
     sample_fraction = sample_fraction,
     resp_name = resp_name,
     response = response_obj,
-    dots = list(...),
+    dots = dots_original,
+    weights = weights_full,
     n = n,
     mu_base_cols = mu_base_design$cols,
     sigma_base_cols = sigma_base_design$cols,
@@ -323,6 +349,26 @@ sb_gamlss <- function(
       }
     }
     res
+  }
+  
+  subset_special <- function(obj, idx) {
+    if (is.null(obj) || !length(idx)) return(obj)
+    if (is.data.frame(obj)) {
+      if (nrow(obj) == selector_globals$n) {
+        return(obj[idx, , drop = FALSE])
+      }
+      return(obj)
+    }
+    if (is.matrix(obj) || (!is.null(dim(obj)) && length(dim(obj)) >= 2L)) {
+      if (nrow(obj) == selector_globals$n) {
+        return(obj[idx, , drop = FALSE])
+      }
+      return(obj)
+    }
+    if (length(obj) == selector_globals$n) {
+      return(obj[idx])
+    }
+    tryCatch(obj[idx], error = function(e) obj)
   }
   
   subset_response <- function(resp, idx) {
@@ -379,6 +425,7 @@ sb_gamlss <- function(
       for (nm in candidate_cols) df[[nm]] <- X_sub[, nm]
       dots_sub <- subset_dots(idx)
       response_vec <- subset_response(selector_globals$response, idx)
+      weights_sub <- subset_special(selector_globals$weights, idx)
       if (is.null(response_vec) && selector_globals$resp_name %in% names(df)) {
         response_vec <- df[[selector_globals$resp_name]]
       }
@@ -419,6 +466,9 @@ sb_gamlss <- function(
           data = df,
           trace = FALSE
         ), dots_sub)
+        if (!is.null(weights_sub)) {
+          args$weights <- weights_sub
+        }
         fit0 <- try(do.call(gamlss::gamlss, args), silent = TRUE)
         if (inherits(fit0, "try-error")) return(setNames(rep(0, length(candidate_cols)), candidate_cols))
         scope <- list(lower = selector_globals$base_formulas[[param]], upper = selector_globals$upper_formulas[[param]])
@@ -443,6 +493,7 @@ sb_gamlss <- function(
         cv <- try(glmnet::cv.glmnet(
           x = X_glm,
           y = y,
+          weights = weights_sub,
           alpha = selector_globals$glmnet_alpha,
           family = "gaussian",
           penalty.factor = penalty,
@@ -484,6 +535,11 @@ sb_gamlss <- function(
           group_idx[missing] <- offset + seq_along(missing)
         }
         group_vec <- c(rep(0, length(base_cols)), group_idx)
+        if (!is.null(weights_sub)) {
+          cv <- try(grpreg::cv.grpreg(x = X_mat, y = y, group = group_vec, family = "gaussian", penalty = selector_globals$grpreg_penalty, seed = NULL, weights = weights_sub), silent = TRUE)
+        } else {
+          cv <- try(grpreg::cv.grpreg(x = X_mat, y = y, group = group_vec, family = "gaussian", penalty = selector_globals$grpreg_penalty, seed = NULL), silent = TRUE)
+        }
         cv <- try(grpreg::cv.grpreg(x = X_mat, y = y, group = group_vec, family = "gaussian", penalty = selector_globals$grpreg_penalty, seed = NULL), silent = TRUE)
         if (inherits(cv, "try-error")) return(setNames(rep(0, length(candidate_cols)), candidate_cols))
         beta <- stats::coef(cv$fit, lambda = cv$lambda.min)
@@ -620,15 +676,19 @@ sb_gamlss <- function(
   final_nu    <- select_terms(base_nu,    results$nu,    nu_scope_use)
   final_tau   <- select_terms(base_tau,   results$tau,   tau_scope_use)
 
-  final_fit <- gamlss::gamlss(
+  final_args <- c(list(
     formula = final_mu,
     sigma.formula = final_sigma,
     nu.formula = final_nu,
     tau.formula = final_tau,
     data = data,
     family = family,
-    ...
-  )
+    trace = trace
+  ), dots_original)
+  if (!is.null(weights_full)) {
+    final_args$weights <- weights_full
+  }
+  final_fit <- do.call(gamlss::gamlss, final_args)
 
   out <- list(
     final_fit = final_fit,

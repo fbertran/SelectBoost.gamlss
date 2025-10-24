@@ -100,7 +100,7 @@
   tol
 }
 
-#' `%||%`
-#' 
-#' @export
-`%||%` <- function(a, b) if (is.null(a)) b else a
+# #' `%||%`
+# #' 
+# #' @export
+# `%||%` <- function(a, b) if (is.null(a)) b else a

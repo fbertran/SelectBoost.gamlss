@@ -15,6 +15,8 @@ With the growth of big data, variable selection has become one of the major chal
 
 Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
 
+> **Conference highlight.** SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 in Portland, OR, in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (Frédéric Bertrand & M. Maumy). The presentation underscored how correlated resampling improves recall and precision in high-dimensional, highly correlated settings.
+
 ## Key features
 - **Bootstrap stability-selection** for all distribution parameters (μ, σ, ν, τ) with optional SelectBoost grouping over correlation clusters.
 - **Multiple engines:** classical stepwise via `gamlss::stepGAIC()`, lasso/ridge/elastic-net via **glmnet**, grouped penalties via **grpreg**/**SGL** (group lasso / sparse group lasso), and per-parameter engine choices.
@@ -77,9 +79,6 @@ res <- sb_gamlss(
   pre_standardize = TRUE,
   trace = FALSE
 )
-#> GAMLSS-RS iteration 1: Global Deviance = 1146.267 
-#> GAMLSS-RS iteration 2: Global Deviance = 1146.264 
-#> GAMLSS-RS iteration 3: Global Deviance = 1146.264
 
 res$final_formula
 #> $mu
@@ -87,22 +86,34 @@ res$final_formula
 #> 
 #> $sigma
 #> ~x1
-#> <environment: 0x146415d60>
+#> <environment: 0x1635234a8>
 #> 
 #> $nu
 #> ~1
-#> <environment: 0x146415d60>
+#> <environment: 0x1635234a8>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x146415d60>
-head(selection_table(res))
+#> <environment: 0x1635234a8>
+sel <- selection_table(res)
+sel <- sel[order(sel$parameter, -sel$prop), , drop = FALSE]
+head(sel, n = min(8L, nrow(sel)))
 #>   parameter term count prop
 #> 1        mu   x1    50 1.00
 #> 2        mu   x2    37 0.74
 #> 3        mu   x3     5 0.10
 #> 4     sigma   x1    37 0.74
 #> 5     sigma   x2     6 0.12
+stable <- sel[sel$prop >= res$pi_thr, , drop = FALSE]
+if (nrow(stable)) {
+  stable
+} else {
+  cat("No terms reached the stability threshold of", res$pi_thr, "for this run.\n")
+}
+#>   parameter term count prop
+#> 1        mu   x1    50 1.00
+#> 2        mu   x2    37 0.74
+#> 4     sigma   x1    37 0.74
 plot_sb_gamlss(res)
 ```
 
@@ -115,12 +126,21 @@ plot_sb_gamlss(res)
 if (requireNamespace("ggplot2", quietly = TRUE)) {
   print(effect_plot(res, "x1", dat, what = "mu"))
 }
-#> Warning in data.frame(data, source = namelist): row names were found from a short variable and have
-#> been discarded
-#> Prediction failed for parameter 'mu': arguments imply differing number of rows: 100, 101 (fallback failed at row 1: incompatible dimensions).
+#> Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+#> ℹ Please use tidy evaluation idioms with `aes()`.
+#> ℹ See also `vignette("ggplot2-in-packages")` for more information.
+#> ℹ The deprecated feature was likely used in the SelectBoost.gamlss package.
+#>   Please report the issue at <https://github.com/fbertran/SelectBoost.gamlss/issues/>.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 ```
 
-`selection_table()` ranks the most stable terms per parameter, `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (falls back to base graphics if **ggplot2** is unavailable).
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-4-2.png" alt="plot of chunk unnamed-chunk-4" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-4</p>
+</div>
+
+`selection_table()` ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (falls back to base graphics if **ggplot2** is unavailable).
 
 
 ### SelectBoost integration

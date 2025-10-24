@@ -4,8 +4,7 @@ shorttitle: "Real Data Examples"
 author: 
 - name: "Frédéric Bertrand"
   affiliation: 
-  - Cnam, Paris
-  - Cedric
+  - Cedric, Cnam, Paris
   email: frederic.bertrand@lecnam.net
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette

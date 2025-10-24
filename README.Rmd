@@ -24,6 +24,8 @@ With the growth of big data, variable selection has become one of the major chal
 
 Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
 
+> **Conference highlight.** SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 in Portland, OR, in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (Frédéric Bertrand & M. Maumy). The presentation underscored how correlated resampling improves recall and precision in high-dimensional, highly correlated settings.
+
 ## Key features
 - **Bootstrap stability-selection** for all distribution parameters (μ, σ, ν, τ) with optional SelectBoost grouping over correlation clusters.
 - **Multiple engines:** classical stepwise via `gamlss::stepGAIC()`, lasso/ridge/elastic-net via **glmnet**, grouped penalties via **grpreg**/**SGL** (group lasso / sparse group lasso), and per-parameter engine choices.
@@ -84,14 +86,22 @@ res <- sb_gamlss(
 )
 
 res$final_formula
-head(selection_table(res))
+sel <- selection_table(res)
+sel <- sel[order(sel$parameter, -sel$prop), , drop = FALSE]
+head(sel, n = min(8L, nrow(sel)))
+stable <- sel[sel$prop >= res$pi_thr, , drop = FALSE]
+if (nrow(stable)) {
+  stable
+} else {
+  cat("No terms reached the stability threshold of", res$pi_thr, "for this run.\n")
+}
 plot_sb_gamlss(res)
 if (requireNamespace("ggplot2", quietly = TRUE)) {
   print(effect_plot(res, "x1", dat, what = "mu"))
 }
 ```
 
-`selection_table()` ranks the most stable terms per parameter, `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (falls back to base graphics if **ggplot2** is unavailable).
+`selection_table()` ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (falls back to base graphics if **ggplot2** is unavailable).
 
 
 ### SelectBoost integration

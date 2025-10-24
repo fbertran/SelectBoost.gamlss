@@ -43,6 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/advanced-real-data-examples.html">Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</a></li>
+    <li><a class="dropdown-item" href="../articles/algorithm-pseudocode.html">Algorithmic Pseudocode for SelectBoost.gamlss</a></li>
     <li><a class="dropdown-item" href="../articles/benchmark.html">Benchmark: Stepwise vs Grouped vs Glmnet Engines</a></li>
     <li><a class="dropdown-item" href="../articles/comparison.html">Comparing SelectBoost-GAMLSS Variants</a></li>
     <li><a class="dropdown-item" href="../articles/confidence-functionals.html">Confidence Functionals for SelectBoost-GAMLSS</a></li>
@@ -72,7 +73,14 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Comparing SelectBoost-GAMLSS Variants</h1>
-            
+                        <h4 data-toc-skip class="author">Frédéric
+Bertrand</h4>
+            <address class="author_afil">
+      Cedric, Cnam,
+Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
+      </address>
+                  
+            <h4 data-toc-skip class="date">2025-10-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/comparison.Rmd" class="external-link"><code>vignettes/comparison.Rmd</code></a></small>
       <div class="d-none name"><code>comparison.Rmd</code></div>
@@ -85,29 +93,23 @@ SelectBoost-integrated <code>SelectBoost_gamlss</code>, grid-based
 <code>sb_gamlss_c0_grid</code> + <code>autoboost_gamlss</code>, and the
 lightweight <code>fastboost_gamlss</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required package: splines</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: gamlss.data</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'gamlss.data'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:datasets':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     sleep</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: gamlss.dist</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: nlme</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: parallel</span></span></code></pre>
-<pre><code><span><span class="co">##  **********   GAMLSS Version 5.5-0  **********</span></span></code></pre>
-<pre><code><span><span class="co">## For more on GAMLSS look at https://www.gamlss.com/</span></span></code></pre>
-<pre><code><span><span class="co">## Type gamlssNews() to see new features/changes/bug fixes.</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'SelectBoost.gamlss'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     %||%</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: splines</span></span>
+<span><span class="co">#&gt; Loading required package: gamlss.data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'gamlss.data'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:datasets':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     sleep</span></span>
+<span><span class="co">#&gt; Loading required package: gamlss.dist</span></span>
+<span><span class="co">#&gt; Loading required package: nlme</span></span>
+<span><span class="co">#&gt; Loading required package: parallel</span></span>
+<span><span class="co">#&gt;  **********   GAMLSS Version 5.5-0  **********</span></span>
+<span><span class="co">#&gt; For more on GAMLSS look at https://www.gamlss.com/</span></span>
+<span><span class="co">#&gt; Type gamlssNews() to see new features/changes/bug fixes.</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
 <span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">x4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fl">0.5</span> <span class="op">+</span> <span class="fl">1.2</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="fl">0.8</span><span class="op">*</span><span class="va">x3</span></span>
@@ -119,86 +121,83 @@ lightweight <code>fastboost_gamlss</code>.</p>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">50</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">b0</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571</span></span>
+<span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">b0</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-1-1.png" width="700"></p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># SelectBoost integration (single c0)</span></span>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># SelectBoost integration (single c0)</span></span>
 <span><span class="va">sb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/SelectBoost_gamlss.html">SelectBoost_gamlss</a></span><span class="op">(</span></span>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">50</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, c0 <span class="op">=</span> <span class="fl">0.5</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571</span></span></code></pre>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sb</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">sb</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-1-2.png" width="700"><img src="comparison_files/figure-html/unnamed-chunk-1-3.png" width="700"></p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># c0 grid + autoboost</span></span>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># c0 grid + autoboost</span></span>
 <span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid</a></span><span class="op">(</span></span>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
 <span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |===================================                                   |  50%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |======================================================================| 100%</span></span></code></pre>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |===================================                                   |  50%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-1-4.png" width="700"></p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/confidence_table.html">confidence_table</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   parameter term conf_index cover</span></span>
-<span><span class="co">## 1        mu   x1        0.4     1</span></span>
-<span><span class="co">## 5        mu   x3        0.4     1</span></span>
-<span><span class="co">## 2     sigma   x1        0.0     0</span></span>
-<span><span class="co">## 3        mu   x2        0.0     0</span></span>
-<span><span class="co">## 4     sigma   x2        0.0     0</span></span>
-<span><span class="co">## 6        mu   x4        0.0     0</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autoboost_gamlss.html">autoboost_gamlss</a></span><span class="op">(</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/confidence_table.html">confidence_table</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   parameter term conf_index cover</span></span>
+<span><span class="co">#&gt; 1        mu   x1        0.4     1</span></span>
+<span><span class="co">#&gt; 5        mu   x3        0.4     1</span></span>
+<span><span class="co">#&gt; 2     sigma   x1        0.0     0</span></span>
+<span><span class="co">#&gt; 3        mu   x2        0.0     0</span></span>
+<span><span class="co">#&gt; 4     sigma   x2        0.0     0</span></span>
+<span><span class="co">#&gt; 6        mu   x4        0.0     0</span></span>
+<span></span>
+<span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/autoboost_gamlss.html">autoboost_gamlss</a></span><span class="op">(</span></span>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
 <span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |===================================                                   |  50%</span></span></code></pre>
-<pre><code><span><span class="co">## Warning in RS(): Algorithm RS has not yet converged</span></span></code></pre>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
-<span><span class="co">##   |                                                                              |======================================================================| 100%</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">ab</span>, <span class="st">"chosen_c0"</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] 0.2</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">ab</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |===================================                                   |  50%</span></span>
+<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">ab</span>, <span class="st">"chosen_c0"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0.2</span></span>
+<span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">ab</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-1-5.png" width="700"></p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># fastboost (lightweight)</span></span>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># fastboost (lightweight)</span></span>
 <span><span class="va">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fastboost_gamlss.html">fastboost_gamlss</a></span><span class="op">(</span></span>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">x4</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">30</span>, sample_fraction <span class="op">=</span> <span class="fl">0.6</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1453.571</span></span></code></pre>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fb</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1453.571 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1453.571</span></span>
+<span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fb</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-1-6.png" width="700"></p>
 <div class="section level2">
 <h2 id="confidence-functionals-ausc-coverage-quantiles-weighted-conservative">Confidence Functionals (AUSC, Coverage, Quantiles, Weighted,
@@ -231,7 +230,7 @@ to emphasize parts of the grid.</li>
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
 before computing AUSC.</li>
 </ul>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using the grid g created above</span></span>
 <span><span class="va">cf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confidence_functionals.html">confidence_functionals</a></span><span class="op">(</span></span>
 <span>  <span class="va">g</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
@@ -240,26 +239,26 @@ before computing AUSC.</li>
 <span>  conservative <span class="op">=</span> <span class="cn">TRUE</span>, B <span class="op">=</span> <span class="fl">40</span>,           <span class="co"># use lower bounds</span></span>
 <span>  method <span class="op">=</span> <span class="st">"trapezoid"</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##          area  area_pos      w_area cover        sup        inf         q50</span></span>
-<span><span class="co">## 1 0.912375461 0.3123755 0.912375461     1 0.91237546 0.91237546 0.912375461</span></span>
-<span><span class="co">## 3 0.912375461 0.3123755 0.912375461     1 0.91237546 0.91237546 0.912375461</span></span>
-<span><span class="co">## 6 0.048498421 0.0000000 0.063195402     0 0.07061092 0.00000000 0.055094902</span></span>
-<span><span class="co">## 5 0.037500329 0.0000000 0.037371182     0 0.05459420 0.02583556 0.039578888</span></span>
-<span><span class="co">## 2 0.006910189 0.0000000 0.002892637     0 0.01382038 0.00000000 0.006910189</span></span>
-<span><span class="co">## 4 0.000000000 0.0000000 0.000000000     0 0.00000000 0.00000000 0.000000000</span></span>
-<span><span class="co">##          q80        q90 parameter term  rank_score</span></span>
-<span><span class="co">## 1 0.91237546 0.91237546        mu   x1 0.638662823</span></span>
-<span><span class="co">## 3 0.91237546 0.91237546        mu   x3 0.638662823</span></span>
-<span><span class="co">## 6 0.07061092 0.07061092     sigma   x2 0.014122183</span></span>
-<span><span class="co">## 5 0.04558501 0.05008960     sigma   x1 0.010017921</span></span>
-<span><span class="co">## 2 0.01382038 0.01382038        mu   x2 0.002764075</span></span>
-<span><span class="co">## 4 0.00000000 0.00000000        mu   x4 0.000000000</span></span></code></pre>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cf</span>, top <span class="op">=</span> <span class="fl">12</span>, label_top <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          area  area_pos      w_area cover        sup        inf         q50</span></span>
+<span><span class="co">#&gt; 1 0.912375461 0.3123755 0.912375461     1 0.91237546 0.91237546 0.912375461</span></span>
+<span><span class="co">#&gt; 3 0.912375461 0.3123755 0.912375461     1 0.91237546 0.91237546 0.912375461</span></span>
+<span><span class="co">#&gt; 6 0.048498421 0.0000000 0.063195402     0 0.07061092 0.00000000 0.055094902</span></span>
+<span><span class="co">#&gt; 5 0.037500329 0.0000000 0.037371182     0 0.05459420 0.02583556 0.039578888</span></span>
+<span><span class="co">#&gt; 2 0.006910189 0.0000000 0.002892637     0 0.01382038 0.00000000 0.006910189</span></span>
+<span><span class="co">#&gt; 4 0.000000000 0.0000000 0.000000000     0 0.00000000 0.00000000 0.000000000</span></span>
+<span><span class="co">#&gt;          q80        q90 parameter term  rank_score</span></span>
+<span><span class="co">#&gt; 1 0.91237546 0.91237546        mu   x1 0.638662823</span></span>
+<span><span class="co">#&gt; 3 0.91237546 0.91237546        mu   x3 0.638662823</span></span>
+<span><span class="co">#&gt; 6 0.07061092 0.07061092     sigma   x2 0.014122183</span></span>
+<span><span class="co">#&gt; 5 0.04558501 0.05008960     sigma   x1 0.010017921</span></span>
+<span><span class="co">#&gt; 2 0.01382038 0.01382038        mu   x2 0.002764075</span></span>
+<span><span class="co">#&gt; 4 0.00000000 0.00000000        mu   x4 0.000000000</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cf</span>, top <span class="op">=</span> <span class="fl">12</span>, label_top <span class="op">=</span> <span class="fl">8</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Inspect stability curves of top terms</span></span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="co"># Inspect stability curves of top terms</span></span>
 <span><span class="va">top_terms</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">cf</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">cf</span><span class="op">$</span><span class="va">rank_score</span>, decreasing <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"term"</span>,<span class="st">"parameter"</span><span class="op">)</span><span class="op">]</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_stability_curves.html">plot_stability_curves</a></span><span class="op">(</span><span class="va">g</span>, terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">top_terms</span><span class="op">$</span><span class="va">term</span><span class="op">)</span>, parameter <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">top_terms</span><span class="op">$</span><span class="va">parameter</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-2-2.png" width="700"></p>
@@ -267,7 +266,7 @@ before computing AUSC.</li>
 <div class="section level2">
 <h2 id="grouped-penalties-for-factors-splines">Grouped penalties for factors &amp; splines<a class="anchor" aria-label="anchor" href="#grouped-penalties-for-factors-splines"></a>
 </h2>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span>
 <span></span>
@@ -285,66 +284,65 @@ before computing AUSC.</li>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>,</span>
 <span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 1595.614 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1595.614</span></span></code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Group lasso for μ and sparse group lasso for σ</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1595.614 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1595.614</span></span>
+<span></span>
+<span><span class="co"># Group lasso for μ and sparse group lasso for σ</span></span>
 <span><span class="va">fit_grp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>,</span>
 <span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
 <span>  engine <span class="op">=</span> <span class="st">"grpreg"</span>, engine_sigma <span class="op">=</span> <span class="st">"sgl"</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 2012.29 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 2010.758 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 2010.21 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 2009.983 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 2009.917 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 2009.897 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 2009.885 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 2009.875 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 2009.868 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 2009.862 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 2009.857 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 2009.853 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 2009.849 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 2009.847 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 2009.844 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 16: Global Deviance = 2009.843 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 17: Global Deviance = 2009.841 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 18: Global Deviance = 2009.84 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 19: Global Deviance = 2009.839</span></span></code></pre>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fit_step</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2012.29 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2010.758 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 2010.21 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 2009.983 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 2009.917 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 2009.897 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 2009.885 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 2009.875 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 2009.868 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 2009.862 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 2009.857 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 2009.853 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 2009.849 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 2009.847 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 2009.844 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 2009.843 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 2009.841 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 2009.84 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 2009.839</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fit_step</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fit_grp</span><span class="op">)</span></span></code></pre></div>
 <p><img src="comparison_files/figure-html/unnamed-chunk-3-2.png" width="700"></p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_step</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   parameter   term count  prop</span></span>
-<span><span class="co">## 1        mu      f    40 1.000</span></span>
-<span><span class="co">## 2        mu     x1    40 1.000</span></span>
-<span><span class="co">## 3        mu pb(x2)    40 1.000</span></span>
-<span><span class="co">## 4        mu   f:x1     2 0.050</span></span>
-<span><span class="co">## 5     sigma      f     1 0.025</span></span>
-<span><span class="co">## 6     sigma     x1     2 0.050</span></span></code></pre>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_grp</span><span class="op">)</span>  <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   parameter   term count prop</span></span>
-<span><span class="co">## 1        mu      f     0    0</span></span>
-<span><span class="co">## 2        mu     x1     0    0</span></span>
-<span><span class="co">## 3        mu pb(x2)     0    0</span></span>
-<span><span class="co">## 4        mu   f:x1     0    0</span></span>
-<span><span class="co">## 5     sigma      f    40    1</span></span>
-<span><span class="co">## 6     sigma     x1    40    1</span></span></code></pre>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_step</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   parameter   term count  prop</span></span>
+<span><span class="co">#&gt; 1        mu      f    40 1.000</span></span>
+<span><span class="co">#&gt; 2        mu     x1    40 1.000</span></span>
+<span><span class="co">#&gt; 3        mu pb(x2)    40 1.000</span></span>
+<span><span class="co">#&gt; 4        mu   f:x1     2 0.050</span></span>
+<span><span class="co">#&gt; 5     sigma      f     1 0.025</span></span>
+<span><span class="co">#&gt; 6     sigma     x1     2 0.050</span></span>
+<span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_grp</span><span class="op">)</span>  <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   parameter   term count prop</span></span>
+<span><span class="co">#&gt; 1        mu      f     0    0</span></span>
+<span><span class="co">#&gt; 2        mu     x1     0    0</span></span>
+<span><span class="co">#&gt; 3        mu pb(x2)     0    0</span></span>
+<span><span class="co">#&gt; 4        mu   f:x1     0    0</span></span>
+<span><span class="co">#&gt; 5     sigma      f    40    1</span></span>
+<span><span class="co">#&gt; 6     sigma     x1    40    1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="tuning-group-knockoffs">Tuning &amp; Group Knockoffs<a class="anchor" aria-label="anchor" href="#tuning-group-knockoffs"></a>
 </h2>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Tuning engines / penalties</span></span>
 <span><span class="va">cfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"stepGAIC"</span><span class="op">)</span>,</span>
@@ -356,37 +354,36 @@ before computing AUSC.</li>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
 <span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, sample_fraction <span class="op">=</span> <span class="fl">0.7</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span><span class="va">cfgs</span>, base_args <span class="op">=</span> <span class="va">base</span>, B_small <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1595.614 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1595.614 </span></span>
-<span><span class="co">##   |                                                                              |=======================                                               |  33%GAMLSS-RS iteration 1: Global Deviance = 1595.614 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1595.614 </span></span>
-<span><span class="co">##   |                                                                              |===============================================                       |  67%GAMLSS-RS iteration 1: Global Deviance = 2012.29 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 2010.758 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 2010.21 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 2009.983 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 2009.917 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 2009.897 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 2009.885 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 2009.875 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 2009.868 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 2009.862 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 2009.857 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 2009.853 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 2009.849 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 2009.847 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 2009.844 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 16: Global Deviance = 2009.843 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 17: Global Deviance = 2009.841 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 18: Global Deviance = 2009.84 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 19: Global Deviance = 2009.839 </span></span>
-<span><span class="co">##   |                                                                              |======================================================================| 100%</span></span></code></pre>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tuned</span><span class="op">$</span><span class="va">best_config</span></span></code></pre></div>
-<pre><code><span><span class="co">## $engine</span></span>
-<span><span class="co">## [1] "stepGAIC"</span></span></code></pre>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Approximate group knockoffs for mu</span></span>
+<span><span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span><span class="va">cfgs</span>, base_args <span class="op">=</span> <span class="va">base</span>, B_small <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1595.614 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1595.614 </span></span>
+<span><span class="co">#&gt;   |                                                                              |=======================                                               |  33%GAMLSS-RS iteration 1: Global Deviance = 1595.614 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1595.614 </span></span>
+<span><span class="co">#&gt;   |                                                                              |===============================================                       |  67%GAMLSS-RS iteration 1: Global Deviance = 2012.29 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2010.758 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 2010.21 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 2009.983 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 2009.917 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 2009.897 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 2009.885 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 2009.875 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 2009.868 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 2009.862 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 2009.857 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 2009.853 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 2009.849 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 2009.847 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 2009.844 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 2009.843 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 2009.841 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 2009.84 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 2009.839 </span></span>
+<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="va">tuned</span><span class="op">$</span><span class="va">best_config</span></span>
+<span><span class="co">#&gt; $engine</span></span>
+<span><span class="co">#&gt; [1] "stepGAIC"</span></span>
+<span></span>
+<span><span class="co"># Approximate group knockoffs for mu</span></span>
 <span><span class="va">sel_mu</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"knockoff"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">sel_mu</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
@@ -398,10 +395,9 @@ before computing AUSC.</li>
 <span>  <span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Package 'knockoff' not installed; skipping knockoff example.\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## Knockoff filter failed: non-numeric argument to binary operator — skipping example.</span></span></code></pre>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">sel_mu</span><span class="op">)</span><span class="op">)</span> <span class="va">sel_mu</span></span></code></pre></div>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Knockoff filter failed: non-numeric argument to binary operator — skipping example.</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">sel_mu</span><span class="op">)</span><span class="op">)</span> <span class="va">sel_mu</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

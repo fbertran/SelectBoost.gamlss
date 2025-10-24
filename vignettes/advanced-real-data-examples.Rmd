@@ -4,13 +4,12 @@ shorttitle: "Advanced Real Data Examples"
 author: 
 - name: "Frédéric Bertrand"
   affiliation: 
-  - Cnam, Paris
-  - Cedric
+  - Cedric, Cnam, Paris
   email: frederic.bertrand@lecnam.net
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Advanced Real Data Examples}
+  %\VignetteIndexEntry{Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -30,6 +29,8 @@ This vignette demonstrates **SelectBoost.gamlss** on three additional *real* dat
 - **Zero-inflated counts** (`pscl::bioChemists`): ZIP / ZINB
 - **Semicontinuous** (`datasets::airquality` Ozone): ZAGA
 - **Longitudinal growth with random effects** (`nlme::Orthodont`): random intercepts
+
+> **Conference highlight.** These examples build on the communication *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (Frédéric Bertrand & Myriam Maumy) delivered at the Joint Statistics Meetings 2024 in Portland, emphasizing SelectBoost-driven variable selection for GAMLSS and quantile regression through resampling-intensive benchmarking.
 
 ```{r}
 library(SelectBoost.gamlss)
@@ -65,16 +66,26 @@ if (requireNamespace("pscl", quietly = TRUE)) {
     set.seed(10)
     fit_zip <- sb_gamlss(
       art ~ 1, data = bc, family = gamlss.dist::ZIP(),
-      mu_scope = ~ kid5 + fem + mar + phd + ment + dept,
+      mu_scope = ~ kid5 + fem + mar + phd + ment,
       engine = "grpreg", grpreg_penalty = "grLasso",
       B = 80, pi_thr = 0.6, pre_standardize = FALSE, parallel = "auto", trace = FALSE
     )
-    head(selection_table(fit_zip))
+    sel_zip <- selection_table(fit_zip)
+    sel_zip <- sel_zip[order(sel_zip$parameter, -sel_zip$prop), , drop = FALSE]
+    head(sel_zip, n = min(8L, nrow(sel_zip)))
+    stable_zip <- sel_zip[sel_zip$prop >= fit_zip$pi_thr, , drop = FALSE]
+    if (nrow(stable_zip)) {
+      stable_zip
+    } else {
+      cat("No terms reached the stability threshold of", fit_zip$pi_thr, "for this run.\n")
+    }
   }
 } else {
   cat("Package 'pscl' not installed; skipping bioChemists example.\n")
 }
 ```
+
+The tables above report the eight most stable terms (sorted within each parameter) together with the subset that exceeds the stability threshold `pi_thr`.
 
 ### ZINB often handles overdispersion better than ZIP
 ```{r}
@@ -82,11 +93,19 @@ if (requireNamespace("pscl", quietly = TRUE) && !is.null(bc)) {
   set.seed(11)
   fit_zinb <- sb_gamlss(
     art ~ 1, data = bc, family = gamlss.dist::ZINBI(),
-    mu_scope = ~ kid5 + fem + mar + phd + ment + dept,
+    mu_scope = ~ kid5 + fem + mar + phd + ment,
     engine = "grpreg", grpreg_penalty = "grLasso",
     B = 80, pi_thr = 0.6, pre_standardize = FALSE, parallel = "auto", trace = FALSE
   )
-  head(selection_table(fit_zinb))
+  sel_zinb <- selection_table(fit_zinb)
+  sel_zinb <- sel_zinb[order(sel_zinb$parameter, -sel_zinb$prop), , drop = FALSE]
+  head(sel_zinb, n = min(8L, nrow(sel_zinb)))
+  stable_zinb <- sel_zinb[sel_zinb$prop >= fit_zinb$pi_thr, , drop = FALSE]
+  if (nrow(stable_zinb)) {
+    stable_zinb
+  } else {
+    cat("No terms reached the stability threshold of", fit_zinb$pi_thr, "for this run.\n")
+  }
 } else if (!requireNamespace("pscl", quietly = TRUE)) {
   cat("Package 'pscl' not installed; skipping bioChemists example.\n")
 } else {
@@ -147,8 +166,18 @@ fit_zaga <- sb_gamlss(
   engine = "grpreg", grpreg_penalty = "grLasso",
   B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto", trace = FALSE
 )
-head(selection_table(fit_zaga))
+sel_zaga <- selection_table(fit_zaga)
+sel_zaga <- sel_zaga[order(sel_zaga$parameter, -sel_zaga$prop), , drop = FALSE]
+head(sel_zaga, n = min(8L, nrow(sel_zaga)))
+stable_zaga <- sel_zaga[sel_zaga$prop >= fit_zaga$pi_thr, , drop = FALSE]
+if (nrow(stable_zaga)) {
+  stable_zaga
+} else {
+  cat("No terms reached the stability threshold of", fit_zaga$pi_thr, "for this run.\n")
+}
 ```
+
+As with the count model, we present the eight most persistent effects plus the subset clearing the stability requirement.
 
 ### Effect plot for Temp on mu (ZAGA)
 ```{r}
@@ -163,30 +192,54 @@ if (requireNamespace('ggplot2', quietly = TRUE)) {
 
 ## 3. Longitudinal growth with random effects — `nlme::Orthodont`
 
-Fit **random intercepts** by subject using `gamlss.random::random()`, while selecting fixed effects for μ.
+Fit **random intercepts** by subject using `gamlss::random()`, while selecting fixed effects for μ.
 
 ```{r}
 if (requireNamespace("nlme", quietly = TRUE)) {
-  data(Orthodont, package = "nlme")       # distance ~ age, Sex, Subject
-  data(Orthodont,package="nlme")
-  Orthodont$Subject <- factor(Orthodont$Subject); Orthodont$Sex <- factor(Orthodont$Sex)
-
-  set.seed(30)
-  fit_long <- sb_gamlss(
-    distance ~ gamlss::random(Subject),     # random intercept
-    data = od, family = gamlss.dist::NO(),
-    mu_scope = ~ pb(age) + Sex + pb(age):Sex,      # select fixed effects
-    engine = "grpreg", grpreg_penalty = "grLasso",
-    B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto", trace = FALSE
-  )
-  head(selection_table(fit_long))  
-  if (requireNamespace("ggplot2", quietly = TRUE)) {
-    gg <- effect_plot(fit_long, "age", od, what = "mu")
-    print(gg)
+  data_ok <- tryCatch({
+    utils::data("Orthodont", package = "nlme", envir = environment())
+    TRUE
+  }, error = function(e) FALSE)
+  if (!data_ok || !exists("Orthodont", inherits = FALSE)) {
+    cat("Dataset 'Orthodont' unavailable; skipping longitudinal example.\n")
+  } else {
+    od <- get("Orthodont", inherits = FALSE)
+    rm(Orthodont)
+    od$Subject <- factor(od$Subject)
+    od$Sex <- factor(od$Sex)
+    set.seed(30)
+    fit_long <- sb_gamlss(
+      distance ~ gamlss::random(Subject),     # random intercept
+      data = od, family = gamlss.dist::NO(),
+      mu_scope = ~ pb(age) + Sex + pb(age):Sex,      # select fixed effects
+      engine = "grpreg", grpreg_penalty = "grLasso",
+      B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto", trace = FALSE
+    )
+  sel_long <- selection_table(fit_long)
+  sel_long <- sel_long[order(sel_long$parameter, -sel_long$prop), , drop = FALSE]
+  head(sel_long, n = min(8L, nrow(sel_long)))
+  stable_long <- sel_long[sel_long$prop >= fit_long$pi_thr, , drop = FALSE]
+  if (nrow(stable_long)) {
+    stable_long
+  } else {
+    cat("No terms reached the stability threshold of", fit_long$pi_thr, "for this run.\n")
+  }
+    if (requireNamespace("ggplot2", quietly = TRUE)) {
+      gg <- tryCatch(
+        effect_plot(fit_long, "age", od, what = "mu"),
+        error = function(e) {
+          message("effect_plot() skipped for random-effect example: ", conditionMessage(e))
+          NULL
+        }
+      )
+      if (!is.null(gg)) {
+        print(gg)
+      }
+    }
   }
 } else {
-  cat("Packages 'nlme' not installed; skipping longitudinal example.\n")
+  cat("Package 'nlme' not installed; skipping longitudinal example.\n")
 }
 ```
 
-**Notes.** The `random(Subject)` term stays in the base formula (not in `mu_scope`) so it is always included, while SelectBoost focuses on selecting the **fixed** structure.
+**Notes.** The `random(Subject)` term stays in the base formula (not in `mu_scope`) so it is always included, while SelectBoost focuses on selecting the **fixed** structure. Some plotting helpers (e.g., `effect_plot()`) may be skipped when random-effect predictions are unavailable in a given setup.

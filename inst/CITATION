@@ -6,16 +6,37 @@ vers <- paste("R package version", meta$Version)
 doi <- paste0("10.32614/CRAN.package.", meta$Package)
 urldoi <- paste0("https://doi.org/", doi)
 
-bibentry(bibtype="Manual",
+bibentry(bibtype = "Manual",
          title = titl,
-         author = c(person(given = "Frederic", family= "Bertrand")),
-         year         = year,
-         note         = vers,
-#         url          = "https://CRAN.R-project.org/package=SelectBoost.gamlss",
-#         doi         = doi,
-         textVersion = 
-         paste("Frederic Bertrand (",year ,"). ", 
-               titl, ", ", vers, ".", sep=""
-#               titl, ", ", vers, ". doi:", doi, ".", sep=""
-               )
+         author = c(person(given = "Frederic", family = "Bertrand")),
+         year = year,
+         note = vers,
+#         url = "https://CRAN.R-project.org/package=SelectBoost.gamlss",
+#         doi = doi,
+         textVersion =
+           paste(
+             "Frederic Bertrand (", year, "). ",
+             titl, ", ", vers, ".",
+#               titl, ", ", vers, ". doi:", doi, ".",
+             sep=""
+           )
+)
+
+bibentry(
+  bibtype = "InProceedings",
+  title = "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression",
+  author = c(
+    person(given = "Frederic", family = "Bertrand"),
+    person(given = "Myriam", family = "Maumy")
+  ),
+  year = "2024",
+  booktitle = "Joint Statistical Meetings (JSM) 2024, Portland, OR",
+  organization = "American Statistical Association",
+  note = "Conference presentation highlighting SelectBoost for GAMLSS and quantile regression via correlation-aware resampling.",
+  keywords = "GAMLSS; quantile regression; resampling; simulation; variable selection",
+  textVersion = paste(
+    "Frederic Bertrand and Myriam Maumy (2024).",
+    "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression.",
+    "Joint Statistical Meetings (JSM) 2024, Portland, OR."
+  )
 )

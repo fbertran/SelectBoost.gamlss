@@ -1,7 +1,13 @@
 #' @keywords internal
 #' @aliases SelectBoost.gamlss-package SelectBoost.gamlss NULL
 #'
-#' @references TODO
+#' @references
+#' Bertrand, F. and Maumy, M. (2024). *An Improvement for Variable Selection for
+#' Generalized Additive Models for Location, Shape and Scale and Quantile
+#' Regression*. Joint Statistics Meetings (JSM) 2024, Portland, OR. Presented the
+#' SelectBoost approach for GAMLSS and quantile regression, emphasizing
+#' correlation-aware resampling to improve recall and precision when predictors
+#' are numerous and highly correlated. 
 #'
 #' @author This package was written by Frederic Bertrand.
 #' Maintainer: Frederic Bertrand <frederic.bertrand@@lecnam.net>
@@ -34,7 +40,7 @@
 #' @importFrom graphics plot.new
 #' @importFrom graphics text
 #' @importFrom graphics title
-#' @importFrom rlang .data
+# #' @importFrom rlang .data
 #' @importFrom stats aggregate
 #' @importFrom stats coef
 #' @importFrom stats logLik

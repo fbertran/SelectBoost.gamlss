@@ -43,6 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/advanced-real-data-examples.html">Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</a></li>
+    <li><a class="dropdown-item" href="../articles/algorithm-pseudocode.html">Algorithmic Pseudocode for SelectBoost.gamlss</a></li>
     <li><a class="dropdown-item" href="../articles/benchmark.html">Benchmark: Stepwise vs Grouped vs Glmnet Engines</a></li>
     <li><a class="dropdown-item" href="../articles/comparison.html">Comparing SelectBoost-GAMLSS Variants</a></li>
     <li><a class="dropdown-item" href="../articles/confidence-functionals.html">Confidence Functionals for SelectBoost-GAMLSS</a></li>
@@ -72,7 +73,14 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</h1>
-            
+                        <h4 data-toc-skip class="author">Frédéric
+Bertrand</h4>
+            <address class="author_afil">
+      Cedric, Cnam,
+Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
+      </address>
+                  
+            <h4 data-toc-skip class="date">2025-10-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/advanced-real-data-examples.Rmd" class="external-link"><code>vignettes/advanced-real-data-examples.Rmd</code></a></small>
       <div class="d-none name"><code>advanced-real-data-examples.Rmd</code></div>
@@ -86,28 +94,31 @@ counts</strong> (<code><a href="https://rdrr.io/pkg/pscl/man/bioChemists.html" c
 <strong>Semicontinuous</strong> (<code><a href="https://rdrr.io/r/datasets/airquality.html" class="external-link">datasets::airquality</a></code>
 Ozone): ZAGA - <strong>Longitudinal growth with random effects</strong>
 (<code><a href="https://rdrr.io/pkg/nlme/man/Orthodont.html" class="external-link">nlme::Orthodont</a></code>): random intercepts</p>
+<blockquote>
+<p><strong>Conference highlight.</strong> These examples build on the
+communication <em>“An Improvement for Variable Selection for Generalized
+Additive Models for Location, Shape and Scale and Quantile
+Regression”</em> (Frédéric Bertrand &amp; Myriam Maumy) delivered at the
+Joint Statistics Meetings 2024 in Portland, emphasizing
+SelectBoost-driven variable selection for GAMLSS and quantile regression
+through resampling-intensive benchmarking.</p>
+</blockquote>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'SelectBoost.gamlss'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     %||%</span></span></code></pre>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required package: splines</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: gamlss.data</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'gamlss.data'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:datasets':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     sleep</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: gamlss.dist</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: nlme</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: parallel</span></span></code></pre>
-<pre><code><span><span class="co">##  **********   GAMLSS Version 5.5-0  **********</span></span></code></pre>
-<pre><code><span><span class="co">## For more on GAMLSS look at https://www.gamlss.com/</span></span></code></pre>
-<pre><code><span><span class="co">## Type gamlssNews() to see new features/changes/bug fixes.</span></span></code></pre>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: splines</span></span>
+<span><span class="co">#&gt; Loading required package: gamlss.data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'gamlss.data'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:datasets':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     sleep</span></span>
+<span><span class="co">#&gt; Loading required package: gamlss.dist</span></span>
+<span><span class="co">#&gt; Loading required package: nlme</span></span>
+<span><span class="co">#&gt; Loading required package: parallel</span></span>
+<span><span class="co">#&gt;  **********   GAMLSS Version 5.5-0  **********</span></span>
+<span><span class="co">#&gt; For more on GAMLSS look at https://www.gamlss.com/</span></span>
+<span><span class="co">#&gt; Type gamlssNews() to see new features/changes/bug fixes.</span></span></code></pre></div>
 <blockquote>
 <p>Optional engines:
 <code>install.packages(c("glmnet","grpreg","SGL","future.apply"))</code></p>
@@ -116,7 +127,7 @@ Ozone): ZAGA - <strong>Longitudinal growth with random effects</strong>
 <h2 id="zero-inflated-counts-psclbiochemists-zipzinb">1. Zero-inflated counts — <code>pscl::bioChemists</code>
 (ZIP/ZINB)<a class="anchor" aria-label="anchor" href="#zero-inflated-counts-psclbiochemists-zipzinb"></a>
 </h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bc</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pscl"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"bioChemists"</span>, package <span class="op">=</span> <span class="st">"pscl"</span><span class="op">)</span></span>
@@ -145,26 +156,27 @@ Ozone): ZAGA - <strong>Longitudinal growth with random effects</strong>
 <span>      engine <span class="op">=</span> <span class="st">"grpreg"</span>, grpreg_penalty <span class="op">=</span> <span class="st">"grLasso"</span>,</span>
 <span>      B <span class="op">=</span> <span class="fl">80</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">FALSE</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>    <span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_zip</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">sel_zip</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_zip</span><span class="op">)</span></span>
+<span>    <span class="va">sel_zip</span> <span class="op">&lt;-</span> <span class="va">sel_zip</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel_zip</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel_zip</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sel_zip</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">8L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sel_zip</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">stable_zip</span> <span class="op">&lt;-</span> <span class="va">sel_zip</span><span class="op">[</span><span class="va">sel_zip</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">fit_zip</span><span class="op">$</span><span class="va">pi_thr</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stable_zip</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="va">stable_zip</span></span>
+<span>    <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"No terms reached the stability threshold of"</span>, <span class="va">fit_zip</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="st">"for this run.\n"</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Package 'pscl' not installed; skipping bioChemists example.\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 3367.349 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 3359.01 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 3358.788 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 3358.783 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 3358.782</span></span></code></pre>
-<pre><code><span><span class="co">##   parameter term count prop</span></span>
-<span><span class="co">## 1        mu kid5     0    0</span></span>
-<span><span class="co">## 2        mu  fem     0    0</span></span>
-<span><span class="co">## 3        mu  mar     0    0</span></span>
-<span><span class="co">## 4        mu  phd     0    0</span></span>
-<span><span class="co">## 5        mu ment     0    0</span></span></code></pre>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; No terms reached the stability threshold of 0.6 for this run.</span></span></code></pre></div>
+<p>The tables above report the eight most stable terms (sorted within
+each parameter) together with the subset that exceeds the stability
+threshold <code>pi_thr</code>.</p>
 <div class="section level3">
 <h3 id="zinb-often-handles-overdispersion-better-than-zip">ZINB often handles overdispersion better than ZIP<a class="anchor" aria-label="anchor" href="#zinb-often-handles-overdispersion-better-than-zip"></a>
 </h3>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pscl"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">bc</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">11</span><span class="op">)</span></span>
 <span>  <span class="va">fit_zinb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
@@ -173,31 +185,26 @@ Ozone): ZAGA - <strong>Longitudinal growth with random effects</strong>
 <span>    engine <span class="op">=</span> <span class="st">"grpreg"</span>, grpreg_penalty <span class="op">=</span> <span class="st">"grLasso"</span>,</span>
 <span>    B <span class="op">=</span> <span class="fl">80</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">FALSE</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>  <span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_zinb</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">sel_zinb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_zinb</span><span class="op">)</span></span>
+<span>  <span class="va">sel_zinb</span> <span class="op">&lt;-</span> <span class="va">sel_zinb</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel_zinb</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel_zinb</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sel_zinb</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">8L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sel_zinb</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">stable_zinb</span> <span class="op">&lt;-</span> <span class="va">sel_zinb</span><span class="op">[</span><span class="va">sel_zinb</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">fit_zinb</span><span class="op">$</span><span class="va">pi_thr</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stable_zinb</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">stable_zinb</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"No terms reached the stability threshold of"</span>, <span class="va">fit_zinb</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="st">"for this run.\n"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pscl"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Package 'pscl' not installed; skipping bioChemists example.\n"</span><span class="op">)</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"bioChemists dataset unavailable; skipping ZINBI example.\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 3231.793 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 3226.04 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 3223.159 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 3221.509 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 3220.475 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 3219.911 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 3219.874 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 3219.874</span></span></code></pre>
-<pre><code><span><span class="co">##   parameter term count prop</span></span>
-<span><span class="co">## 1        mu kid5     0    0</span></span>
-<span><span class="co">## 2        mu  fem     0    0</span></span>
-<span><span class="co">## 3        mu  mar     0    0</span></span>
-<span><span class="co">## 4        mu  phd     0    0</span></span>
-<span><span class="co">## 5        mu ment     0    0</span></span></code></pre>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; No terms reached the stability threshold of 0.6 for this run.</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="side-by-side-metrics-zip-vs-zinb">Side-by-side metrics (ZIP vs ZINB)<a class="anchor" aria-label="anchor" href="#side-by-side-metrics-zip-vs-zinb"></a>
 </h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pscl"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"fit_zip"</span>, inherits <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"fit_zinb"</span>, inherits <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">zip_g</span> <span class="op">&lt;-</span> <span class="va">fit_zip</span><span class="op">$</span><span class="va">final_fit</span></span>
@@ -226,10 +233,10 @@ Ozone): ZAGA - <strong>Longitudinal growth with random effects</strong>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Package 'pscl' not installed; skipping bioChemists example.\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">##   model      AIC  GAIC_k2 deviance</span></span>
-<span><span class="co">## 1   ZIP 3362.782 3362.782       NA</span></span>
-<span><span class="co">## 2 ZINBI 3225.873 3225.873       NA</span></span></code></pre>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt;   model      AIC  GAIC_k2 deviance</span></span>
+<span><span class="co">#&gt; 1   ZIP 3362.782 3362.782       NA</span></span>
+<span><span class="co">#&gt; 2 ZINBI 3225.873 3225.873       NA</span></span></code></pre></div>
 <p><strong>Notes.</strong> Many <code>art</code> values are zero;
 <code>ZINB</code> usually outperforms <code>ZIP</code> when
 overdispersion is present. Group lasso treats factor levels as single
@@ -242,7 +249,7 @@ grouped terms.</p>
 </h2>
 <p><code>Ozone</code> is non-negative and has zeros; positive part is
 continuous — ideal for <strong>ZAGA</strong> (zero-adjusted Gamma).</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">aq</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">airquality</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Ozone</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Wind</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Temp</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Solar.R</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">aq</span><span class="op">$</span><span class="va">Month</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">aq</span><span class="op">$</span><span class="va">Month</span><span class="op">)</span></span>
 <span></span>
@@ -253,40 +260,43 @@ continuous — ideal for <strong>ZAGA</strong> (zero-adjusted Gamma).</p>
 <span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb</a></span><span class="op">(</span><span class="va">Temp</span><span class="op">)</span>,</span>
 <span>  engine <span class="op">=</span> <span class="st">"grpreg"</span>, grpreg_penalty <span class="op">=</span> <span class="st">"grLasso"</span>,</span>
 <span>  B <span class="op">=</span> <span class="fl">80</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 1028.243 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 1027.651 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 1027.316 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 1027.17 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 1027.137 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 1027.187 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 1027.302 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 1027.486 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 1027.48 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 1027.378 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 1027.344 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 1027.332 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 1027.329 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 1027.327 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 1027.327</span></span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_zaga</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">##   parameter        term count   prop</span></span>
-<span><span class="co">## 1        mu    pb(Temp)     0 0.0000</span></span>
-<span><span class="co">## 2        mu    pb(Wind)     0 0.0000</span></span>
-<span><span class="co">## 3        mu pb(Solar.R)     0 0.0000</span></span>
-<span><span class="co">## 4        mu       Month     0 0.0000</span></span>
-<span><span class="co">## 5     sigma    pb(Temp)    71 0.8875</span></span></code></pre>
+<span><span class="op">)</span></span>
+<span><span class="va">sel_zaga</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_zaga</span><span class="op">)</span></span>
+<span><span class="va">sel_zaga</span> <span class="op">&lt;-</span> <span class="va">sel_zaga</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel_zaga</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel_zaga</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sel_zaga</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">8L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sel_zaga</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   parameter        term count   prop</span></span>
+<span><span class="co">#&gt; 1        mu    pb(Temp)     0 0.0000</span></span>
+<span><span class="co">#&gt; 2        mu    pb(Wind)     0 0.0000</span></span>
+<span><span class="co">#&gt; 3        mu pb(Solar.R)     0 0.0000</span></span>
+<span><span class="co">#&gt; 4        mu       Month     0 0.0000</span></span>
+<span><span class="co">#&gt; 5     sigma    pb(Temp)    71 0.8875</span></span>
+<span><span class="va">stable_zaga</span> <span class="op">&lt;-</span> <span class="va">sel_zaga</span><span class="op">[</span><span class="va">sel_zaga</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">fit_zaga</span><span class="op">$</span><span class="va">pi_thr</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stable_zaga</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">stable_zaga</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"No terms reached the stability threshold of"</span>, <span class="va">fit_zaga</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="st">"for this run.\n"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt;   parameter     term count   prop</span></span>
+<span><span class="co">#&gt; 5     sigma pb(Temp)    71 0.8875</span></span></code></pre></div>
+<p>As with the count model, we present the eight most persistent effects
+plus the subset clearing the stability requirement.</p>
 <div class="section level3">
 <h3 id="effect-plot-for-temp-on-mu-zaga">Effect plot for Temp on mu (ZAGA)<a class="anchor" aria-label="anchor" href="#effect-plot-for-temp-on-mu-zaga"></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">'ggplot2'</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="../reference/effect_plot.html">effect_plot</a></span><span class="op">(</span><span class="va">fit_zaga</span>, <span class="st">'Temp'</span>, <span class="va">aq</span>, what <span class="op">=</span> <span class="st">'mu'</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## Warning in data.frame(data, source = namelist): row names were found from a</span></span>
-<span><span class="co">## short variable and have been discarded</span></span></code></pre>
-<pre><code><span><span class="co">## Prediction failed for parameter 'mu': arguments imply differing number of rows: 100, 101 (fallback failed at row 1: incompatible dimensions).</span></span></code></pre>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">SelectBoost.gamlss</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at</span></span>
+<span><span class="co">#&gt;   <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/fbertran/SelectBoost.gamlss/issues/&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<p><img src="advanced-real-data-examples_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
 <p><strong>Notes.</strong> <code>ZAGA</code> models a point mass at zero
 plus a Gamma for the positive part. Group selection keeps whole spline
 bases together.</p>
@@ -299,12 +309,12 @@ bases together.</p>
 </h2>
 <p>Fit <strong>random intercepts</strong> by subject using
 <code><a href="https://rdrr.io/pkg/gamlss/man/random.html" class="external-link">gamlss::random()</a></code>, while selecting fixed effects for μ.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"nlme"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">data_ok</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>    <span class="fu">utils</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Orthodont"</span>, package <span class="op">=</span> <span class="st">"nlme"</span>, envir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/environment.html" class="external-link">environment</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="cn">TRUE</span></span>
-<span>  <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="cn">FALSE</span><span class="op">)</span> </span>
+<span>  <span class="op">}</span>, error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="va">data_ok</span> <span class="op">||</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html" class="external-link">exists</a></span><span class="op">(</span><span class="st">"Orthodont"</span>, inherits <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Dataset 'Orthodont' unavailable; skipping longitudinal example.\n"</span><span class="op">)</span></span>
 <span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
@@ -312,7 +322,6 @@ bases together.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">Orthodont</span><span class="op">)</span></span>
 <span>    <span class="va">od</span><span class="op">$</span><span class="va">Subject</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">od</span><span class="op">$</span><span class="va">Subject</span><span class="op">)</span></span>
 <span>    <span class="va">od</span><span class="op">$</span><span class="va">Sex</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">od</span><span class="op">$</span><span class="va">Sex</span><span class="op">)</span></span>
-<span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">30</span><span class="op">)</span></span>
 <span>    <span class="va">fit_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
 <span>      <span class="va">distance</span> <span class="op">~</span> <span class="fu">gamlss</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/random.html" class="external-link">random</a></span><span class="op">(</span><span class="va">Subject</span><span class="op">)</span>,     <span class="co"># random intercept</span></span>
@@ -321,25 +330,38 @@ bases together.</p>
 <span>      engine <span class="op">=</span> <span class="st">"grpreg"</span>, grpreg_penalty <span class="op">=</span> <span class="st">"grLasso"</span>,</span>
 <span>      B <span class="op">=</span> <span class="fl">80</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span>    <span class="op">)</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_long</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
+<span>  <span class="va">sel_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_long</span><span class="op">)</span></span>
+<span>  <span class="va">sel_long</span> <span class="op">&lt;-</span> <span class="va">sel_long</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel_long</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel_long</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sel_long</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">8L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sel_long</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">stable_long</span> <span class="op">&lt;-</span> <span class="va">sel_long</span><span class="op">[</span><span class="va">sel_long</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">fit_long</span><span class="op">$</span><span class="va">pi_thr</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stable_long</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">stable_long</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"No terms reached the stability threshold of"</span>, <span class="va">fit_long</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="st">"for this run.\n"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">gg</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/effect_plot.html">effect_plot</a></span><span class="op">(</span><span class="va">fit_long</span>, <span class="st">"age"</span>, <span class="va">od</span>, what <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span></span>
-<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gg</span><span class="op">)</span></span>
+<span>      <span class="va">gg</span> <span class="op">&lt;-</span> <span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="../reference/effect_plot.html">effect_plot</a></span><span class="op">(</span><span class="va">fit_long</span>, <span class="st">"age"</span>, <span class="va">od</span>, what <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span>,</span>
+<span>        error <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">e</span><span class="op">)</span> <span class="op">{</span></span>
+<span>          <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"effect_plot() skipped for random-effect example: "</span>, <span class="fu"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">conditionMessage</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span><span class="op">)</span></span>
+<span>          <span class="cn">NULL</span></span>
+<span>        <span class="op">}</span></span>
+<span>      <span class="op">)</span></span>
+<span>      <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">gg</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">gg</span><span class="op">)</span></span>
+<span>      <span class="op">}</span></span>
 <span>    <span class="op">}</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Packages 'nlme' not installed; skipping longitudinal example.\n"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"Package 'nlme' not installed; skipping longitudinal example.\n"</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 537.5816 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 537.5816</span></span></code></pre>
-<pre><code><span><span class="co">## Warning in data.frame(data, source = namelist): row names were found from a</span></span>
-<span><span class="co">## short variable and have been discarded</span></span></code></pre>
-<pre><code><span><span class="co">## Prediction failed for parameter 'mu': arguments imply differing number of rows: 100, 101 (fallback failed at row 1: contrasts can be applied only to factors with 2 or more levels).</span></span></code></pre>
+<p><img src="advanced-real-data-examples_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <p><strong>Notes.</strong> The <code>random(Subject)</code> term stays
 in the base formula (not in <code>mu_scope</code>) so it is always
 included, while SelectBoost focuses on selecting the
-<strong>fixed</strong> structure.</p>
+<strong>fixed</strong> structure. Some plotting helpers (e.g.,
+<code><a href="../reference/effect_plot.html">effect_plot()</a></code>) may be skipped when random-effect
+predictions are unavailable in a given setup.</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

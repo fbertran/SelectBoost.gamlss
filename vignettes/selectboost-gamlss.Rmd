@@ -4,8 +4,7 @@ shorttitle: "Stability-Selection for GAMLSS"
 author: 
 - name: "Frédéric Bertrand"
   affiliation: 
-  - Cnam, Paris
-  - Cedric
+  - Cedric, Cnam, Paris
   email: frederic.bertrand@lecnam.net
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -27,6 +26,8 @@ knitr::opts_chunk$set(
 ```
 
 This vignette demonstrates bootstrap stability-selection for GAMLSS models.
+
+> **Conference highlight.** SelectBoost for GAMLSS was presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* by Frédéric Bertrand and M. Maumy. The presentation stressed how correlation-aware resampling sharpens variable selection for GAMLSS and quantile regression problems even when predictors are numerous and strongly correlated.
 
 ```{r}
 set.seed(1)
@@ -55,7 +56,15 @@ fit <- sb_gamlss(
 )
 
 fit$final_formula
-head(selection_table(fit))
+sel <- selection_table(fit)
+sel <- sel[order(sel$parameter, -sel$prop), , drop = FALSE]
+head(sel, n = min(8L, nrow(sel)))
+stable <- sel[sel$prop >= fit$pi_thr, , drop = FALSE]
+if (nrow(stable)) {
+  stable
+} else {
+  cat("No terms reached the stability threshold of", fit$pi_thr, "for this run.\n")
+}
 plot_sb_gamlss(fit, top = 10)
 if (requireNamespace("ggplot2", quietly = TRUE)) {
   print(effect_plot(fit, "x1", dat, what = "mu"))
@@ -63,7 +72,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 ```
 
 
-`selection_table()` ranks stable terms for each parameter; `plot_sb_gamlss()` overlays selection frequency vs. coefficient magnitude, and `effect_plot()` visualizes partial effects (using **ggplot2** if available, otherwise base R).
+`selection_table()` ranks stable terms for each parameter; the chunk above prints the eight strongest effects (sorted by stability) alongside the terms exceeding the stability threshold. `plot_sb_gamlss()` overlays selection frequency vs. coefficient magnitude, and `effect_plot()` visualizes partial effects (using **ggplot2** if available, otherwise base R).
 
 ## Grouped penalties and parameter-specific engines
 
@@ -91,7 +100,15 @@ fit_grouped <- sb_gamlss(
   trace = FALSE
 )
 
-head(selection_table(fit_grouped))
+sel_grouped <- selection_table(fit_grouped)
+sel_grouped <- sel_grouped[order(sel_grouped$parameter, -sel_grouped$prop), , drop = FALSE]
+head(sel_grouped, n = min(8L, nrow(sel_grouped)))
+stable_grouped <- sel_grouped[sel_grouped$prop >= fit_grouped$pi_thr, , drop = FALSE]
+if (nrow(stable_grouped)) {
+  stable_grouped
+} else {
+  cat("No terms reached the stability threshold of", fit_grouped$pi_thr, "for this run.\n")
+}
 ```
 
 Grouped engines build design matrices internally (safely handling factors/splines) and retain original formulas for the final `gamlss` refit.

@@ -1,7 +1,7 @@
 test_that("fast vs generic deviance equality holds across a broad family sweep", {
   skip_on_cran()
   skip_if_not_installed("gamlss")
-skip_long_tests()
+#skip_long_tests()
   set.seed(999)
   fams <- c("NO","PO","LOGNO","GA","IG","LO","LOGITNO","GEOM","BE",
             "NBI","NBII","LOGLOG","DEL","ZAGA","ZIP","ZINBI","DPO","GPO",

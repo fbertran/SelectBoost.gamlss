@@ -113,12 +113,12 @@ effect_plot <- function(fit, var, data, what = "mu", grid = 100) {
 
   if (requireNamespace("ggplot2", quietly = TRUE)) {
     gg <- if (is.numeric(df_ref[[var]])) {
-      ggplot2::ggplot(newd, ggplot2::aes(x = rlang::.data[[var]], y = rlang::.data[[".fitted"]])) +
+      ggplot2::ggplot(newd, ggplot2::aes_string(x = var, y = ".fitted")) +
         ggplot2::geom_line() +
         ggplot2::labs(x = var, y = paste0("fitted ", what), title = paste("Effect of", var))
     } else {
-      ggplot2::ggplot(newd, ggplot2::aes(x = rlang::.data[[var]], y = rlang::.data[[".fitted"]])) +
-        ggplot2::geom_point() + ggplot2::geom_line(group = 1) +
+      ggplot2::ggplot(newd, ggplot2::aes_string(x = var, y = ".fitted")) +
+        ggplot2::geom_point() + ggplot2::geom_line(ggplot2::aes(group = 1)) +
         ggplot2::labs(x = var, y = paste0("fitted ", what), title = paste("Effect of", var))
     }
     return(gg)

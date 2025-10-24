@@ -43,6 +43,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/advanced-real-data-examples.html">Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</a></li>
+    <li><a class="dropdown-item" href="../articles/algorithm-pseudocode.html">Algorithmic Pseudocode for SelectBoost.gamlss</a></li>
     <li><a class="dropdown-item" href="../articles/benchmark.html">Benchmark: Stepwise vs Grouped vs Glmnet Engines</a></li>
     <li><a class="dropdown-item" href="../articles/comparison.html">Comparing SelectBoost-GAMLSS Variants</a></li>
     <li><a class="dropdown-item" href="../articles/confidence-functionals.html">Confidence Functionals for SelectBoost-GAMLSS</a></li>
@@ -72,7 +73,14 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Fast Deviance: Numerical Equality Checks</h1>
-            
+                        <h4 data-toc-skip class="author">Frédéric
+Bertrand</h4>
+            <address class="author_afil">
+      Cedric, Cnam,
+Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
+      </address>
+                  
+            <h4 data-toc-skip class="date">2025-10-23</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/fast-deviance-equality.Rmd" class="external-link"><code>vignettes/fast-deviance-equality.Rmd</code></a></small>
       <div class="d-none name"><code>fast-deviance-equality.Rmd</code></div>
@@ -84,29 +92,23 @@
 <code>gamlss.dist</code> density route (up to floating-point tolerance)
 across common families.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## Loading required package: splines</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: gamlss.data</span></span></code></pre>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'gamlss.data'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:datasets':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     sleep</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: gamlss.dist</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: nlme</span></span></code></pre>
-<pre><code><span><span class="co">## Loading required package: parallel</span></span></code></pre>
-<pre><code><span><span class="co">##  **********   GAMLSS Version 5.5-0  **********</span></span></code></pre>
-<pre><code><span><span class="co">## For more on GAMLSS look at https://www.gamlss.com/</span></span></code></pre>
-<pre><code><span><span class="co">## Type gamlssNews() to see new features/changes/bug fixes.</span></span></code></pre>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## </span></span>
-<span><span class="co">## Attaching package: 'SelectBoost.gamlss'</span></span></code></pre>
-<pre><code><span><span class="co">## The following object is masked from 'package:base':</span></span>
-<span><span class="co">## </span></span>
-<span><span class="co">##     %||%</span></span></code></pre>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: splines</span></span>
+<span><span class="co">#&gt; Loading required package: gamlss.data</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'gamlss.data'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:datasets':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     sleep</span></span>
+<span><span class="co">#&gt; Loading required package: gamlss.dist</span></span>
+<span><span class="co">#&gt; Loading required package: nlme</span></span>
+<span><span class="co">#&gt; Loading required package: parallel</span></span>
+<span><span class="co">#&gt;  **********   GAMLSS Version 5.5-0  **********</span></span>
+<span><span class="co">#&gt; For more on GAMLSS look at https://www.gamlss.com/</span></span>
+<span><span class="co">#&gt; Type gamlssNews() to see new features/changes/bug fixes.</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">4000</span></span>
 <span><span class="va">families</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span>  NO <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -139,44 +141,43 @@ across common families.</p>
 <span>  <span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_fast_vs_generic.html">check_fast_vs_generic</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">dat</span>, tol <span class="op">=</span> <span class="fl">1e-6</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>family <span class="op">=</span> <span class="va">fname</span>, ll_fast <span class="op">=</span> <span class="va">chk</span><span class="op">$</span><span class="va">ll_fast</span>, ll_generic <span class="op">=</span> <span class="va">chk</span><span class="op">$</span><span class="va">ll_generic</span>,</span>
 <span>             abs_diff <span class="op">=</span> <span class="va">chk</span><span class="op">$</span><span class="va">abs_diff</span>, pass <span class="op">=</span> <span class="va">chk</span><span class="op">$</span><span class="va">pass</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11375.33 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11375.33 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 14782.83 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 14782.83 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 7267.968 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 7267.968 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10699.55 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10699.55 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11694.15 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11694.15 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 15982.17 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 15982.16 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 15982.16 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 18087.96 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = -7154.868 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = -7422.771 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = -7422.823 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = -7422.823</span></span></code></pre>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">summ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Negate</a></span><span class="op">(</span><span class="va">is.null</span><span class="op">)</span>, <span class="va">summ</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">summ</span></span></code></pre></div>
-<pre><code><span><span class="co">##   family    ll_fast ll_generic abs_diff pass</span></span>
-<span><span class="co">## 1     NO  -5688.032  -5688.032        0 TRUE</span></span>
-<span><span class="co">## 2     PO -10568.077 -10568.077        0 TRUE</span></span>
-<span><span class="co">## 3  LOGNO  -4398.621  -4398.621        0 TRUE</span></span>
-<span><span class="co">## 4     GA  -8009.049  -8009.049        0 TRUE</span></span>
-<span><span class="co">## 5     IG  -8144.880  -8144.880        0 TRUE</span></span>
-<span><span class="co">## 6     LO  -7991.389  -7991.389        0 TRUE</span></span>
-<span><span class="co">## 7   GEOM  -9326.121  -9326.121        0 TRUE</span></span>
-<span><span class="co">## 8     BE   1678.217   1678.217        0 TRUE</span></span></code></pre>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11375.33 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11375.33 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 14782.83 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 14782.83 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 7267.968 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 7267.968 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10699.55 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10699.55 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11694.15 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11694.15 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 15982.17 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 15982.16 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 15982.16 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 18087.96 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = -7154.868 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = -7422.771 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = -7422.823 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = -7422.823</span></span>
+<span><span class="va">summ</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Negate</a></span><span class="op">(</span><span class="va">is.null</span><span class="op">)</span>, <span class="va">summ</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">summ</span></span>
+<span><span class="co">#&gt;   family    ll_fast ll_generic abs_diff pass</span></span>
+<span><span class="co">#&gt; 1     NO  -5688.032  -5688.032        0 TRUE</span></span>
+<span><span class="co">#&gt; 2     PO -10568.077 -10568.077        0 TRUE</span></span>
+<span><span class="co">#&gt; 3  LOGNO  -4398.621  -4398.621        0 TRUE</span></span>
+<span><span class="co">#&gt; 4     GA  -8009.049  -8009.049        0 TRUE</span></span>
+<span><span class="co">#&gt; 5     IG  -8144.880  -8144.880        0 TRUE</span></span>
+<span><span class="co">#&gt; 6     LO  -7991.389  -7991.389        0 TRUE</span></span>
+<span><span class="co">#&gt; 7   GEOM  -9326.121  -9326.121        0 TRUE</span></span>
+<span><span class="co">#&gt; 8     BE   1678.217   1678.217        0 TRUE</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="wide-family-sweep-auto">Wide family sweep (auto)<a class="anchor" aria-label="anchor" href="#wide-family-sweep-auto"></a>
 </h2>
 <p>Below we attempt an automatic sweep across many families; those
 without installed densities or generators will be skipped
 gracefully.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NO"</span>,<span class="st">"PO"</span>,<span class="st">"LOGNO"</span>,<span class="st">"GA"</span>,<span class="st">"IG"</span>,<span class="st">"LO"</span>,<span class="st">"LOGITNO"</span>,<span class="st">"GEOM"</span>,<span class="st">"BE"</span>,</span>
 <span>          <span class="st">"NBI"</span>,<span class="st">"NBII"</span>,<span class="st">"LOGLOG"</span>,<span class="st">"DEL"</span>,<span class="st">"ZAGA"</span>,<span class="st">"ZIP"</span>,<span class="st">"ZINBI"</span>,<span class="st">"DPO"</span>,<span class="st">"GPO"</span>,</span>
 <span>          <span class="st">"ZAIG"</span>,<span class="st">"ZALG"</span>,<span class="st">"BCT"</span>,<span class="st">"BCPE"</span>,<span class="st">"ZIPF"</span>,<span class="st">"ZIPFmu"</span>,<span class="st">"SICHEL"</span>,<span class="st">"GLG"</span>,</span>
@@ -192,135 +193,134 @@ gracefully.</p>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">inherits</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"try-error"</span><span class="op">)</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
 <span>  <span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_fast_vs_generic.html">check_fast_vs_generic</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">dat</span>, tol <span class="op">=</span> <span class="fl">1e-6</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>family <span class="op">=</span> <span class="va">fam</span>, abs_diff <span class="op">=</span> <span class="va">chk</span><span class="op">$</span><span class="va">abs_diff</span>, pass <span class="op">=</span> <span class="va">chk</span><span class="op">$</span><span class="va">pass</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 8615.228 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 8615.228 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10988.5 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10988.5 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 5327.758 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 5327.758 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 7943.186 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 7943.186 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 8701.265 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 8701.265 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11876.4 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11876.4 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 11876.4 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 13655.01 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = -5375.158 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = -5578.084 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = -5578.124 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = -5578.124 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11283.26 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11283.26 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11023 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11023 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 11023 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10670 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10669.65 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 10669.34 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 10669.07 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 10668.83 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 10668.61 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 10668.42 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 10668.24 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 10668.09 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 10667.95 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 10667.82 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 10667.71 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 10667.6 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 10667.51 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 10667.43 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 16: Global Deviance = 10667.35 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 17: Global Deviance = 10667.28 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 18: Global Deviance = 10667.22 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 19: Global Deviance = 10667.17 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 20: Global Deviance = 10667.12</span></span></code></pre>
-<pre><code><span><span class="co">## Warning in RS(): Algorithm RS has not yet converged</span></span></code></pre>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 9320.173 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 9320.173 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10312.69 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10311.55 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 10311.48 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 10311.44 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 10311.41 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 10311.4 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 10311.39 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 10311.38 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 10311.38 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 10311.38 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 10311.38 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 10311.38 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11566.28 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11566.18 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 11566.18 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 12274.44 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 12274.44 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 9841.625 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 9841.625 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 12231.44 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 12229.24 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 12228.23 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 12227.59 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 12227.14 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 12226.81 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 12226.55 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 12226.34 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 12226.17 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 12226.02 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 12225.9 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 12225.79 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 12225.7 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 12225.62 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 12225.56 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 16: Global Deviance = 12225.5 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 17: Global Deviance = 12225.44 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 18: Global Deviance = 12225.4 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 19: Global Deviance = 12225.35 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 20: Global Deviance = 12225.32</span></span></code></pre>
-<pre><code><span><span class="co">## Warning in RS(): Algorithm RS has not yet converged</span></span></code></pre>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10091.85 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10091.37 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 10091.36 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 10091.36 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 9563.572 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 9505.614 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 9501.911 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 9501.197 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 9501.037 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 9500.992 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 9500.977 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 9500.971 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 9500.968 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 9500.967 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 9500.966</span></span></code></pre>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Negate</a></span><span class="op">(</span><span class="va">is.null</span><span class="op">)</span>, <span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">res</span></span></code></pre></div>
-<pre><code><span><span class="co">##    family abs_diff pass</span></span>
-<span><span class="co">## 1      NO        0 TRUE</span></span>
-<span><span class="co">## 2      PO        0 TRUE</span></span>
-<span><span class="co">## 3   LOGNO        0 TRUE</span></span>
-<span><span class="co">## 4      GA        0 TRUE</span></span>
-<span><span class="co">## 5      IG        0 TRUE</span></span>
-<span><span class="co">## 6      LO        0 TRUE</span></span>
-<span><span class="co">## 7    GEOM        0 TRUE</span></span>
-<span><span class="co">## 8      BE        0 TRUE</span></span>
-<span><span class="co">## 9     NBI        0 TRUE</span></span>
-<span><span class="co">## 10   NBII        0 TRUE</span></span>
-<span><span class="co">## 11    DEL        0 TRUE</span></span>
-<span><span class="co">## 12   ZAGA        0 TRUE</span></span>
-<span><span class="co">## 13  ZINBI        0 TRUE</span></span>
-<span><span class="co">## 14    DPO        0 TRUE</span></span>
-<span><span class="co">## 15    GPO        0 TRUE</span></span>
-<span><span class="co">## 16   ZAIG        0 TRUE</span></span>
-<span><span class="co">## 17 SICHEL        0 TRUE</span></span>
-<span><span class="co">## 18    WEI        0 TRUE</span></span>
-<span><span class="co">## 19    GIG        0 TRUE</span></span></code></pre>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8615.228 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8615.228 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10988.5 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10988.5 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 5327.758 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 5327.758 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 7943.186 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 7943.186 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8701.265 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8701.265 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11876.4 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11876.4 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11876.4 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 13655.01 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = -5375.158 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = -5578.084 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = -5578.124 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = -5578.124 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11283.26 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11283.26 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11023 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11023 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11023 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10670 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10669.65 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10669.34 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10669.07 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10668.83 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10668.61 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10668.42 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10668.24 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10668.09 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10667.95 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10667.82 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10667.71 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 10667.6 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 10667.51 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 10667.43 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 10667.35 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 10667.28 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 10667.22 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 10667.17 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 10667.12</span></span>
+<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9320.173 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9320.173 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10312.69 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10311.55 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10311.48 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10311.44 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10311.41 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10311.4 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10311.39 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10311.38 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10311.38 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10311.38 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10311.38 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10311.38 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11566.28 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11566.18 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11566.18 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12274.44 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12274.44 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9841.625 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9841.625 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12231.44 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12229.24 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 12228.23 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 12227.59 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 12227.14 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 12226.81 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 12226.55 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 12226.34 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 12226.17 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 12226.02 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 12225.9 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 12225.79 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 12225.7 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 12225.62 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 12225.56 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 12225.5 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 12225.44 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 12225.4 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 12225.35 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 12225.32</span></span>
+<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10091.85 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10091.37 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10091.36 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10091.36 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9563.572 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9505.614 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 9501.911 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 9501.197 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 9501.037 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 9500.992 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 9500.977 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 9500.971 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 9500.968 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 9500.967 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 9500.966</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/funprog.html" class="external-link">Negate</a></span><span class="op">(</span><span class="va">is.null</span><span class="op">)</span>, <span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt;    family abs_diff pass</span></span>
+<span><span class="co">#&gt; 1      NO        0 TRUE</span></span>
+<span><span class="co">#&gt; 2      PO        0 TRUE</span></span>
+<span><span class="co">#&gt; 3   LOGNO        0 TRUE</span></span>
+<span><span class="co">#&gt; 4      GA        0 TRUE</span></span>
+<span><span class="co">#&gt; 5      IG        0 TRUE</span></span>
+<span><span class="co">#&gt; 6      LO        0 TRUE</span></span>
+<span><span class="co">#&gt; 7    GEOM        0 TRUE</span></span>
+<span><span class="co">#&gt; 8      BE        0 TRUE</span></span>
+<span><span class="co">#&gt; 9     NBI        0 TRUE</span></span>
+<span><span class="co">#&gt; 10   NBII        0 TRUE</span></span>
+<span><span class="co">#&gt; 11    DEL        0 TRUE</span></span>
+<span><span class="co">#&gt; 12   ZAGA        0 TRUE</span></span>
+<span><span class="co">#&gt; 13  ZINBI        0 TRUE</span></span>
+<span><span class="co">#&gt; 14    DPO        0 TRUE</span></span>
+<span><span class="co">#&gt; 15    GPO        0 TRUE</span></span>
+<span><span class="co">#&gt; 16   ZAIG        0 TRUE</span></span>
+<span><span class="co">#&gt; 17 SICHEL        0 TRUE</span></span>
+<span><span class="co">#&gt; 18    WEI        0 TRUE</span></span>
+<span><span class="co">#&gt; 19    GIG        0 TRUE</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="wide-family-sweep-with-skip-reasons">Wide family sweep with skip reasons<a class="anchor" aria-label="anchor" href="#wide-family-sweep-with-skip-reasons"></a>
 </h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fams</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NO"</span>,<span class="st">"PO"</span>,<span class="st">"LOGNO"</span>,<span class="st">"GA"</span>,<span class="st">"IG"</span>,<span class="st">"LO"</span>,<span class="st">"LOGITNO"</span>,<span class="st">"GEOM"</span>,<span class="st">"BE"</span>,</span>
 <span>          <span class="st">"NBI"</span>,<span class="st">"NBII"</span>,<span class="st">"LOGLOG"</span>,<span class="st">"DEL"</span>,<span class="st">"ZAGA"</span>,<span class="st">"ZIP"</span>,<span class="st">"ZINBI"</span>,<span class="st">"DPO"</span>,<span class="st">"GPO"</span>,</span>
 <span>          <span class="st">"ZAIG"</span>,<span class="st">"ZALG"</span>,<span class="st">"BCT"</span>,<span class="st">"BCPE"</span>,<span class="st">"ZIPF"</span>,<span class="st">"ZIPFmu"</span>,<span class="st">"SICHEL"</span>,<span class="st">"GLG"</span>,</span>
@@ -346,142 +346,141 @@ gracefully.</p>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>family<span class="op">=</span><span class="va">fam</span>, status<span class="op">=</span><span class="st">"skip"</span>, reason<span class="op">=</span><span class="st">"fit failed"</span>, abs_diff<span class="op">=</span><span class="cn">NA_real_</span>, pass<span class="op">=</span><span class="cn">NA</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span>  <span class="co"># evaluate</span></span>
-<span>  <span class="va">tol_fam</span> <span class="op">&lt;-</span> <span class="va">tols</span><span class="op">[[</span><span class="va">fam</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="../reference/grapes-or-or-grapes.html">%||%</a></span> <span class="va">tol_default</span></span>
+<span>  <span class="va">tol_fam</span> <span class="op">&lt;-</span> <span class="va">tols</span><span class="op">[[</span><span class="va">fam</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://rdrr.io/r/base/Control.html" class="external-link">%||%</a></span> <span class="va">tol_default</span></span>
 <span>  <span class="va">chk</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/check_fast_vs_generic.html">check_fast_vs_generic</a></span><span class="op">(</span><span class="va">fit</span>, <span class="va">dat</span>, tol <span class="op">=</span> <span class="va">tol_fam</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>family<span class="op">=</span><span class="va">fam</span>, status<span class="op">=</span><span class="st">"ok"</span>, reason<span class="op">=</span><span class="st">""</span>, abs_diff<span class="op">=</span><span class="va">chk</span><span class="op">$</span><span class="va">abs_diff</span>, pass<span class="op">=</span><span class="va">chk</span><span class="op">$</span><span class="va">pass</span><span class="op">)</span></span>
-<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 8484.742 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 8484.742 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10872.98 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10872.98 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 5341.986 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 5341.986 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 8015.778 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 8015.778 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 8692.182 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 8692.182 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11909.62 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11909.55 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 11909.55 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 13515 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = -5382.726 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = -5583.397 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = -5583.435 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = -5583.435 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11308.87 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11308.87 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11075.33 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11075.33 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 11075.33 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10735.22 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10735.04 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 10734.89 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 10734.76 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 10734.64 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 10734.54 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 10734.46 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 10734.38 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 10734.32 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 10734.27 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 10734.22 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 10734.19 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 10734.15 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 10734.13 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 10734.11 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 16: Global Deviance = 10734.09 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 17: Global Deviance = 10734.08 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 18: Global Deviance = 10734.08 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 19: Global Deviance = 10734.07 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 20: Global Deviance = 10734.07 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 9155.055 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 9155.055 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10422.64 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10421.36 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 10421.2 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 10421.1 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 10421.05 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 10421.01 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 10420.99 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 10420.98 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 10420.97 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 10420.97 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 10420.97 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 10420.96 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 10420.96 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 11345.71 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 11345.63 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 11345.63 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 12225.98 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 12225.98 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 9806.759 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 9806.759 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 12050.13 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 12049.42 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 12049.14 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 12048.99 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 12048.9 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 12048.84 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 12048.8 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 12048.77 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 9: Global Deviance = 12048.75 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 10: Global Deviance = 12048.74 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 11: Global Deviance = 12048.72 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 12: Global Deviance = 12048.71 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 13: Global Deviance = 12048.71 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 14: Global Deviance = 12048.7 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 15: Global Deviance = 12048.7 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 16: Global Deviance = 12048.69 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 17: Global Deviance = 12048.69 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 18: Global Deviance = 12048.69 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 19: Global Deviance = 12048.69 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 20: Global Deviance = 12048.68</span></span></code></pre>
-<pre><code><span><span class="co">## Warning in RS(): Algorithm RS has not yet converged</span></span></code></pre>
-<pre><code><span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 10251.6 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 10251.24 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 10251.24 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 10251.24 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 1: Global Deviance = 9539.068 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 2: Global Deviance = 9504.096 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 3: Global Deviance = 9502.578 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 4: Global Deviance = 9502.384 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 5: Global Deviance = 9502.352 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 6: Global Deviance = 9502.346 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 7: Global Deviance = 9502.344 </span></span>
-<span><span class="co">## GAMLSS-RS iteration 8: Global Deviance = 9502.343</span></span></code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">rows</span><span class="op">)</span></span>
-<span><span class="va">res</span></span></code></pre></div>
-<pre><code><span><span class="co">##     family status                   reason abs_diff pass</span></span>
-<span><span class="co">## 1       NO     ok                                 0 TRUE</span></span>
-<span><span class="co">## 2       PO     ok                                 0 TRUE</span></span>
-<span><span class="co">## 3    LOGNO     ok                                 0 TRUE</span></span>
-<span><span class="co">## 4       GA     ok                                 0 TRUE</span></span>
-<span><span class="co">## 5       IG     ok                                 0 TRUE</span></span>
-<span><span class="co">## 6       LO     ok                                 0 TRUE</span></span>
-<span><span class="co">## 7  LOGITNO   skip               fit failed       NA   NA</span></span>
-<span><span class="co">## 8     GEOM     ok                                 0 TRUE</span></span>
-<span><span class="co">## 9       BE     ok                                 0 TRUE</span></span>
-<span><span class="co">## 10     NBI     ok                                 0 TRUE</span></span>
-<span><span class="co">## 11    NBII     ok                                 0 TRUE</span></span>
-<span><span class="co">## 12  LOGLOG   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 13     DEL     ok                                 0 TRUE</span></span>
-<span><span class="co">## 14    ZAGA     ok                                 0 TRUE</span></span>
-<span><span class="co">## 15     ZIP   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 16   ZINBI     ok                                 0 TRUE</span></span>
-<span><span class="co">## 17     DPO     ok                                 0 TRUE</span></span>
-<span><span class="co">## 18     GPO     ok                                 0 TRUE</span></span>
-<span><span class="co">## 19    ZAIG     ok                                 0 TRUE</span></span>
-<span><span class="co">## 20    ZALG   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 21     BCT   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 22    BCPE   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 23    ZIPF   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 24  ZIPFmu   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 25  SICHEL     ok                                 0 TRUE</span></span>
-<span><span class="co">## 26     GLG   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 27   BETA4   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 28      RS   skip generator missing/failed       NA   NA</span></span>
-<span><span class="co">## 29     WEI     ok                                 0 TRUE</span></span>
-<span><span class="co">## 30     GIG     ok                                 0 TRUE</span></span></code></pre>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8484.742 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8484.742 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10872.98 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10872.98 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 5341.986 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 5341.986 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8015.778 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8015.778 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 8692.182 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 8692.182 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11909.62 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11909.55 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11909.55 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 13515 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = -5382.726 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = -5583.397 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = -5583.435 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = -5583.435 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11308.87 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11308.87 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11075.33 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11075.33 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11075.33 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10735.22 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10735.04 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10734.89 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10734.76 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10734.64 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10734.54 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10734.46 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10734.38 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10734.32 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10734.27 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10734.22 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10734.19 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 10734.15 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 10734.13 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 10734.11 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 10734.09 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 10734.08 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 10734.08 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 10734.07 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 10734.07 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9155.055 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9155.055 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10422.64 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10421.36 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10421.2 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10421.1 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 10421.05 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 10421.01 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 10420.99 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 10420.98 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 10420.97 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 10420.97 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 10420.97 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 10420.96 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 10420.96 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 11345.71 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 11345.63 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 11345.63 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12225.98 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12225.98 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9806.759 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9806.759 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 12050.13 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 12049.42 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 12049.14 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 12048.99 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 12048.9 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 12048.84 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 12048.8 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 12048.77 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 9: Global Deviance = 12048.75 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 10: Global Deviance = 12048.74 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 11: Global Deviance = 12048.72 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 12: Global Deviance = 12048.71 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 13: Global Deviance = 12048.71 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 14: Global Deviance = 12048.7 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 15: Global Deviance = 12048.7 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 16: Global Deviance = 12048.69 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 17: Global Deviance = 12048.69 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 18: Global Deviance = 12048.69 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 19: Global Deviance = 12048.69 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 20: Global Deviance = 12048.68</span></span>
+<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 10251.6 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 10251.24 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 10251.24 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 10251.24 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 9539.068 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 9504.096 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 9502.578 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 9502.384 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 9502.352 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 9502.346 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 9502.344 </span></span>
+<span><span class="co">#&gt; GAMLSS-RS iteration 8: Global Deviance = 9502.343</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">rows</span><span class="op">)</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt;     family status                   reason abs_diff pass</span></span>
+<span><span class="co">#&gt; 1       NO     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 2       PO     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 3    LOGNO     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 4       GA     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 5       IG     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 6       LO     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 7  LOGITNO   skip               fit failed       NA   NA</span></span>
+<span><span class="co">#&gt; 8     GEOM     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 9       BE     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 10     NBI     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 11    NBII     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 12  LOGLOG   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 13     DEL     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 14    ZAGA     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 15     ZIP   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 16   ZINBI     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 17     DPO     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 18     GPO     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 19    ZAIG     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 20    ZALG   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 21     BCT   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 22    BCPE   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 23    ZIPF   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 24  ZIPFmu   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 25  SICHEL     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 26     GLG   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 27   BETA4   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 28      RS   skip generator missing/failed       NA   NA</span></span>
+<span><span class="co">#&gt; 29     WEI     ok                                 0 TRUE</span></span>
+<span><span class="co">#&gt; 30     GIG     ok                                 0 TRUE</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

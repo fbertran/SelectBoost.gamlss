@@ -1,0 +1,158 @@
+---
+title: "Algorithmic Pseudocode for SelectBoost.gamlss"
+shorttitle: "Algorithm pseudocode"
+author:
+- name: "Frédéric Bertrand"
+  affiliation:
+  - Cedric, Cnam, Paris
+  email: frederic.bertrand@lecnam.net
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Algorithmic Pseudocode for SelectBoost.gamlss}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## Overview
+
+This vignette distils the key SelectBoost.gamlss workflows into lightweight pseudocode.
+The goal is to surface the control flow and data preparation steps that matter when you
+use the package.
+
+Notation:
+
+- \(B\) — number of bootstrap replications.
+- \(c_0\) — SelectBoost correlation threshold.
+- `scope` — candidate terms for a parameter (μ, σ, ν, τ).
+- `base` — always-included terms for a parameter.
+
+## Stability selection core (`sb_gamlss`)
+
+The main helper orchestrates correlated resampling, engine-specific fits, aggregation,
+and a final refit with stable terms.
+
+```text
+Algorithm sb_gamlss(formula, data, family, scopes, base_formulas, B, sample_fraction, pi_thr, engines, c0, use_groups)
+  1. Validate formulas, convert data.frame inputs, and optionally standardise numeric predictors.
+  2. Build base design matrices per parameter, keeping track of sanitized column names and term maps.
+  3. For each scope formula:
+       a. Call sb_prepare_selectboost(data, scope, B, c0, use_groups) to obtain
+          normalised matrices, grouped indices, and pre-simulated SelectBoost draws.
+       b. Form the "upper" formula that contains both base and candidate columns for stepwise refits.
+  4. For each parameter (μ, σ, ν, τ):
+       a. Define a selector callback that, given a candidate design matrix subset and response subset,
+          fits the requested engine (stepGAIC, glmnet, grpreg, or sgl) on a bootstrap subsample of rows.
+       b. Use SelectBoost::boost.apply() with the correlated simulations to repeat the selector B times,
+          returning a coefficient matrix whose rows correspond to candidate columns.
+       c. Convert column-level selection frequencies into term-level counts, respecting scope term maps.
+  5. Collate selection tables for all parameters and mark base terms as always selected.
+  6. Augment each base formula with terms whose selection proportion ≥ pi_thr.
+  7. Refit gamlss() on the full data using the final formulas and return the sb_gamlss object.
+```
+
+### SelectBoost correlated resampling (`sb_prepare_selectboost`)
+
+SelectBoost provides correlation-aware resampling that keeps highly correlated predictors from co-occurring.
+The bridge helper mirrors the package's internal pipeline and feeds the simulations back into `sb_gamlss`.
+
+```text
+Algorithm sb_prepare_selectboost(data, scope_formula, B, corr_func, group_fun, c0, use_groups)
+  1. Build the scope model matrix without an intercept and sanitise column names.
+     If no candidate columns remain, return empty matrices flagged as "nosimul".
+  2. Normalise each column with SelectBoost::boost.normalize() and compute the correlation matrix
+     via SelectBoost::boost.compcorrs().
+  3. Derive the sign of each correlation with SelectBoost::boost.correlation_sign().
+  4. If use_groups is TRUE, call SelectBoost::boost.findgroups() with threshold c0 to obtain
+     correlation clusters; otherwise, fall back to singleton groups.
+  5. Compute von Mises–Fisher parameters with SelectBoost::boost.adjust() to align the grouped axes.
+  6. Draw B correlated resamples with SelectBoost::boost.random(), recording which columns were simulated.
+  7. Return the normalised matrix, simulations, group metadata, and mappings back to original term labels.
+```
+
+The correlated simulations ensure that each bootstrap iteration resamples at most one representative
+per high-correlation cluster, improving precision in dense feature spaces.
+
+### Aggregating correlated draws (`SelectBoost::boost.apply`)
+
+During each parameter-specific run, the package feeds the pre-computed draws through `boost.apply()`.
+
+```text
+Algorithm boost.apply(X, simulations, response, selector)
+  1. For each simulated column matrix in `simulations`:
+       a. Compose a candidate design by replacing simulated columns inside X.
+       b. Invoke the user-supplied `selector` (defined in sb_gamlss) on the matching
+          rows of X and the response.
+  2. Collect the resulting coefficient vectors column-wise.
+  3. Use SelectBoost::boost.select() to convert magnitudes into selection frequencies per column.
+```
+
+## c0 grids and AutoBoost wrappers
+
+`sb_gamlss_c0_grid()` automates repeated stability runs over a vector of \(c_0\) thresholds, while
+`autoboost_gamlss()` converts the grid into a one-click workflow.
+
+```text
+Algorithm sb_gamlss_c0_grid(args, c0_grid)
+  1. For each c0 value:
+       a. Call sb_gamlss() with the supplied arguments and the current c0.
+       b. Append the resulting selection table with an extra column storing c0.
+  2. Combine all selection tables, keep the reference to each fitted sb_gamlss object,
+     and record the stability threshold (pi_thr).
+
+Algorithm autoboost_gamlss(args, c0_grid)
+  1. Run sb_gamlss_c0_grid() to obtain fits and per-term selection proportions across c0.
+  2. For each c0, sum the positive excess of selection proportions above pi_thr.
+  3. Select the c0 with the highest total excess (ties resolved towards the median grid value).
+  4. Return the sb_gamlss fit associated with the chosen c0, tagging it with diagnostic metadata.
+```
+
+## Lightweight variants and tuning utilities
+
+Two convenience helpers reuse the core algorithm with modified budgets or grids.
+
+```text
+Algorithm fastboost_gamlss(args)
+  1. Override B (default 30) and sample_fraction (default 0.6).
+  2. Delegate to sb_gamlss() with the reduced budget for faster, approximate screening.
+
+Algorithm tune_sb_gamlss(config_grid, base_args, metric)
+  1. For each configuration in config_grid:
+       a. Merge it into base_args and run a small sb_gamlss() fit using B_small bootstraps.
+       b. If metric == "stability", compute the mass of selection proportions above pi_thr
+          and subtract score_lambda × (# stable terms).
+       c. If metric == "deviance", perform cross-validated deviances via cv_deviance_sb().
+  2. Choose the configuration with the highest score and return both the winning sb_gamlss fit
+     and a score table for auditing.
+```
+
+## Confidence summaries
+
+Downstream diagnostics turn stability curves into interpretable rankings.
+
+```text
+Algorithm confidence_table(grid, pi_thr)
+  1. Group grid$table by parameter and term.
+  2. Within each group, report the maximum selection count and derive selection proportions.
+  3. Return a data frame combining all parameters with the supplied threshold.
+
+Algorithm confidence_functionals(grid, pi_thr, q, weight_fun, conservative)
+  1. Optionally replace observed proportions with Wilson lower bounds if conservative = TRUE.
+  2. For each term:
+       a. Sort by c0, integrate the selection curve using trapezoidal (or step) rule to obtain AUSC.
+       b. Compute the thresholded positive area, weighted AUSC, coverage, extrema, and quantiles `q`.
+       c. Combine the metrics into a rank_score summary.
+  3. Order terms by rank_score for reporting and plotting helpers.
+```
+
+Together, these routines document how SelectBoost.gamlss orchestrates correlated resampling,
+selection aggregation, hyper-parameter exploration, and the confidence metrics used for reporting.

@@ -108,7 +108,7 @@ if (requireNamespace("nlme", quietly = TRUE)) {
   data_ok <- tryCatch({
     utils::data("Orthodont", package = "nlme", envir = environment())
     TRUE
-  }, error = function(e) FALSE) 
+  }, error = function(e) FALSE)
   if (!data_ok || !exists("Orthodont", inherits = FALSE)) {
     cat("Dataset 'Orthodont' unavailable; skipping longitudinal example.\n")
   } else {
@@ -128,8 +128,16 @@ if (requireNamespace("nlme", quietly = TRUE)) {
     head(selection_table(fit_long))
 
     if (requireNamespace("ggplot2", quietly = TRUE)) {
-      gg <- effect_plot(fit_long, "age", od, what = "mu")
-      print(gg)
+      gg <- tryCatch(
+        effect_plot(fit_long, "age", od, what = "mu"),
+        error = function(e) {
+          message("effect_plot() skipped for random-effect example: ", conditionMessage(e))
+          NULL
+        }
+      )
+      if (!is.null(gg)) {
+        print(gg)
+      }
     }
   }
 } else {
