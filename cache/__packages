@@ -5,3 +5,7 @@ gamlss.data
 gamlss.dist
 nlme
 gamlss
+testthat
+future
+MASS
+httr2

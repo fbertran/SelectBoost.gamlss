@@ -32,7 +32,7 @@ Recent releases added optimized shortcuts for additional families (`LOGITNO`, `G
 automatic routing through native `gamlss.dist` densities for zero-adjusted/zero-inflated variants (e.g., `ZAGA`, `ZIPF`, `BETA4`).
 Pair this benchmark with `check_fast_vs_generic()` for numerical validation and `fast_vs_generic_ll()` for micro-timing comparisons.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)
 

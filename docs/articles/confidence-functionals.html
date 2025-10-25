@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-23</h4>
+            <h4 data-toc-skip class="date">2025-10-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/confidence-functionals.Rmd" class="external-link"><code>vignettes/confidence-functionals.Rmd</code></a></small>
       <div class="d-none name"><code>confidence-functionals.Rmd</code></div>
@@ -147,17 +147,9 @@ by a Wilson lower bound before integrating.</li>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
 <span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1149.895 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1149.895 </span></span>
-<span><span class="co">#&gt;   |                                                                              |===================================                                   |  50%</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%</span></span>
 <span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%</span></span>
 <span></span>
 <span><span class="va">cf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/confidence_functionals.html">confidence_functionals</a></span><span class="op">(</span></span>
 <span>  <span class="va">g</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, q <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.8</span>, <span class="fl">0.9</span><span class="op">)</span>,</span>

@@ -56,9 +56,13 @@
 <li>
 <strong>Glmnet support</strong> (lasso/ridge/elastic-net) extended beyond μ via working-response proxies for σ/ν/τ.</li>
 <li>
+<strong>Glmnet selectors</strong> now accept <code>glmnet_family</code> (gaussian/binomial/poisson) and handle factor predictors via model-matrix expansion.</li>
+<li>
 <strong>Tuning framework</strong>: <code><a href="../reference/tune_sb_gamlss.html">tune_sb_gamlss()</a></code> with <strong>stability</strong> or <strong>deviance</strong> metrics (K-fold), <strong>progress bars</strong>, and a <strong>complexity penalty</strong>.</li>
 <li>
 <strong>Fast deviance paths</strong> for common families (auto-used in deviance CV): <code>NO</code>, <code>PO</code>, <code>LOGNO</code>, <code>GA</code>, <code>IG</code>, <code>LO</code>, <code>LOGITNO</code>, <code>GEOM</code>, <code>BE</code>, <code>NBI</code>, <code>NBII</code>, <code>BI</code>, and native shortcuts via <code>gamlss.dist</code> for many others (e.g., <code>LOGLOG</code>, <code>DEL</code>, <code>ZAGA</code>, <code>ZIP/ZIP2</code>, <code>ZAIG</code>, <code>ZALG</code>, <code>ZIBI/ZIBB</code>, <code>PARETO</code>, <code>SEP1/SEP2</code>, <code>ZIPF/ZIPFmu</code>, <code>BCT</code>, <code>BCPE</code>, <code>SICHEL</code>, <code>GLG</code>, <code>BETA4</code>, <code>RS</code>, <code>WEI</code>, <code>GIG</code>), with graceful fallbacks.</li>
+<li>
+<strong>Fast deviance</strong> dynamically calls <code>gamlss.dist::d&lt;family&gt;()</code> when available, broadening zero-inflated/hurdle coverage without manual whitelists.</li>
 <li>
 <strong>Group knockoffs</strong> (approximate) for FDR-style control: <code><a href="../reference/knockoff_filter_mu.html">knockoff_filter_mu()</a></code>, <code><a href="../reference/knockoff_filter_param.html">knockoff_filter_param()</a></code>.</li>
 <li>
@@ -88,6 +92,8 @@
 <li>
 <code>progress</code> — progress bar for sequential bootstraps</li>
 <li>(still) <code>glmnet_alpha</code> — 0=ridge, 1=lasso, (0,1)=EN</li>
+<li>
+<code>glmnet_family</code> — choose gaussian/binomial/poisson for glmnet selectors</li>
 </ul></div>
 <div class="section level4">
 <h4 id="documentation--vignettes-0-2-0">Documentation &amp; vignettes<a class="anchor" aria-label="anchor" href="#documentation--vignettes-0-2-0"></a></h4>
@@ -102,6 +108,7 @@
 <strong>Fast deviance equality</strong> (accuracy checks) + <strong>wide-family sweep</strong> with per-family tolerances &amp; skip reasons</li>
 <li>
 <strong>pkgdown</strong> site scaffolding + GitHub Actions workflow</li>
+<li>README quick start now covers factor effects, BCT four-parameter example, and deviance-based tuning metrics.</li>
 </ul></div>
 <div class="section level4">
 <h4 id="testing--quality-0-2-0">Testing &amp; quality<a class="anchor" aria-label="anchor" href="#testing--quality-0-2-0"></a></h4>

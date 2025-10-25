@@ -15,6 +15,7 @@
 #' @param engine Engine for \eqn{\mu} (`"stepGAIC"`, `"glmnet"`, `"grpreg"`, `"sgl"`).
 #' @param engine_sigma,engine_nu,engine_tau Optional engines for \eqn{\sigma}, \eqn{\nu}, \eqn{\tau}.
 #' @param glmnet_alpha Elastic-net mixing for glmnet (1 = lasso, 0 = ridge).
+#' @param glmnet_family Family passed to glmnet-based selectors ("gaussian", "binomial", "poisson").
 #' @param grpreg_penalty Group penalty for grpreg (`"grLasso"`, `"grMCP"`, `"grSCAD"`).
 #' @param sgl_alpha Alpha for sparse group lasso.
 #' @param pre_standardize Logical; standardize numeric predictors before penalized fits.
@@ -83,6 +84,7 @@ sb_gamlss <- function(
   df_smooth = 6L,
   progress = TRUE,
   glmnet_alpha = 1,
+  glmnet_family = c("gaussian","binomial","poisson"),
   parallel = c('none','auto','multisession','multicore'),
   workers = NULL,
   trace = TRUE,
@@ -300,6 +302,8 @@ sb_gamlss <- function(
   drop_final <- c("formula","sigma.formula","nu.formula","tau.formula","data","family")
   dots_original <- dots_original[setdiff(names(dots_original), drop_final)]
   
+  glmnet_family <- match.arg(glmnet_family)
+  
   selector_globals <- list(
     base_data = base_data,
     base_formulas = base_formulas_internal,
@@ -308,6 +312,7 @@ sb_gamlss <- function(
     direction = direction,
     k = k,
     glmnet_alpha = glmnet_alpha,
+    glmnet_family = glmnet_family,
     grpreg_penalty = grpreg_penalty,
     sgl_alpha = sgl_alpha,
     sample_fraction = sample_fraction,
@@ -429,7 +434,7 @@ sb_gamlss <- function(
       if (is.null(response_vec) && selector_globals$resp_name %in% names(df)) {
         response_vec <- df[[selector_globals$resp_name]]
       }
-      response_as_vector <- function(y, engine_label) {
+      response_as_vector <- function(y, engine_label, family = NULL) {
         if (is.null(y)) {
           stop(sprintf("engine='%s' requires a univariate response.", engine_label), call. = FALSE)
         }
@@ -452,6 +457,9 @@ sb_gamlss <- function(
         }
         if (length(y) != length(idx)) {
           stop(sprintf("engine='%s' received a response of length %d but expected %d.", engine_label, length(y), length(idx)), call. = FALSE)
+        }
+        if (!is.null(family) && identical(engine_label, "glmnet")) {
+          return(.glmnet_prepare_response(y, family))
         }
         as.numeric(y)
       }
@@ -489,13 +497,13 @@ sb_gamlss <- function(
         }
         X_glm <- as.matrix(df[, c(base_cols, candidate_cols), drop = FALSE])
         penalty <- c(rep(0, length(base_cols)), rep(1, length(candidate_cols)))
-        y <- response_as_vector(response_vec, "glmnet")
+        y <- response_as_vector(response_vec, "glmnet", selector_globals$glmnet_family)
         cv <- try(glmnet::cv.glmnet(
           x = X_glm,
           y = y,
           weights = weights_sub,
           alpha = selector_globals$glmnet_alpha,
-          family = "gaussian",
+          family = selector_globals$glmnet_family,
           penalty.factor = penalty,
           standardize = FALSE,
           intercept = TRUE

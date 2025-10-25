@@ -25,10 +25,7 @@ effect_plot(fit, var, data, what = "mu", grid = 100)
 \item{...}{unused}
 }
 \value{
-A ggplot object if ggplot2 present; otherwise draws a base plot and returns
-NULL. When prediction fails, returns an object of class
-\code{effect_plot_failure} that carries diagnostic information and prints a
-message describing the failure.
+a ggplot object if ggplot2 present; otherwise draws base plot and returns NULL
 }
 \description{
 Varies one variable and holds others at typical values (median/mode) to plot the

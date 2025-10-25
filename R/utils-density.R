@@ -182,18 +182,25 @@ loglik_gamlss_newdata_fast <- function(fit, newdata) {
   }
 
 
-  # ---- Native gamlss.dist fast routes for additional common families
-  if (fam %in% c("LOGLOG", "DEL", "ZAGA", "ZIP2")) {
-    # Use the specific d* function if it exists; otherwise fall back
-    dens_name <- paste0("d", fam)
-    dn <- try(getFromNamespace(dens_name, "gamlss.dist"), silent = TRUE)
-    if (!inherits(dn, "try-error")) {
-      fmls <- names(formals(dn))
-      args <- list(x = y, log = TRUE)
-      for (nm in c("mu","sigma","nu","tau")) {
-        if (nm %in% names(pars) && nm %in% fmls) args[[nm]] <- pars[[nm]]
-      }
-      ll <- do.call(dn, args)
+  # ---- Native gamlss.dist fast routes for additional families via direct density lookup
+  dens_name <- paste0("d", fam)
+  dn <- try(getFromNamespace(dens_name, "gamlss.dist"), silent = TRUE)
+  if (!inherits(dn, "try-error")) {
+    fmls <- names(formals(dn))
+    args <- list(log = TRUE)
+    if (is.matrix(y) && ncol(y) == 2) {
+      successes <- y[, 1]
+      trials <- rowSums(y)
+      args$x <- successes
+      if ("bd" %in% fmls) args$bd <- trials
+    } else {
+      args$x <- as.numeric(y)
+    }
+    for (nm in c("mu","sigma","nu","tau")) {
+      if (nm %in% names(pars) && nm %in% fmls) args[[nm]] <- pars[[nm]]
+    }
+    ll <- try(do.call(dn, args), silent = TRUE)
+    if (!inherits(ll, "try-error")) {
       return(safe_sum(ll))
     }
   }

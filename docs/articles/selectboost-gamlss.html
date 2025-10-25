@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-24</h4>
+            <h4 data-toc-skip class="date">2025-10-25</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/selectboost-gamlss.Rmd" class="external-link"><code>vignettes/selectboost-gamlss.Rmd</code></a></small>
       <div class="d-none name"><code>selectboost-gamlss.Rmd</code></div>
@@ -138,8 +138,6 @@ strongly correlated.</p>
 <span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937</span></span>
 <span></span>
 <span><span class="va">fit</span><span class="op">$</span><span class="va">final_formula</span></span>
 <span><span class="co">#&gt; $mu</span></span>
@@ -147,15 +145,15 @@ strongly correlated.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sigma</span></span>
 <span><span class="co">#&gt; ~1</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x1158dd698&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x11b0d6ba8&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $nu</span></span>
 <span><span class="co">#&gt; ~1</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x1158dd698&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x11b0d6ba8&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $tau</span></span>
 <span><span class="co">#&gt; ~1</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x1158dd698&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x11b0d6ba8&gt;</span></span>
 <span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sel</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">8L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -181,9 +179,16 @@ strongly correlated.</p>
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="../reference/effect_plot.html">effect_plot</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"x1"</span>, <span class="va">dat</span>, what <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; Warning in data.frame(data, source = namelist): row names were found from a</span></span>
-<span><span class="co">#&gt; short variable and have been discarded</span></span>
-<span><span class="co">#&gt; Prediction failed for parameter 'mu': arguments imply differing number of rows: 100, 101 (fallback failed at row 1: incompatible dimensions).</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning: `aes_string()` was deprecated in ggplot2 3.0.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">SelectBoost.gamlss</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at</span></span>
+<span><span class="co">#&gt;   <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/fbertran/SelectBoost.gamlss/issues/&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
+<p><img src="selectboost-gamlss_files/figure-html/unnamed-chunk-1-2.png" width="700"></p>
 <p><code><a href="../reference/selection_table.html">selection_table()</a></code> ranks stable terms for each parameter;
 the chunk above prints the eight strongest effects (sorted by stability)
 alongside the terms exceeding the stability threshold.
@@ -221,11 +226,6 @@ individually.</p>
 <span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1745.571 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1745.503 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 1745.488 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 1745.487 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 1745.487</span></span>
 <span></span>
 <span><span class="va">sel_grouped</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_grouped</span><span class="op">)</span></span>
 <span><span class="va">sel_grouped</span> <span class="op">&lt;-</span> <span class="va">sel_grouped</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel_grouped</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel_grouped</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
@@ -271,15 +271,7 @@ automated c0 choice.</p>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |===================================                                   |  50%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1149.895 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1149.895 </span></span>
-<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">grid_obj</span><span class="op">)</span></span></code></pre></div>
 <p><img src="selectboost-gamlss_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -303,18 +295,10 @@ automated c0 choice.</p>
 <span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |==================                                                    |  25%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |===================================                                   |  50%</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%</span></span>
 <span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
 <span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%GAMLSS-RS iteration 1: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1145.937 </span></span>
-<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt;   |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">auto_obj</span>, <span class="st">"chosen_c0"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.4</span></span>
 <span></span>
@@ -330,8 +314,6 @@ automated c0 choice.</p>
 <span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1149.895 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1149.895</span></span>
 <span><span class="fu"><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fast_obj</span><span class="op">)</span></span></code></pre></div>
 <p><img src="selectboost-gamlss_files/figure-html/unnamed-chunk-3-2.png" width="700"></p>
 <p>Use <code>progress = TRUE</code> on any of these helpers to monitor
@@ -404,16 +386,7 @@ arguments.</p>
 <span><span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span><span class="va">configs</span>, base_args <span class="op">=</span> <span class="va">baseline</span>, B_small <span class="op">=</span> <span class="fl">25</span>, metric <span class="op">=</span> <span class="st">"stability"</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   |                                                                              |                                                                      |   0%</span></span>
 <span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1133.433 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1133.433 </span></span>
-<span><span class="co">#&gt;   |                                                                              |=======================                                               |  33%GAMLSS-RS iteration 1: Global Deviance = 1133.433 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1133.433 </span></span>
-<span><span class="co">#&gt;   |                                                                              |===============================================                       |  67%GAMLSS-RS iteration 1: Global Deviance = 1743.934 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1743.78 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 1743.774 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 1743.772 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 1743.772 </span></span>
-<span><span class="co">#&gt;   |                                                                              |======================================================================| 100%</span></span>
+<span><span class="co">#&gt;   |                                                                              |=======================                                               |  33%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================================| 100%</span></span>
 <span><span class="va">tuned</span><span class="op">$</span><span class="va">best_config</span></span>
 <span><span class="co">#&gt; $engine</span></span>
 <span><span class="co">#&gt; [1] "glmnet"</span></span>

@@ -35,7 +35,7 @@ functionals condense these curves into scalar confidences:
 5. **Weighted AUSC**: integrate \(w(c0)\,p(c0)\) normalized by \(\int w(c0)\,dc0\).
 6. **Conservative AUSC**: replace \(p\) by a Wilson lower bound before integrating.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)
 

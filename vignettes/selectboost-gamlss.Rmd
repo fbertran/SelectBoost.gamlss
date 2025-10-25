@@ -29,7 +29,7 @@ This vignette demonstrates bootstrap stability-selection for GAMLSS models.
 
 > **Conference highlight.** SelectBoost for GAMLSS was presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* by Frédéric Bertrand and M. Maumy. The presentation stressed how correlation-aware resampling sharpens variable selection for GAMLSS and quantile regression problems even when predictors are numerous and strongly correlated.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 set.seed(1)
 library(gamlss)
 library(SelectBoost.gamlss)
@@ -78,7 +78,7 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 
 SelectBoost.gamlss lets you mix-and-match engines across parameters. Grouped penalties (via **grpreg** and **SGL**) keep whole factors/spline bases/interactions together, while `engine`, `engine_sigma`, `engine_nu`, and `engine_tau` control the selection backend individually.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 set.seed(2)
 f  <- factor(sample(letters[1:3], n, TRUE))
 dat2 <- transform(dat, f = f, x4 = rnorm(n))
@@ -117,7 +117,7 @@ Grouped engines build design matrices internally (safely handling factors/spline
 
 The SelectBoost wrappers expose correlation-aware grouping and automated c0 choice.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 grid_obj <- sb_gamlss_c0_grid(
   y ~ 1,
   data = dat,
@@ -169,7 +169,7 @@ Use `progress = TRUE` on any of these helpers to monitor grid/config iteration.
 
 `confidence_functionals()` collapses stability curves across the c0 grid into scalar summaries (AUSC, coverage, quantiles, weighted, conservative). The output ranks terms and integrates seamlessly with `plot()` and `plot_stability_curves()`.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 cf <- confidence_functionals(
   grid_obj,
   pi_thr = 0.6,
@@ -188,7 +188,7 @@ For model interpretation, pair the stability summaries with partial-effect diagn
 
 `tune_sb_gamlss()` evaluates different engine/penalty configurations using either stability or deviance metrics (with optional K-fold CV). Supply a list of configurations and a shared baseline of arguments.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 configs <- list(
   list(engine = "stepGAIC"),
   list(engine = "glmnet", glmnet_alpha = 1),

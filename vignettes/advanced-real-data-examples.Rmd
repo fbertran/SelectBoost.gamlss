@@ -41,7 +41,7 @@ library(gamlss)
 
 ## 1. Zero-inflated counts — `pscl::bioChemists` (ZIP/ZINB)
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 bc <- NULL
 if (requireNamespace("pscl", quietly = TRUE)) {
   data("bioChemists", package = "pscl")
@@ -88,7 +88,7 @@ if (requireNamespace("pscl", quietly = TRUE)) {
 The tables above report the eight most stable terms (sorted within each parameter) together with the subset that exceeds the stability threshold `pi_thr`.
 
 ### ZINB often handles overdispersion better than ZIP
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 if (requireNamespace("pscl", quietly = TRUE) && !is.null(bc)) {
   set.seed(11)
   fit_zinb <- sb_gamlss(
@@ -114,7 +114,7 @@ if (requireNamespace("pscl", quietly = TRUE) && !is.null(bc)) {
 ```
 
 ### Side-by-side metrics (ZIP vs ZINB)
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 if (requireNamespace("pscl", quietly = TRUE)) {
   if (exists("fit_zip", inherits = FALSE) && exists("fit_zinb", inherits = FALSE)) {
     zip_g <- fit_zip$final_fit
@@ -154,7 +154,7 @@ if (requireNamespace("pscl", quietly = TRUE)) {
 
 `Ozone` is non-negative and has zeros; positive part is continuous — ideal for **ZAGA** (zero-adjusted Gamma).
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 aq <- subset(airquality, !is.na(Ozone) & !is.na(Wind) & !is.na(Temp) & !is.na(Solar.R))
 aq$Month <- factor(aq$Month)
 
@@ -180,7 +180,7 @@ if (nrow(stable_zaga)) {
 As with the count model, we present the eight most persistent effects plus the subset clearing the stability requirement.
 
 ### Effect plot for Temp on mu (ZAGA)
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 if (requireNamespace('ggplot2', quietly = TRUE)) {
   print(effect_plot(fit_zaga, 'Temp', aq, what = 'mu'))
 }
@@ -194,7 +194,7 @@ if (requireNamespace('ggplot2', quietly = TRUE)) {
 
 Fit **random intercepts** by subject using `gamlss::random()`, while selecting fixed effects for μ.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 if (requireNamespace("nlme", quietly = TRUE)) {
   data_ok <- tryCatch({
     utils::data("Orthodont", package = "nlme", envir = environment())

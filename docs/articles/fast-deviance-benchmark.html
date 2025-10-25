@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-23</h4>
+            <h4 data-toc-skip class="date">2025-10-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/fast-deviance-benchmark.Rmd" class="external-link"><code>vignettes/fast-deviance-benchmark.Rmd</code></a></small>
       <div class="d-none name"><code>fast-deviance-benchmark.Rmd</code></div>
@@ -191,22 +191,22 @@ variants (e.g., <code>ZAGA</code>, <code>ZIPF</code>,
 <span></span>
 <span><span class="va">res</span></span>
 <span><span class="co">#&gt;     method    median unit rel_speed family</span></span>
-<span><span class="co">#&gt; 1     fast  825.3505   us 0.5510792     NO</span></span>
-<span><span class="co">#&gt; 2  generic  454.8335   us 1.8146212     NO</span></span>
-<span><span class="co">#&gt; 3     fast 1524.6055   us 0.7515833     PO</span></span>
-<span><span class="co">#&gt; 4  generic 1145.8680   us 1.3305245     PO</span></span>
-<span><span class="co">#&gt; 5     fast 1336.5180   us 0.7263176  LOGNO</span></span>
-<span><span class="co">#&gt; 6  generic  970.7365   us 1.3768082  LOGNO</span></span>
-<span><span class="co">#&gt; 7     fast 1360.3185   us 0.7229833     GA</span></span>
-<span><span class="co">#&gt; 8  generic  983.4875   us 1.3831579     GA</span></span>
-<span><span class="co">#&gt; 9     fast 1329.6300   us 0.7216620     IG</span></span>
-<span><span class="co">#&gt; 10 generic  959.5435   us 1.3856902     IG</span></span>
-<span><span class="co">#&gt; 11    fast  881.8280   us 0.5970104     LO</span></span>
-<span><span class="co">#&gt; 12 generic  526.4605   us 1.6750127     LO</span></span>
-<span><span class="co">#&gt; 13    fast 1417.0830   us 0.7341377   GEOM</span></span>
-<span><span class="co">#&gt; 14 generic 1040.3340   us 1.3621424   GEOM</span></span>
-<span><span class="co">#&gt; 15    fast 1154.6625   us 0.6777275     BE</span></span>
-<span><span class="co">#&gt; 16 generic  782.5465   us 1.4755193     BE</span></span>
+<span><span class="co">#&gt; 1     fast  831.5620   us 0.5549009     NO</span></span>
+<span><span class="co">#&gt; 2  generic  461.4345   us 1.8021236     NO</span></span>
+<span><span class="co">#&gt; 3     fast  754.9945   us 1.5799506     PO</span></span>
+<span><span class="co">#&gt; 4  generic 1192.8540   us 0.6329312     PO</span></span>
+<span><span class="co">#&gt; 5     fast  890.0690   us 1.1034133  LOGNO</span></span>
+<span><span class="co">#&gt; 6  generic  982.1140   us 0.9062787  LOGNO</span></span>
+<span><span class="co">#&gt; 7     fast  888.7775   us 1.0822281     GA</span></span>
+<span><span class="co">#&gt; 8  generic  961.8600   us 0.9240196     GA</span></span>
+<span><span class="co">#&gt; 9     fast  874.4480   us 1.0833646     IG</span></span>
+<span><span class="co">#&gt; 10 generic  947.3460   us 0.9230503     IG</span></span>
+<span><span class="co">#&gt; 11    fast  858.3965   us 0.5833353     LO</span></span>
+<span><span class="co">#&gt; 12 generic  500.7330   us 1.7142799     LO</span></span>
+<span><span class="co">#&gt; 13    fast  549.9125   us 1.7757689   GEOM</span></span>
+<span><span class="co">#&gt; 14 generic  976.5175   us 0.5631363   GEOM</span></span>
+<span><span class="co">#&gt; 15    fast 1135.8845   us 0.6736631     BE</span></span>
+<span><span class="co">#&gt; 16 generic  765.2035   us 1.4844215     BE</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="co"># Plot median times by family (if microbenchmark unit)</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">res_list</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>, <span class="st">"unit"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>

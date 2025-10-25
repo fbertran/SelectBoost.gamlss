@@ -21,6 +21,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/advanced-real-data-examples.html">Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</a></li>
+    <li><a class="dropdown-item" href="../articles/algorithm-pseudocode.html">Algorithmic Pseudocode for SelectBoost.gamlss</a></li>
     <li><a class="dropdown-item" href="../articles/benchmark.html">Benchmark: Stepwise vs Grouped vs Glmnet Engines</a></li>
     <li><a class="dropdown-item" href="../articles/comparison.html">Comparing SelectBoost-GAMLSS Variants</a></li>
     <li><a class="dropdown-item" href="../articles/confidence-functionals.html">Confidence Functionals for SelectBoost-GAMLSS</a></li>
@@ -79,6 +80,7 @@
 <span>  df_smooth <span class="op">=</span> <span class="fl">6L</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  glmnet_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  glmnet_family <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gaussian"</span>, <span class="st">"binomial"</span>, <span class="st">"poisson"</span><span class="op">)</span>,</span>
 <span>  parallel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"auto"</span>, <span class="st">"multisession"</span>, <span class="st">"multicore"</span><span class="op">)</span>,</span>
 <span>  workers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -176,6 +178,10 @@
 <dd><p>Elastic-net mixing for glmnet (1 = lasso, 0 = ridge).</p></dd>
 
 
+<dt id="arg-glmnet-family">glmnet_family<a class="anchor" aria-label="anchor" href="#arg-glmnet-family"></a></dt>
+<dd><p>Family passed to glmnet-based selectors ("gaussian", "binomial", "poisson").</p></dd>
+
+
 <dt id="arg-parallel">parallel<a class="anchor" aria-label="anchor" href="#arg-parallel"></a></dt>
 <dd><p>Parallel mode (<code>"none"</code>, <code>"auto"</code>, <code>"multisession"</code>, `"multicore").</p></dd>
 
@@ -227,24 +233,22 @@
 <span class="r-in"><span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span></span>
 <span class="r-in"><span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 1: Global Deviance = 150.4894 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> GAMLSS-RS iteration 2: Global Deviance = 150.4894 </span>
 <span class="r-in"><span><span class="va">fit</span><span class="op">$</span><span class="va">final_formula</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $mu</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> y ~ 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x16191e7f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x1281ba0b0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $sigma</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x16199c780&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x1283126d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $nu</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x16199c780&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x1283126d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $tau</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ~1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x16199c780&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: 0x1283126d8&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

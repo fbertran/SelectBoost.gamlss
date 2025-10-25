@@ -90,8 +90,13 @@ select_sgl_param <- function(data, scope_terms, y_work, alpha = 0.95, df_smooth 
 # Expand mu/sigma/nu/tau scope term labels into a model.matrix-ready RHS string.
 # We replace common smoother constructors (pb(), cs()) with splines::bs() proxies for selection,
 # so group lasso treats the whole basis as one group. Interactions with smoothers are not expanded.
-.expand_terms_to_mm <- function(terms, df_smooth = 6L) {
+.expand_terms_to_mm <- function(terms, df_smooth = 6L, converters = getOption("SelectBoost.gamlss.term_converters")) {
   if (length(terms) == 0L) return(character(0))
+  if (!is.null(converters)) {
+    if (!is.list(converters) || !all(vapply(converters, is.function, logical(1)))) {
+      stop("`converters` must be a list of functions or NULL.")
+    }
+  }
   out <- character(length(terms))
   for (i in seq_along(terms)) {
     t <- terms[i]
@@ -101,6 +106,23 @@ select_sgl_param <- function(data, scope_terms, y_work, alpha = 0.95, df_smooth 
     # cs(x) -> splines::bs(x, df = df_smooth)
     t <- gsub("(\\bcs\\(\\s*([[:alnum:]_\\.]+)\\s*\\))",
               sprintf("splines::bs(\\2, df=%d)", df_smooth), t, perl = TRUE)
+    # pbm(x) -> splines::bs(x, df = df_smooth)
+    t <- gsub("(\\bpbm\\(\\s*([[:alnum:]_\\.]+)\\s*\\))",
+              sprintf("splines::bs(\\2, df=%d)", df_smooth), t, perl = TRUE)
+    # lo(x, ...) -> splines::ns(x, df = df_smooth) using first argument
+    t <- gsub("(\\blo\\(\\s*([[:alnum:]_\\.]+)[^)]*\\))",
+              sprintf("splines::ns(\\2, df=%d)", df_smooth), t, perl = TRUE)
+    if (!is.null(converters) && length(converters)) {
+      for (conv in converters) {
+        res <- conv(t, df_smooth = df_smooth)
+        if (!is.null(res)) {
+          if (!is.character(res) || length(res) != 1L) {
+            stop("Custom term converters must return a single character string or NULL.")
+          }
+          t <- res
+        }
+      }
+    }
     out[i] <- t
   }
   out

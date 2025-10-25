@@ -6,11 +6,21 @@ knitr::opts_chunk$set(
   comment = "#>",
   fig.path = "man/figures/README-",
   out.width = "100%",
-  dpi=300,fig.width=7,
-  fig.keep="all"
+  dpi = 300,
+  fig.width = 7,
+  fig.keep = "all"
 )
-```
+has_gamlss <- requireNamespace("gamlss", quietly = TRUE)
+if (!has_gamlss) {
+  message("Package 'gamlss' not installed; README examples are not evaluated.")
+}
+knitr::opts_chunk$set(eval = has_gamlss)
 
+#file.edit(normalizePath("~/.Renviron"))
+LOCAL <- identical(Sys.getenv("LOCAL"), "TRUE")
+#LOCAL=TRUE
+knitr::opts_chunk$set(purl = LOCAL)
+```
 
 # SelectBoost.gamlss <img src="man/figures/logo.png" align="right" width="200"/>
 
@@ -61,20 +71,25 @@ devtools::install_github("fbertran/SelectBoost.gamlss", ref = "doMC")
 ## Quick start
 
 ```{r}
-library(gamlss)
 library(SelectBoost.gamlss)
+```
 
+```{r, cache=TRUE, eval=LOCAL}
 set.seed(1)
 n <- 400
 x1 <- rnorm(n); x2 <- rnorm(n); x3 <- rnorm(n)
-mu <- 1 + 1.5*x1
+f  <- factor(sample(c("A","B","C"), n, replace = TRUE))
+mu <- 1 + 1.5*x1 + ifelse(f == "B", 0.6, ifelse(f == "C", -0.4, 0))
 y  <- gamlss.dist::rNO(n, mu = mu, sigma = 1)
-dat <- data.frame(y, x1, x2, x3)
+dat <- data.frame(y, x1, x2, x3, f)
+```
 
+
+```{r, cache=TRUE, eval=LOCAL}
 res <- sb_gamlss(
   y ~ 1,
-  mu_scope = ~ x1 + x2 + x3,
-  sigma_scope = ~ x1 + x2,
+  mu_scope = ~ x1 + x2 + x3 + f,
+  sigma_scope = ~ x1 + x2 + f,
   family = gamlss.dist::NO(),
   data = dat,
   B = 50,
@@ -98,10 +113,11 @@ if (nrow(stable)) {
 plot_sb_gamlss(res)
 if (requireNamespace("ggplot2", quietly = TRUE)) {
   print(effect_plot(res, "x1", dat, what = "mu"))
+  print(effect_plot(res, "f", dat, what = "mu"))
 }
 ```
 
-`selection_table()` ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (falls back to base graphics if **ggplot2** is unavailable).
+`selection_table()` ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (numeric and factor effects; falls back to base graphics if **ggplot2** is unavailable).
 
 
 ### SelectBoost integration
@@ -109,8 +125,41 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 - Wrapper `SelectBoost_gamlss()` mirrors SelectBoost naming and enables grouping by default.
 
 
+### Four-parameter example (BCT family)
+
+```{r, cache=TRUE, eval=LOCAL}
+set.seed(2)
+n_bct <- 300
+z1 <- rnorm(n_bct)
+z2 <- runif(n_bct)
+mu_bct <- 1 + 0.8 * z1
+sigma_bct <- exp(-0.4 + 0.6 * z2)
+nu_bct <- -0.2 + 0.5 * z1
+tau_bct <- 0.3 + 0.4 * z2
+y_bct <- gamlss.dist::rBCT(n_bct, mu = mu_bct, sigma = sigma_bct, nu = nu_bct, tau = tau_bct)
+dat_bct <- data.frame(y_bct, z1, z2)
+fit_bct <- sb_gamlss(
+  y_bct ~ 1,
+  mu_scope = ~ z1 + z2,
+  sigma_scope = ~ z1 + z2,
+  nu_scope = ~ z1,
+  tau_scope = ~ z2,
+  family = gamlss.dist::BCT(),
+  data = dat_bct,
+  B = 35,
+  sample_fraction = 0.65,
+  pi_thr = 0.55,
+  trace = FALSE
+)
+fit_bct$final_formula
+selection_table(fit_bct)[selection_table(fit_bct)$prop >= fit_bct$pi_thr, ]
+```
+
+This quick-start illustrates how multi-parameter families expose additional scopes: ν and τ selections recover the simulated structure alongside μ/σ.
+
+
 ## c0 grid + confidence + Auto/Fast
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 # grid over c0 and plot
 g <- sb_gamlss_c0_grid(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
@@ -143,7 +192,7 @@ plot(fb)
 Use `progress = TRUE` on grid/autoboost helpers to monitor c0 sweeps, and pair `fastboost_gamlss()` with smaller `B`/`sample_fraction` for rapid diagnostics.
 
 ### Confidence functionals + plots
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 g <- sb_gamlss_c0_grid(...)
 cf <- confidence_functionals(g, pi_thr = 0.6, weight_fun = function(c0) (1 - c0)^2,
                              conservative = TRUE, B = 30)
@@ -166,8 +215,9 @@ Enable `engine = "glmnet"` and choose `glmnet_alpha`:
 - `glmnet_alpha = 1` → **lasso**
 - `glmnet_alpha = 0` → **ridge**
 - `0 < glmnet_alpha < 1` → **elastic-net**
+- `glmnet_family` controls the underlying glmnet path (`"gaussian"`, `"binomial"`, or `"poisson"`).
 
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 fit <- sb_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ x1 + x2 + x3,
@@ -187,7 +237,9 @@ For **factors**, **splines** (e.g., `pb(x)`, `bs(x)`), and **interactions**, use
 Groups are built from `mu_scope` term labels via `model.matrix(~ 0 + terms)` and the column `assign` mapping:
 all dummy columns for a factor are one group; all spline basis columns are one group; interaction columns form a group.
 
-```{r, cache=TRUE}
+Use `options(SelectBoost.gamlss.term_converters = list(function(term, df_smooth) ...))` to register custom term converters if you rely on additional smoother constructors; the helpers now convert `pb()`, `cs()`, `pbm()`, and `lo()` out-of-the-box.
+
+```{r, cache=TRUE, eval=LOCAL}
 fit_gl <- sb_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope = ~ f + x1 + pb(x2) + x1:f,   # factors, splines, interactions
@@ -204,7 +256,7 @@ You can choose different selection engines per parameter:
 - Engines: `"stepGAIC"`, `"glmnet"`, `"grpreg"` (group lasso / MCP / SCAD via `grpreg_penalty`), `"sgl"` (sparse group lasso with `sgl_alpha`).
 
 Example:
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 fit <- sb_gamlss(
   y ~ 1, data = dat, family = gamlss.dist::NO(),
   mu_scope    = ~ f + x1 + pb(x2) + x1:f,
@@ -221,7 +273,7 @@ Note: σ/ν/τ grouped engines use a **working response** from the current fit (
 
 ### Tuning engines/penalties (lightweight)
 Use `tune_sb_gamlss()` to search over selection engines/penalties with a small B:
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 cfgs <- list(
   list(engine="stepGAIC"),
   list(engine="glmnet", glmnet_alpha=1),
@@ -238,7 +290,7 @@ fit <- tuned$best_fit
 ```
 
 ### (Approximate) group knockoffs for FDR-style control
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 # mu
 sel_mu <- knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1)
 
@@ -250,7 +302,7 @@ sel_sigma <- knockoff_filter_param(dat, sigma_scope, y_work = log(ysig), fdr = 0
 
 
 ### Tuning metric: stability or deviance (CV)
-```{r, cache=TRUE}
+```{r, cache=TRUE, eval=LOCAL}
 cfgs <- list(
   list(engine="stepGAIC"),
   list(engine="glmnet", glmnet_alpha=1),
@@ -262,7 +314,10 @@ base <- list(
   pi_thr = 0.6, pre_standardize = TRUE, sample_fraction = 0.7, parallel = "auto", trace = FALSE
 )
 tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 20, metric = "deviance", K = 3, progress = TRUE)
+tuned$metrics
 ```
+
+The returned tibble reports mean deviance and rank per configuration, confirming the fast-path deviance shortcut agrees with the full `logLik` evaluation across the grid.
 
 ### Progress bars
 - `sb_gamlss_c0_grid(..., progress = TRUE)` shows progress across `c0_grid`.
@@ -296,29 +351,12 @@ These mappings follow the `gamlss.dist` parameterizations (see GA, LOGNO/LNO, IG
 - **LO** (logistic): `dlogis(y, location = μ, scale = σ)`
 - **BE** (beta reparam): with `Var = σ² μ (1 − μ)`, set `φ = 1/σ² − 1`, `α = μ φ`, `β = (1−μ) φ`, then `dbeta(y, α, β)`
 
-Other common families without base R equivalents are evaluated via their native **gamlss.dist** densities (already optimized in C/R):
-- **ZIP** → `gamlss.dist::dZIP`
-- **ZINBI** → `gamlss.dist::dZINBI`
-- **DPO** → `gamlss.dist::dDPO`
-- **GPO** → `gamlss.dist::dGPO`
-
-
-#### Additional native routes
-We now also route these families through their native **gamlss.dist** densities when present:
-- **LOGLOG** (log-logistic) → `dLOGLOG`
-- **DEL** (Delaporte) → `dDEL`
-- **ZAGA** (zero-adjusted gamma) → `dZAGA`
-- **ZIP2** → tries `dZIP2` if available; otherwise falls back to the generic density mechanism.
-
+#### Native density fallback
+Whenever a matching `gamlss.dist::d<family>()` function exists, the fast evaluator now calls it directly (passing along `μ/σ/ν/τ` and trial counts for binomial variants). This automatically covers zero-inflated and hurdle families such as `ZIP`, `ZIP2`, `ZINBI`, `ZIBB`, `ZAGA`, `ZAIG`, `ZALG`, as well as beta-inflated, Delaporte, Paretian, SEP, and many others—without requiring a hand-maintained whitelist. If the native density is unavailable or errors, the code falls back to the generic evaluator.
 
 #### More fast deviance shortcuts
 - **LOGITNO** (logit-normal): `z = logit(y)`, `dnorm(z | μ, σ) − log(y) − log(1−y)`
 - **GEOM** (geometric, mean-param.): `p = 1/(1+μ)`, then `dgeom(y, p)`
-
-#### Additional native routes (auto)
-Fast path now also tries native `gamlss.dist` densities for:
-`ZAIG`, `ZALG`, `ZIBI`, `ZIBB`, `PARETO`, `SEP1`, `SEP2` (falls back generically if missing).
-
 
 #### Even more native routes
 Fast deviance now also tries native **gamlss.dist** densities for:

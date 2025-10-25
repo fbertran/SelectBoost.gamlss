@@ -21,6 +21,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/advanced-real-data-examples.html">Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</a></li>
+    <li><a class="dropdown-item" href="../articles/algorithm-pseudocode.html">Algorithmic Pseudocode for SelectBoost.gamlss</a></li>
     <li><a class="dropdown-item" href="../articles/benchmark.html">Benchmark: Stepwise vs Grouped vs Glmnet Engines</a></li>
     <li><a class="dropdown-item" href="../articles/comparison.html">Comparing SelectBoost-GAMLSS Variants</a></li>
     <li><a class="dropdown-item" href="../articles/confidence-functionals.html">Confidence Functionals for SelectBoost-GAMLSS</a></li>
@@ -54,8 +55,24 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">.gen_family</span><span class="op">(</span><span class="va">fam</span>, <span class="va">n</span><span class="op">)</span></span></code></pre></div>
     </div>
 
+    <div class="section level2">
+    <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
-  </main></div>
+
+<dl><dt id="arg-fam">fam<a class="anchor" aria-label="anchor" href="#arg-fam"></a></dt>
+<dd><p>Character scalar naming the family. This should correspond to a
+distribution available in the <code>gamlss.dist</code> package, as used when
+constructing <code>r&lt;family&gt;</code> generator functions (for example, <code>NO'' or </code>LOGNO”).</p></dd>
+
+
+<dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
+<dd><p>Positive integer giving the number of observations to generate for
+the requested family.</p></dd>
+
+</dl></div>
+
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

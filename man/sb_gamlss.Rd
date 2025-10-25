@@ -32,6 +32,7 @@ sb_gamlss(
   df_smooth = 6L,
   progress = TRUE,
   glmnet_alpha = 1,
+  glmnet_family = c("gaussian", "binomial", "poisson"),
   parallel = c("none", "auto", "multisession", "multicore"),
   workers = NULL,
   trace = TRUE,
@@ -82,6 +83,8 @@ sb_gamlss(
 \item{progress}{Logical; show a progress bar in sequential runs.}
 
 \item{glmnet_alpha}{Elastic-net mixing for glmnet (1 = lasso, 0 = ridge).}
+
+\item{glmnet_family}{Family passed to glmnet-based selectors ("gaussian", "binomial", "poisson").}
 
 \item{parallel}{Parallel mode (\code{"none"}, \code{"auto"}, \code{"multisession"}, `"multicore").}
 

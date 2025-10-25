@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 This vignette compares: plain `sb_gamlss`, the SelectBoost-integrated `SelectBoost_gamlss`,
 grid-based `sb_gamlss_c0_grid` + `autoboost_gamlss`, and the lightweight `fastboost_gamlss`.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)
 
@@ -94,7 +94,7 @@ We summarize the stability curves \(p_j(c0)\) into single-number scores:
 - **Weighted AUSC**: apply a weight function \(w(c0)\) to emphasize parts of the grid.
 - **Conservative AUSC**: use Wilson lower bounds for \(p\) before computing AUSC.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 # Using the grid g created above
 cf <- confidence_functionals(
   g, pi_thr = 0.6,
@@ -114,7 +114,7 @@ plot_stability_curves(g, terms = unique(top_terms$term), parameter = unique(top_
 
 ## Grouped penalties for factors & splines
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)
 
@@ -152,7 +152,7 @@ selection_table(fit_grp)  |> head()
 
 ## Tuning & Group Knockoffs
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 # Tuning engines / penalties
 cfgs <- list(
   list(engine="stepGAIC"),

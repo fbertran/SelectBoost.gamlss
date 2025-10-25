@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-23</h4>
+            <h4 data-toc-skip class="date">2025-10-24</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/benchmark.Rmd" class="external-link"><code>vignettes/benchmark.Rmd</code></a></small>
       <div class="d-none name"><code>benchmark.Rmd</code></div>
@@ -144,32 +144,16 @@ your machine and BLAS.</p>
 <span>  <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">res</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>engine<span class="op">=</span><span class="va">e</span><span class="op">$</span><span class="va">name</span>, elapsed<span class="op">=</span><span class="va">t</span><span class="op">[[</span><span class="st">"elapsed"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">#&gt; Running stepGAIC ...</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2356.23 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2356.23 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2352.448 </span></span>
 <span><span class="co">#&gt; Running glmnet-lasso ...</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2352.448 </span></span>
 <span><span class="co">#&gt; Running grpreg ...</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 3398.117 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 3398.117 </span></span>
 <span><span class="co">#&gt; Running sgl ...</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2356.23 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2356.23 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 2352.448 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 2352.448</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         engine elapsed</span></span>
-<span><span class="co">#&gt; 1     stepGAIC  71.209</span></span>
-<span><span class="co">#&gt; 2 glmnet-lasso  35.278</span></span>
-<span><span class="co">#&gt; 3       grpreg  35.597</span></span>
-<span><span class="co">#&gt; 4          sgl 263.019</span></span>
+<span><span class="co">#&gt; 1     stepGAIC  68.505</span></span>
+<span><span class="co">#&gt; 2 glmnet-lasso  34.076</span></span>
+<span><span class="co">#&gt; 3       grpreg  36.121</span></span>
+<span><span class="co">#&gt; 4          sgl 260.046</span></span>
 <span></span>
 <span><span class="co"># simple barplot</span></span>
 <span><span class="va">op</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mar<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">8</span>,<span class="fl">4</span>,<span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html" class="external-link">barplot</a></span><span class="op">(</span><span class="va">res</span><span class="op">$</span><span class="va">elapsed</span>, names.arg <span class="op">=</span> <span class="va">res</span><span class="op">$</span><span class="va">engine</span>, las <span class="op">=</span> <span class="fl">2</span>,</span>

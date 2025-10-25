@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 We validate that the fast deviance evaluator matches the generic `gamlss.dist` density route
 (up to floating-point tolerance) across common families.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)
 
@@ -75,7 +75,7 @@ summ
 Below we attempt an automatic sweep across many families; those without installed densities
 or generators will be skipped gracefully.
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 fams <- c("NO","PO","LOGNO","GA","IG","LO","LOGITNO","GEOM","BE",
           "NBI","NBII","LOGLOG","DEL","ZAGA","ZIP","ZINBI","DPO","GPO",
           "ZAIG","ZALG","BCT","BCPE","ZIPF","ZIPFmu","SICHEL","GLG",
@@ -99,7 +99,7 @@ res
 
 ### Wide family sweep with skip reasons
 
-```{r}
+```{r, cache=TRUE, eval=LOCAL}
 fams <- c("NO","PO","LOGNO","GA","IG","LO","LOGITNO","GEOM","BE",
           "NBI","NBII","LOGLOG","DEL","ZAGA","ZIP","ZINBI","DPO","GPO",
           "ZAIG","ZALG","BCT","BCPE","ZIPF","ZIPFmu","SICHEL","GLG",
