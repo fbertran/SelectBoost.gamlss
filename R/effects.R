@@ -1,5 +1,9 @@
 #' One-variable effect plot from an sb_gamlss (or gamlss) fit
 #'
+#'@name effect_plot
+#'
+utils::globalVariables(c("x", "y", ".fitted"))
+#'
 #' Varies one variable and holds others at typical values (median/mode) to plot the
 #' predicted parameter curve (default: mu). Uses ggplot2 if available, otherwise base.
 #'

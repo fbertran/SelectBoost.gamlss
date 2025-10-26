@@ -5,16 +5,16 @@
 # SelectBoost.gamlss <img src="man/figures/logo.png" align="right" width="200"/>
 
 <!-- badges: start -->
-[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss)
+<!-- [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss) -->
 [![R-CMD-check](https://github.com/fbertran/SelectBoost.gamlss/workflows/R-CMD-check/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions)
-[![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss)
+<!-- [![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss) -->
 <!-- badges: end -->
 
 With the growth of big data, variable selection has become one of the major challenges in statistics. Although many methods have been proposed in the literature their performance in terms of recall and precision are limited in a context where the number of variables by far exceeds the number of observations or in a high correlated setting. 
 
 Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
 
-> **Conference highlight.** SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 in Portland, OR, in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (Frédéric Bertrand & M. Maumy). The presentation underscored how correlated resampling improves recall and precision in high-dimensional, highly correlated settings.
+> **Conference highlight.** SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 in Portland, OR, in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (F. Bertrand & M. Maumy). The presentation underscored how correlated resampling improves recall and precision in high-dimensional, highly correlated settings.
 
 ## Key features
 - **Bootstrap stability-selection** for all distribution parameters (μ, σ, ν, τ) with optional SelectBoost grouping over correlation clusters.
@@ -92,15 +92,15 @@ res$final_formula
 #> 
 #> $sigma
 #> ~1
-#> <environment: 0x3377327e0>
+#> <environment: 0x30b1474e0>
 #> 
 #> $nu
 #> ~1
-#> <environment: 0x3377327e0>
+#> <environment: 0x30b1474e0>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x3377327e0>
+#> <environment: 0x30b1474e0>
 sel <- selection_table(res)
 sel <- sel[order(sel$parameter, -sel$prop), , drop = FALSE]
 head(sel, n = min(8L, nrow(sel)))
@@ -125,8 +125,8 @@ plot_sb_gamlss(res)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-13-1.png" alt="plot of chunk unnamed-chunk-13" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-13</p>
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
 </div>
 
 ``` r
@@ -134,14 +134,21 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
   print(effect_plot(res, "x1", dat, what = "mu"))
   print(effect_plot(res, "f", dat, what = "mu"))
 }
+#> Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+#> ℹ Please use tidy evaluation idioms with `aes()`.
+#> ℹ See also `vignette("ggplot2-in-packages")` for more information.
+#> ℹ The deprecated feature was likely used in the SelectBoost.gamlss package.
+#>   Please report the issue at <https://github.com/fbertran/SelectBoost.gamlss/issues/>.
+#> This warning is displayed once every 8 hours.
+#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-13-2.png" alt="plot of chunk unnamed-chunk-13" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-13</p>
+<img src="man/figures/README-unnamed-chunk-6-2.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
 </div><div class="figure">
-<img src="man/figures/README-unnamed-chunk-13-3.png" alt="plot of chunk unnamed-chunk-13" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-13</p>
+<img src="man/figures/README-unnamed-chunk-6-3.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
 </div>
 
 `selection_table()` ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (numeric and factor effects; falls back to base graphics if **ggplot2** is unavailable).
@@ -210,8 +217,8 @@ plot(g)                 # stable terms vs c0 + top confidence terms
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-15</p>
+<img src="man/figures/README-unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-8</p>
 </div>
 
 ``` r
@@ -267,8 +274,8 @@ plot(cf)  # scatter (area_pos vs cover) + top-N bars
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-16-1.png" alt="plot of chunk unnamed-chunk-16" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-16</p>
+<img src="man/figures/README-unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-9</p>
 </div>
 
 ``` r
@@ -276,8 +283,8 @@ plot_stability_curves(g, terms = c("x1","x3"), parameter = "mu")
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-16-2.png" alt="plot of chunk unnamed-chunk-16" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-16</p>
+<img src="man/figures/README-unnamed-chunk-9-2.png" alt="plot of chunk unnamed-chunk-9" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-9</p>
 </div>
 
 Combine these summaries with `effect_plot()` outputs (shown in the quick start) or `selection_table()` to understand which effects drive the final refit.
@@ -444,7 +451,7 @@ The deviance CV now has optimized paths for common families:
 | NO | μ = mean, σ = sd | `dnorm(y, mean = μ, sd = σ)` |
 | PO | μ = mean | `dpois(y, lambda = μ)` |
 | LOGNO | μ = meanlog, σ = sdlog | `dlnorm(y, meanlog = μ, sdlog = σ)` |
-| GA | Var = (σ²)(μ²) | `dgamma(y, shape = 1/σ², scale = μ·σ²)` |
+| GA | Var = σ² μ² | `dgamma(y, shape = 1/σ², scale = μ·σ²)` |
 | IG | Var = σ² μ³ | closed-form: `-½log(2π) - log(σ) - 1.5log(y) - (y-μ)²/(2 μ² σ² y)` |
 | NBI | Var = μ + σ μ² | `dnbinom(y, size = 1/σ, mu = μ)` |
 | NBII | Var = μ(1+σ) | `dnbinom(y, size = μ/σ, mu = μ)` |
@@ -453,17 +460,19 @@ The deviance CV now has optimized paths for common families:
 These mappings follow the `gamlss.dist` parameterizations (see GA, LOGNO/LNO, IG, BI, NBI/NBII documentation).
 
 
-
 #### Added fast paths
 - **LO** (logistic): `dlogis(y, location = μ, scale = σ)`
 - **BE** (beta reparam): with `Var = σ² μ (1 − μ)`, set `φ = 1/σ² − 1`, `α = μ φ`, `β = (1−μ) φ`, then `dbeta(y, α, β)`
 
+
 #### Native density fallback
 Whenever a matching `gamlss.dist::d<family>()` function exists, the fast evaluator now calls it directly (passing along `μ/σ/ν/τ` and trial counts for binomial variants). This automatically covers zero-inflated and hurdle families such as `ZIP`, `ZIP2`, `ZINBI`, `ZIBB`, `ZAGA`, `ZAIG`, `ZALG`, as well as beta-inflated, Delaporte, Paretian, SEP, and many others—without requiring a hand-maintained whitelist. If the native density is unavailable or errors, the code falls back to the generic evaluator.
+
 
 #### More fast deviance shortcuts
 - **LOGITNO** (logit-normal): `z = logit(y)`, `dnorm(z | μ, σ) − log(y) − log(1−y)`
 - **GEOM** (geometric, mean-param.): `p = 1/(1+μ)`, then `dgeom(y, p)`
+
 
 #### Even more native routes
 Fast deviance now also tries native **gamlss.dist** densities for:

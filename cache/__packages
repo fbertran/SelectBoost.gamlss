@@ -9,3 +9,4 @@ testthat
 future
 MASS
 httr2
+rhub

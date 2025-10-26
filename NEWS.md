@@ -1,3 +1,7 @@
+# SelectBoost.gamlss 0.2.1
+
+Additional fixes to code and documentation to silence CRAN check notes for R devel.
+
 # SelectBoost.gamlss 0.2.0
 
 ### Highlights

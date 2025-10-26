@@ -1,8 +1,8 @@
 Package: SelectBoost.gamlss
 Type: Package
 Title: Stability-Selection via Correlated Resampling for 'GAMLSS' Models
-Version: 0.2.0
-Date: 2025-10-19
+Version: 0.2.1
+Date: 2025-10-26
 Depends: 
     R (>= 4.1.0)
 Imports:
@@ -13,6 +13,7 @@ Imports:
     stats,
     utils
 Suggests:
+    AGD,
     doParallel,
     foreach,
     future,
@@ -37,7 +38,8 @@ LinkingTo:
     Rcpp, 
     RcppArmadillo
 Authors@R: c(
-	person(given = "Frederic", family= "Bertrand", role = c("cre", "aut"), email = "frederic.bertrand@lecnam.net", comment = c(ORCID = "0000-0002-0837-8281")))
+	person(given = "Frederic", family= "Bertrand", role = c("cre", "aut"), 
+	email = "frederic.bertrand@lecnam.net", comment = c(ORCID = "0000-0002-0837-8281")))
 Author: Frederic Bertrand [cre, aut] (<https://orcid.org/0000-0002-0837-8281>)
 Maintainer: Frederic Bertrand <frederic.bertrand@lecnam.net>
 Description: Extends the 'SelectBoost' approach to Generalized Additive Models for
@@ -46,8 +48,8 @@ Description: Extends the 'SelectBoost' approach to Generalized Additive Models f
     Includes optional standardization of predictors and helper functions for
     'AICc' calculation. Presented at the Joint Statistics Meetings 2024 (Portland,
     OR) in the talk "An Improvement for Variable Selection for Generalized Additive
-    Models for Location, Shape and Scale and Quantile Regression" (Frédéric
-    Bertrand & M. Maumy), highlighting correlation-aware resampling to improve
+    Models for Location, Shape and Scale and Quantile Regression" ('Bertrand' & 'Maumy'), 
+    highlighting correlation-aware resampling to improve
     variable selection for 'GAMLSS' and quantile regression when predictors are
     numerous and highly correlated.
 License: GPL-3
