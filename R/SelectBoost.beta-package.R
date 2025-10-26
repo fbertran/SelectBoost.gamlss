@@ -40,7 +40,8 @@
 #' @importFrom graphics plot.new
 #' @importFrom graphics text
 #' @importFrom graphics title
-#' @importFrom rlang sym
+# #' @importFrom rlang sym
+#' @importFrom rlang .data
 #' @importFrom stats aggregate
 #' @importFrom stats coef
 #' @importFrom stats logLik

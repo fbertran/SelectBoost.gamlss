@@ -28,6 +28,12 @@ knitr::opts_chunk$set(
 We consider stability curves \(p_j(c0)\) for each term \(j\) across a grid of SelectBoost thresholds `c0`. The following
 functionals condense these curves into scalar confidences:
 
+## What you'll learn
+
+* How to compute `confidence_functionals()` from a `sb_gamlss_c0_grid()` result.
+* How to plot ranking summaries (`plot()`) and raw stability trajectories (`plot_stability_curves()`).
+* How to customise weights, quantiles, and conservative adjustments for different decision rules.
+
 1. **AUSC** (Area Under the Stability Curve): normalized trapezoidal area over the grid.
 2. **Thresholded AUSC**: integrate the positive excess \((p - \pi^\star)_+\).
 3. **Coverage**: fraction of grid points with \(p \ge \pi^\star\).

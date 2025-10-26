@@ -1,6 +1,9 @@
 # SelectBoost.gamlss 0.2.1
 
-Additional fixes to code and documentation to silence CRAN check notes for R devel.
+- Additional fixes to code and documentation to silence CRAN check notes for R devel.
+- Added the boys7482 dataset.
+- Fix knockoff filters to coerce grouped design matrices to numeric, preventing
+  `knockoff::create.fixed()` failures when smooth proxies carry non-numeric classes.
 
 # SelectBoost.gamlss 0.2.0
 

@@ -28,6 +28,12 @@ knitr::opts_chunk$set(
 This vignette demonstrates **SelectBoost.gamlss** on real datasets using *different* distributions.
 We include a **growth** example (Dutch boys) and further count/continuous/binary cases.
 
+## What you'll learn
+
+* How to configure scopes and engines for Box–Cox t growth models, insurance claims, and quine attendance.
+* How to use `selection_table()` and `effect_plot()` to interpret the resulting fits.
+* How to adjust bootstrap settings (`B`, `pi_thr`, `parallel`) for heavier real-world analyses.
+
 > You may want to install optional engines for best results:
 > `install.packages(c("glmnet","grpreg","SGL","future.apply"))`
 
@@ -45,45 +51,40 @@ We model **height** vs **age** with **BCT** (Box–Cox t). Grouped penalties sel
 Increase `B` to 50 for real use.
 
 ```{r, cache=TRUE, eval=LOCAL}
-if (requireNamespace("AGD", quietly = TRUE)) {
-  set.seed(123)
-  # Load and CLEAN the Dutch boys growth data
-  utils::data("boys7482", package = "AGD")
-  # Keep only rows complete
-  boys <- boys7482[stats::complete.cases(boys7482),]
-  boys$gen <- as.factor(boys$gen)
-  # (Optional) keep levels actually present
-  boys <- droplevels(boys)
+set.seed(123)
+# Load and CLEAN the Dutch boys growth data
+utils::data("boys7482", package = "SelectBoost.gamlss")
+# Keep only rows complete
+boys <- boys7482[stats::complete.cases(boys7482),]
+boys$gen <- as.factor(boys$gen)
+# (Optional) keep levels actually present
+boys <- droplevels(boys)
 
-  # Fit SelectBoost.gamlss on CLEANED data (no parallel for vignette stability)
-  fit_growth <- sb_gamlss(
-    hgt ~ 1, data = boys, family = gamlss.dist::BCT(),
-    mu_scope    = ~ pb(age) + pb(age):gen,
-    sigma_scope = ~ pb(age),
-    nu_scope    = ~ pb(age),
-    engine = "grpreg", engine_sigma = "grpreg", engine_nu = "grpreg",
-    grpreg_penalty = "grLasso",
-    B = 1, pi_thr = 0.6, pre_standardize = TRUE,
-    parallel = "none", trace = FALSE
-  )
+# Fit SelectBoost.gamlss on CLEANED data (no parallel for vignette stability)
+fit_growth <- sb_gamlss(
+  hgt ~ 1, data = boys, family = gamlss.dist::BCT(),
+  mu_scope    = ~ pb(age) + pb(age):gen,
+  sigma_scope = ~ pb(age),
+  nu_scope    = ~ pb(age),
+  engine = "grpreg", engine_sigma = "grpreg", engine_nu = "grpreg",
+  grpreg_penalty = "grLasso",
+  B = 1, pi_thr = 0.6, pre_standardize = TRUE,
+  parallel = "none", trace = FALSE
+)
 
-  # Peek at selection (first rows)
-  print(utils::head(selection_table(fit_growth), 12))
+# Peek at selection (first rows)
+print(utils::head(selection_table(fit_growth), 12))
 
-  # Effect plot for age on mu
-  if (requireNamespace("ggplot2", quietly = TRUE)) {
-    print(effect_plot(fit_growth, "age", boys, what = "mu"))
-  }
-} else {
-  cat("Package 'AGD' not installed; skipping Dutch boys growth example.\n")
+# Effect plot for age on mu
+if (requireNamespace("ggplot2", quietly = TRUE)) {
+  print(effect_plot(fit_growth, "age", boys, what = "mu"))
 }
 ```
 
 Increase `B` to 50 for real use.
 
 ```{r, cache=TRUE, eval=FALSE}
-if (requireNamespace("AGD", quietly = TRUE)) {
-  set.seed(123)
+set.seed(123)
 # Stability curves over a small c0 grid (still on CLEANED data)
   g <- sb_gamlss_c0_grid(
     hgt ~ 1, data = boys, family = gamlss.dist::BCT(),
@@ -95,9 +96,6 @@ if (requireNamespace("AGD", quietly = TRUE)) {
     parallel = "none", trace = FALSE
   )
   plot_stability_curves(g, terms = c("pb(age)", "pb(age):gen"), parameter = "mu")
-} else {
-  cat("Package 'AGD' not installed; skipping Dutch boys growth example.\n")
-}
 ```
 
 **Interpretation.** Expect `pb(age)` to be stably selected for μ and σ; interactions like `pb(age):gen` often appear around puberty.

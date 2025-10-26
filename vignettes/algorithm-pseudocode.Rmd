@@ -29,6 +29,12 @@ This vignette distils the key SelectBoost.gamlss workflows into lightweight pseu
 The goal is to surface the control flow and data preparation steps that matter when you
 use the package.
 
+## What you'll learn
+
+* Map the orchestration behind `sb_gamlss()` (scoping, correlated resampling, engine dispatch).
+* Understand how `sb_prepare_selectboost()` derives grouped SelectBoost simulations from your design matrices.
+* Recognise which helpers (`selection_table()`, `confidence_table()`, `sb_gamlss_c0_grid()`) consume the intermediate objects.
+
 Notation:
 
 - \(B\) — number of bootstrap replications.

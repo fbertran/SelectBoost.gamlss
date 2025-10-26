@@ -27,6 +27,13 @@ knitr::opts_chunk$set(
 
 This vignette demonstrates bootstrap stability-selection for GAMLSS models.
 
+## What you'll learn
+
+* How to launch `sb_gamlss()` with correlated-selectBoost bootstraps for μ and σ.
+* How to interpret `selection_table()`, `plot_sb_gamlss()`, and `effect_plot()` outputs.
+* How to mix engines across parameters (`engine`, `engine_sigma`, `engine_tau`) and keep factor/spline terms grouped.
+* How to automate c0 exploration with `sb_gamlss_c0_grid()`, `autoboost_gamlss()`, and `fastboost_gamlss()`.
+
 > **Conference highlight.** SelectBoost for GAMLSS was presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* by Frédéric Bertrand and M. Maumy. The presentation stressed how correlation-aware resampling sharpens variable selection for GAMLSS and quantile regression problems even when predictors are numerous and strongly correlated.
 
 ```{r, cache=TRUE, eval=LOCAL}

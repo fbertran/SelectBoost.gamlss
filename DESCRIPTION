@@ -13,7 +13,6 @@ Imports:
     stats,
     utils
 Suggests:
-    AGD,
     doParallel,
     foreach,
     future,

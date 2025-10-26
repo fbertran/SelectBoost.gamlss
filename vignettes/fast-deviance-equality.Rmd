@@ -28,6 +28,12 @@ knitr::opts_chunk$set(
 We validate that the fast deviance evaluator matches the generic `gamlss.dist` density route
 (up to floating-point tolerance) across common families.
 
+## What you'll learn
+
+* How to call `check_fast_vs_generic()` on fitted `gamlss` models and read the returned diagnostics.
+* How to iterate over multiple families/generators to create a validation table.
+* How to attempt the wide sweep helper for dozens of families while skipping unsupported ones gracefully.
+
 ```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)

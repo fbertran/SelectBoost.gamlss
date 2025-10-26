@@ -30,6 +30,12 @@ This vignette demonstrates **SelectBoost.gamlss** on three additional *real* dat
 - **Semicontinuous** (`datasets::airquality` Ozone): ZAGA
 - **Longitudinal growth with random effects** (`nlme::Orthodont`): random intercepts
 
+## What you'll learn
+
+* How to fit `sb_gamlss()` with grouped penalties on real zero-inflated data sets.
+* How to adapt SelectBoost scopes to semicontinuous responses (ZAGA) and longitudinal models with random effects.
+* How to interpret `selection_table()` outputs when categorical terms are represented by grouped dummy variables.
+
 > **Conference highlight.** These examples build on the communication *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (Frédéric Bertrand & Myriam Maumy) delivered at the Joint Statistics Meetings 2024 in Portland, emphasizing SelectBoost-driven variable selection for GAMLSS and quantile regression through resampling-intensive benchmarking.
 
 ```{r}

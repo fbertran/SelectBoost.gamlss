@@ -1,9 +1,5 @@
 #' One-variable effect plot from an sb_gamlss (or gamlss) fit
 #'
-#'@name effect_plot
-#'
-utils::globalVariables(c("x", "y", ".fitted"))
-#'
 #' Varies one variable and holds others at typical values (median/mode) to plot the
 #' predicted parameter curve (default: mu). Uses ggplot2 if available, otherwise base.
 #'
@@ -68,11 +64,15 @@ effect_plot <- function(fit, var, data, what = "mu", grid = 100) {
   
   if (requireNamespace("ggplot2", quietly = TRUE)) {
     if (is.numeric(df[[var]])) {
-      ggplot2::ggplot(newd, ggplot2::aes_string(x = var, y = ".fitted")) +
+      x_var <- var
+      y_var <- ".fitted"
+      ggplot2::ggplot(newd, ggplot2::aes(.data[[x_var]], .data[[y_var]])) +
         ggplot2::geom_line() +
         ggplot2::labs(x = var, y = paste0("fitted ", what), title = paste("Effect of", var))
     } else {
-      ggplot2::ggplot(newd, ggplot2::aes_string(x = var, y = ".fitted")) +
+      x_var <- var
+      y_var <- ".fitted"      
+      ggplot2::ggplot(newd, ggplot2::aes(.data[[x_var]], .data[[y_var]])) +
         ggplot2::geom_point() +
         ggplot2::geom_line(ggplot2::aes(group = 1)) +
         ggplot2::labs(x = var, y = paste0("fitted ", what), title = paste("Effect of", var))

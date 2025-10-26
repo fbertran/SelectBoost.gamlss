@@ -28,8 +28,6 @@ effect_plot(fit, var, data, what = "mu", grid = 100)
 a ggplot object if ggplot2 present; otherwise draws base plot and returns NULL
 }
 \description{
-One-variable effect plot from an sb_gamlss (or gamlss) fit
-
 Varies one variable and holds others at typical values (median/mode) to plot the
 predicted parameter curve (default: mu). Uses ggplot2 if available, otherwise base.
 }

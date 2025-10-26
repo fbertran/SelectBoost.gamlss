@@ -28,6 +28,12 @@ knitr::opts_chunk$set(
 This vignette compares: plain `sb_gamlss`, the SelectBoost-integrated `SelectBoost_gamlss`,
 grid-based `sb_gamlss_c0_grid` + `autoboost_gamlss`, and the lightweight `fastboost_gamlss`.
 
+## What you'll learn
+
+* How the base `sb_gamlss()` call differs from `SelectBoost_gamlss()` (automatic grouping).
+* How to sweep c0 values with `sb_gamlss_c0_grid()` and let `autoboost_gamlss()` pick a favourite.
+* How to generate rapid previews with `fastboost_gamlss()` before launching a large bootstrap campaign.
+
 ```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)

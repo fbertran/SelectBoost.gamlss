@@ -32,6 +32,12 @@ Recent releases added optimized shortcuts for additional families (`LOGITNO`, `G
 automatic routing through native `gamlss.dist` densities for zero-adjusted/zero-inflated variants (e.g., `ZAGA`, `ZIPF`, `BETA4`).
 Pair this benchmark with `check_fast_vs_generic()` for numerical validation and `fast_vs_generic_ll()` for micro-timing comparisons.
 
+## What you'll learn
+
+* How to loop over `gamlss.dist` families and time `fast_vs_generic_ll()` results.
+* How to extend the benchmark generator list with custom families or parameter grids.
+* How to interpret the summary tibble returned by `fast_vs_generic_ll()` (mean/median ratios, speedups).
+
 ```{r, cache=TRUE, eval=LOCAL}
 library(gamlss)
 library(SelectBoost.gamlss)
