@@ -9,7 +9,7 @@
 Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for 'AICc' calculation. Presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression" ('Bertrand' & 'Maumy'), highlighting correlation-aware resampling to improve variable selection for 'GAMLSS' and quantile regression when predictors are numerous and highly correlated.
 }
 \examples{
-\dontshow{if (requireNamespace("gamlss.dist", quietly = TRUE)  && !inherits(try(requireNamespace("SelectBoost", quietly = TRUE), silent = TRUE), "try-error")) withAutoprint(\{ # examplesIf}
+\dontshow{if (requireNamespace("gamlss.dist", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 set.seed(1)
 dat <- data.frame(
   y = gamlss.dist::rNO(80, mu = 0),

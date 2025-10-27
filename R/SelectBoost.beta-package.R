@@ -12,7 +12,7 @@
 #' @author This package was written by Frederic Bertrand.
 #' Maintainer: Frederic Bertrand <frederic.bertrand@@lecnam.net>
 #'
-#' @examplesIf requireNamespace("gamlss.dist", quietly = TRUE)  && !inherits(try(requireNamespace("SelectBoost", quietly = TRUE), silent = TRUE), "try-error")
+#' @examplesIf requireNamespace("gamlss.dist", quietly = TRUE)
 #' set.seed(1)
 #' dat <- data.frame(
 #'   y = gamlss.dist::rNO(80, mu = 0),
