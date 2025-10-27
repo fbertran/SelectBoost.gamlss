@@ -49,8 +49,13 @@ effect_plot <- function(fit, var, data, what = "mu", grid = 100) {
   if (inherits(yhat, "try-error")) {
     if (requireNamespace("ggplot2", quietly = TRUE)) {
       msg <- paste("Prediction failed for", what, ":", as.character(yhat))
+      blank <- data.frame(.x = seq_along(xs), .y = NA_real_)
+#      x_var = ".x"
+#      y_var = ".y"
       return(
-        ggplot2::ggplot(data.frame(x = seq_along(xs), y = NA_real_), ggplot2::aes(x = x, y = y)) +
+#        ggplot2::ggplot(tmp_dataf, ggplot2::aes(x = x, y = y)) +
+        ggplot2::ggplot(blank, ggplot2::aes(.data$.x, .data$.y)) +
+#        ggplot2::ggplot(newd, ggplot2::aes(.data[[x_var]], .data[[y_var]])) +
           ggplot2::geom_blank() +
           ggplot2::labs(title = msg, x = var, y = paste0("fitted ", what))
       )
