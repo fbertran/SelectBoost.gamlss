@@ -19,8 +19,10 @@ List cs_scale(arma::mat X) {
 // [[Rcpp::export]]
 arma::mat cs_cor(const arma::mat& X) {
   if (X.n_rows < 2) {
-    arma::mat S(X.n_cols, X.n_cols);
-    S.fill(NA_REAL);
+    arma::mat S(X.n_cols, X.n_cols, 
+                arma::fill::value(NA_REAL));
+//    arma::mat S(X.n_cols, X.n_cols);
+//    S.fill(NA_REAL);
     return S;
   }
   arma::rowvec mu = arma::mean(X,0);
