@@ -26,8 +26,9 @@ knitr::opts_chunk$set(purl = LOCAL)
 
 <!-- badges: start -->
 <!-- [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss) -->
-[![R-CMD-check](https://github.com/fbertran/SelectBoost.gamlss/workflows/R-CMD-check/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions)
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss) -->
+[![R-CMD-check](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/R-CMD-check.yaml)
+[![R-hub](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/rhub.yaml/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/rhub.yaml)
 <!-- badges: end -->
 
 **SelectBoost.gamlss** delivers correlation-aware, bootstrap-based stability-selection for Generalized Additive Models for Location, Scale and Shape (GAMLSS) and quantile regression. It extends the [SelectBoost](https://doi.org/10.1093/bioinformatics/btaa855) algorithm so that you can work with multiple distributional parameters, mix-and-match sparse penalties, and interrogate the resulting models with rich visual summaries.
