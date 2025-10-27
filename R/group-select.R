@@ -7,9 +7,17 @@ select_grpreg_mu <- function(data, response, mu_scope_terms, penalty = c("grLass
   }
   gd <- .mu_group_design(data, mu_scope_terms, df_smooth = df_smooth)
   if (is.null(gd$X) || ncol(gd$X) == 0) return(character(0))
-  y <- data[[response]]
+  X <- gd$X
+  y <- data[[response]][gd$rows]
+  keep <- which(!is.na(y) & is.finite(y))
+  if (length(keep) == 0) return(character(0))
+  if (length(keep) < length(y)) {
+    X <- X[keep, , drop = FALSE]
+    y <- y[keep]
+  }
+  if (nrow(X) == 0L) return(character(0))
   # Cross-validated group lasso
-  cv <- grpreg::cv.grpreg(x = gd$X, y = y, group = gd$groups, family = "gaussian",
+  cv <- grpreg::cv.grpreg(x = X, y = y, group = gd$groups, family = "gaussian",
                           penalty = penalty, seed = NULL)
   fit <- cv$fit
   beta <- stats::coef(fit, lambda = cv$lambda.min)[-1, , drop = FALSE]  # drop intercept
@@ -29,9 +37,17 @@ select_sgl_mu <- function(data, response, mu_scope_terms, alpha = 0.95, df_smoot
   }
   gd <- .mu_group_design(data, mu_scope_terms, df_smooth = df_smooth)
   if (is.null(gd$X) || ncol(gd$X) == 0) return(character(0))
-  y <- data[[response]]
+  X <- gd$X
+  y <- data[[response]][gd$rows]
+  keep <- which(!is.na(y) & is.finite(y))
+  if (length(keep) == 0) return(character(0))
+  if (length(keep) < length(y)) {
+    X <- X[keep, , drop = FALSE]
+    y <- y[keep]
+  }
+  if (nrow(X) == 0L) return(character(0))
   # SGL needs a list with x and y; groups as integer vector starting at 1
-  data_sgl <- list(x = gd$X, y = as.numeric(y))
+  data_sgl <- list(x = X, y = as.numeric(y))
   idx <- gd$groups
   # Cross-validate
   cv <- SGL::cvSGL(data = data_sgl, index = idx, type = "linear", alpha = alpha, standardize = FALSE)
@@ -62,7 +78,16 @@ select_grpreg_param <- function(data, scope_terms, y_work, penalty = c("grLasso"
   if (!requireNamespace("grpreg", quietly = TRUE)) stop("Package 'grpreg' is required for engine='grpreg'.")
   gd <- .param_group_design(data, scope_terms, df_smooth = df_smooth)
   if (is.null(gd$X) || ncol(gd$X) == 0) return(character(0))
-  cv <- grpreg::cv.grpreg(x = gd$X, y = as.numeric(y_work), group = gd$groups, family = "gaussian",
+  X <- gd$X
+  yw <- as.numeric(y_work)[gd$rows]
+  keep <- which(!is.na(yw) & is.finite(yw))
+  if (length(keep) == 0) return(character(0))
+  if (length(keep) < length(yw)) {
+    X <- X[keep, , drop = FALSE]
+    yw <- yw[keep]
+  }
+  if (nrow(X) == 0L) return(character(0))
+  cv <- grpreg::cv.grpreg(x = X, y = yw, group = gd$groups, family = "gaussian",
                           penalty = penalty, seed = NULL)
   beta <- stats::coef(cv$fit, lambda = cv$lambda.min)[-1,,drop=FALSE]
   nz <- which(abs(beta[,1]) > 0)
@@ -75,7 +100,16 @@ select_sgl_param <- function(data, scope_terms, y_work, alpha = 0.95, df_smooth 
   if (!requireNamespace("SGL", quietly = TRUE)) stop("Package 'SGL' is required for engine='sgl'.")
   gd <- .param_group_design(data, scope_terms, df_smooth = df_smooth)
   if (is.null(gd$X) || ncol(gd$X) == 0) return(character(0))
-  dat <- list(x = gd$X, y = as.numeric(y_work))
+  X <- gd$X
+  yw <- as.numeric(y_work)[gd$rows]
+  keep <- which(!is.na(yw) & is.finite(yw))
+  if (length(keep) == 0) return(character(0))
+  if (length(keep) < length(yw)) {
+    X <- X[keep, , drop = FALSE]
+    yw <- yw[keep]
+  }
+  if (nrow(X) == 0L) return(character(0))
+  dat <- list(x = X, y = as.numeric(yw))
   idx <- gd$groups
   cv <- SGL::cvSGL(data = dat, index = idx, type = "linear", alpha = alpha, standardize = FALSE)
   lam <- cv$lam[ which.min(cv$lldiff) ]
@@ -132,21 +166,65 @@ select_sgl_param <- function(data, scope_terms, y_work, alpha = 0.95, df_smooth 
   mm_terms <- .expand_terms_to_mm(mu_scope_terms, df_smooth = df_smooth)
   f <- stats::as.formula(paste("~ 0 +", paste(mm_terms, collapse = " + ")))
   X <- stats::model.matrix(f, data)
+  
+  tl <- mu_scope_terms
+  
+  rows <- rownames(X)
+  if (is.null(rows)) {
+    row_idx <- seq_len(nrow(X))
+  } else if (!is.null(rownames(data))) {
+    row_idx <- match(rows, rownames(data))
+  } else {
+    row_idx <- suppressWarnings(as.integer(rows))
+  }
+  if (anyNA(row_idx) || length(row_idx) != nrow(X)) {
+    row_idx <- seq_len(nrow(X))
+  }
+  row_idx <- as.integer(row_idx)
+  X <- as.matrix(X)
+  storage.mode(X) <- "double"
+  rownames(X) <- NULL
   # groups: one id per original term, repeated for its columns
   # build using attr(terms, "term.labels") mapping
-  tl <- mu_scope_terms
-  assign <- attr(stats::terms(f), "assign")
-  # map each column to original term index
-  groups <- assign + 1L  # assign starts at 0 for intercept-free
-  list(X = X, groups = groups, terms = tl)
+
+  assign <- attr(X, "assign")
+  if (is.null(assign)) {
+    assign <- integer(ncol(X))
+  }
+  groups <- assign
+  
+  list(X = X, groups = groups, terms = tl, rows = row_idx)
 }
 
 .param_group_design <- function(data, scope_terms, df_smooth = 6L) {
   mm_terms <- .expand_terms_to_mm(scope_terms, df_smooth = df_smooth)
   f <- stats::as.formula(paste("~ 0 +", paste(mm_terms, collapse = " + ")))
   X <- stats::model.matrix(f, data)
+  
   tl <- scope_terms
-  assign <- attr(stats::terms(f), "assign")
-  groups <- assign + 1L
-  list(X = X, groups = groups, terms = tl)
+  
+  rows <- rownames(X)
+  if (is.null(rows)) {
+    row_idx <- seq_len(nrow(X))
+  } else if (!is.null(rownames(data))) {
+    row_idx <- match(rows, rownames(data))
+  } else {
+    row_idx <- suppressWarnings(as.integer(rows))
+  }
+  if (anyNA(row_idx) || length(row_idx) != nrow(X)) {
+    row_idx <- seq_len(nrow(X))
+  }
+  row_idx <- as.integer(row_idx)
+
+  X <- as.matrix(X)
+  storage.mode(X) <- "double"
+  rownames(X) <- NULL
+  
+  assign <- attr(X, "assign")
+  if (is.null(assign)) {
+    assign <- integer(ncol(X))
+  }
+  groups <- assign
+  
+  list(X = X, groups = groups, terms = tl, rows = row_idx)
 }

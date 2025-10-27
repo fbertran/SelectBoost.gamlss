@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,11 +46,17 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.1" id="selectboostgamlss-021">SelectBoost.gamlss 0.2.1<a class="anchor" aria-label="anchor" href="#selectboostgamlss-021"></a></h2>
+<ul><li>Additional fixes to code and documentation to silence CRAN check notes for R devel.</li>
+<li>Added the boys7482 dataset.</li>
+<li>Fix knockoff filters to coerce grouped design matrices to numeric and supply the response to <code><a href="https://rdrr.io/pkg/knockoff/man/create.fixed.html" class="external-link">knockoff::create.fixed()</a></code>, preventing failures when smooth proxies carried non-numeric classes or the design needed augmentation, and reuse any augmented design/response returned from <code>create.fixed()</code> to avoid downstream dimension mismatches.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.0" id="selectboostgamlss-020">SelectBoost.gamlss 0.2.0<a class="anchor" aria-label="anchor" href="#selectboostgamlss-020"></a></h2>
 <div class="section level4">
 <h4 id="highlights-0-2-0">Highlights<a class="anchor" aria-label="anchor" href="#highlights-0-2-0"></a></h4>
 <ul><li>
-<strong>Grouped selection for all parameters (μ, σ, ν, τ)</strong> with <code>engine = "grpreg"</code> (group lasso/MCP/SCAD) and <code>engine = "sgl"</code> (sparse group lasso), including <strong>factors, splines (<code><a href="https://rdrr.io/pkg/gamlss/man/ps.html" class="external-link">pb()</a></code>/<code><a href="https://rdrr.io/pkg/gamlss/man/cs.html" class="external-link">cs()</a></code>), and interactions</strong> treated as <em>single groups</em>.</li>
+<strong>Grouped selection for all parameters (μ, σ, ν, τ)</strong> with <code>engine = "grpreg"</code> (group lasso/MCP/SCAD) and <code>engine = "sgl"</code> (sparse group lasso), including <strong>factors, splines (<code>pb()</code>/<code>cs()</code>), and interactions</strong> treated as <em>single groups</em>.</li>
 <li>
 <strong>Per-parameter engines</strong>: <code>engine</code>, <code>engine_sigma</code>, <code>engine_nu</code>, <code>engine_tau</code> can be mixed (stepwise / glmnet / grpreg / sgl).</li>
 <li>
@@ -64,7 +70,9 @@
 <li>
 <strong>Fast deviance</strong> dynamically calls <code>gamlss.dist::d&lt;family&gt;()</code> when available, broadening zero-inflated/hurdle coverage without manual whitelists.</li>
 <li>
-<strong>Group knockoffs</strong> (approximate) for FDR-style control: <code><a href="../reference/knockoff_filter_mu.html">knockoff_filter_mu()</a></code>, <code><a href="../reference/knockoff_filter_param.html">knockoff_filter_param()</a></code>.</li>
+<strong>Group knockoffs</strong> (approximate) for FDR-style control: <code><a href="../reference/knockoff_filter_mu.html">knockoff_filter_mu()</a></code>, <code><a href="../reference/knockoff_filter_param.html">knockoff_filter_param()</a></code>.
+<ul><li>Robust to rows dropped by <code><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix()</a></code> (e.g., missing predictors) by aligning the response / working response before building knockoffs.</li>
+</ul></li>
 <li>
 <strong>Compiled speedups</strong> (Rcpp/RcppArmadillo) for scaling/cor; <strong>parallel bootstraps</strong> via <code>future.apply</code>.</li>
 </ul></div>

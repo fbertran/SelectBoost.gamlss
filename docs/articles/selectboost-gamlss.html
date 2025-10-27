@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-25</h4>
+            <h4 data-toc-skip class="date">2025-10-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/selectboost-gamlss.Rmd" class="external-link"><code>vignettes/selectboost-gamlss.Rmd</code></a></small>
       <div class="d-none name"><code>selectboost-gamlss.Rmd</code></div>
@@ -90,6 +90,22 @@ Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.be
     
 <p>This vignette demonstrates bootstrap stability-selection for GAMLSS
 models.</p>
+<div class="section level2">
+<h2 id="what-youll-learn">What you’ll learn<a class="anchor" aria-label="anchor" href="#what-youll-learn"></a>
+</h2>
+<ul>
+<li>How to launch <code><a href="../reference/sb_gamlss.html">sb_gamlss()</a></code> with correlated-selectBoost
+bootstraps for μ and σ.</li>
+<li>How to interpret <code><a href="../reference/selection_table.html">selection_table()</a></code>,
+<code><a href="../reference/plot_sb_gamlss.html">plot_sb_gamlss()</a></code>, and <code><a href="../reference/effect_plot.html">effect_plot()</a></code>
+outputs.</li>
+<li>How to mix engines across parameters (<code>engine</code>,
+<code>engine_sigma</code>, <code>engine_tau</code>) and keep
+factor/spline terms grouped.</li>
+<li>How to automate c0 exploration with
+<code><a href="../reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid()</a></code>, <code><a href="../reference/autoboost_gamlss.html">autoboost_gamlss()</a></code>, and
+<code><a href="../reference/fastboost_gamlss.html">fastboost_gamlss()</a></code>.</li>
+</ul>
 <blockquote>
 <p><strong>Conference highlight.</strong> SelectBoost for GAMLSS was
 presented at the Joint Statistics Meetings 2024 (Portland, OR) in the
@@ -196,6 +212,7 @@ alongside the terms exceeding the stability threshold.
 vs. coefficient magnitude, and <code><a href="../reference/effect_plot.html">effect_plot()</a></code> visualizes
 partial effects (using <strong>ggplot2</strong> if available, otherwise
 base R).</p>
+</div>
 <div class="section level2">
 <h2 id="grouped-penalties-and-parameter-specific-engines">Grouped penalties and parameter-specific engines<a class="anchor" aria-label="anchor" href="#grouped-penalties-and-parameter-specific-engines"></a>
 </h2>

@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-24</h4>
+            <h4 data-toc-skip class="date">2025-10-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/fast-deviance-benchmark.Rmd" class="external-link"><code>vignettes/fast-deviance-benchmark.Rmd</code></a></small>
       <div class="d-none name"><code>fast-deviance-benchmark.Rmd</code></div>
@@ -100,6 +100,17 @@ variants (e.g., <code>ZAGA</code>, <code>ZIPF</code>,
 <code>BETA4</code>). Pair this benchmark with
 <code><a href="../reference/check_fast_vs_generic.html">check_fast_vs_generic()</a></code> for numerical validation and
 <code><a href="../reference/fast_vs_generic_ll.html">fast_vs_generic_ll()</a></code> for micro-timing comparisons.</p>
+<div class="section level2">
+<h2 id="what-youll-learn">What you’ll learn<a class="anchor" aria-label="anchor" href="#what-youll-learn"></a>
+</h2>
+<ul>
+<li>How to loop over <code>gamlss.dist</code> families and time
+<code><a href="../reference/fast_vs_generic_ll.html">fast_vs_generic_ll()</a></code> results.</li>
+<li>How to extend the benchmark generator list with custom families or
+parameter grids.</li>
+<li>How to interpret the summary tibble returned by
+<code><a href="../reference/fast_vs_generic_ll.html">fast_vs_generic_ll()</a></code> (mean/median ratios, speedups).</li>
+</ul>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.gamlss.com/" class="external-link">gamlss</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: splines</span></span>
@@ -221,6 +232,7 @@ variants (e.g., <code>ZAGA</code>, <code>ZIPF</code>,
 <span>    <span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span><span class="va">op</span><span class="op">)</span></span>
 <span>  <span class="op">}</span></span>
 <span><span class="op">}</span></span></code></pre></div>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

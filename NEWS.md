@@ -2,8 +2,11 @@
 
 - Additional fixes to code and documentation to silence CRAN check notes for R devel.
 - Added the boys7482 dataset.
-- Fix knockoff filters to coerce grouped design matrices to numeric, preventing
-  `knockoff::create.fixed()` failures when smooth proxies carry non-numeric classes.
+- Fix knockoff filters to coerce grouped design matrices to numeric and supply the
+  response to `knockoff::create.fixed()`, preventing failures when smooth proxies
+  carried non-numeric classes or the design needed augmentation, and reuse any
+  augmented design/response returned from `create.fixed()` to avoid downstream
+  dimension mismatches.
 
 # SelectBoost.gamlss 0.2.0
 
@@ -16,6 +19,7 @@
 - **Fast deviance paths** for common families (auto-used in deviance CV): `NO`, `PO`, `LOGNO`, `GA`, `IG`, `LO`, `LOGITNO`, `GEOM`, `BE`, `NBI`, `NBII`, `BI`, and native shortcuts via `gamlss.dist` for many others (e.g., `LOGLOG`, `DEL`, `ZAGA`, `ZIP/ZIP2`, `ZAIG`, `ZALG`, `ZIBI/ZIBB`, `PARETO`, `SEP1/SEP2`, `ZIPF/ZIPFmu`, `BCT`, `BCPE`, `SICHEL`, `GLG`, `BETA4`, `RS`, `WEI`, `GIG`), with graceful fallbacks.
 - **Fast deviance** dynamically calls `gamlss.dist::d<family>()` when available, broadening zero-inflated/hurdle coverage without manual whitelists.
 - **Group knockoffs** (approximate) for FDR-style control: `knockoff_filter_mu()`, `knockoff_filter_param()`.
+  - Robust to rows dropped by `model.matrix()` (e.g., missing predictors) by aligning the response / working response before building knockoffs.
 - **Compiled speedups** (Rcpp/RcppArmadillo) for scaling/cor; **parallel bootstraps** via `future.apply`.
 
 ### New user-facing functions

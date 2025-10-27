@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-24</h4>
+            <h4 data-toc-skip class="date">2025-10-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/confidence-functionals.Rmd" class="external-link"><code>vignettes/confidence-functionals.Rmd</code></a></small>
       <div class="d-none name"><code>confidence-functionals.Rmd</code></div>
@@ -94,6 +94,17 @@ for each term
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>
 across a grid of SelectBoost thresholds <code>c0</code>. The following
 functionals condense these curves into scalar confidences:</p>
+<div class="section level2">
+<h2 id="what-youll-learn">What you’ll learn<a class="anchor" aria-label="anchor" href="#what-youll-learn"></a>
+</h2>
+<ul>
+<li>How to compute <code><a href="../reference/confidence_functionals.html">confidence_functionals()</a></code> from a
+<code><a href="../reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid()</a></code> result.</li>
+<li>How to plot ranking summaries (<code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>) and raw
+stability trajectories (<code><a href="../reference/plot_stability_curves.html">plot_stability_curves()</a></code>).</li>
+<li>How to customise weights, quantiles, and conservative adjustments
+for different decision rules.</li>
+</ul>
 <ol style="list-style-type: decimal">
 <li>
 <strong>AUSC</strong> (Area Under the Stability Curve): normalized
@@ -161,6 +172,7 @@ by a Wilson lower bound before integrating.</li>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_stability_curves.html">plot_stability_curves</a></span><span class="op">(</span><span class="va">g</span>, terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>,<span class="st">"x3"</span><span class="op">)</span>, parameter <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="confidence-functionals_files/figure-html/unnamed-chunk-1-2.png" width="700"></p>
+</div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>

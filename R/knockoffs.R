@@ -14,9 +14,17 @@ knockoff_filter_mu <- function(data, response, mu_scope, fdr = 0.1, df_smooth = 
   if (!requireNamespace("knockoff", quietly = TRUE)) stop("Package 'knockoff' required for knockoff filtering.")
   gd <- .mu_group_design(data, attr(stats::terms(mu_scope), "term.labels"), df_smooth = df_smooth)
   if (is.null(gd$X) || ncol(gd$X) == 0) return(character(0))
-  y <- data[[response]]
-  K <- knockoff::create.fixed(gd$X)
-  W <- knockoff::stat.glmnet_coefdiff(gd$X, K, y)
+  X <- gd$X
+  y <- as.numeric(data[[response]])[gd$rows]
+  keep <- which(!is.na(y) & is.finite(y))
+  if (length(keep) == 0) return(character(0))
+  if (length(keep) < length(y)) {
+    X <- X[keep, , drop = FALSE]
+    y <- y[keep]
+  }
+  if (nrow(X) == 0L) return(character(0))
+  K <- knockoff::create.fixed(X, y = y)
+  W <- knockoff::stat.glmnet_coefdiff(X = K$X, X_k = K$Xk, y = K$y)
   t <- knockoff::knockoff.threshold(W, fdr = fdr, offset = 1)
     # group-level statistics: W_g = max_j |W_j| within group, signed by argmax
   grp_ids <- sort(unique(gd$groups))
@@ -26,7 +34,9 @@ knockoff_filter_mu <- function(data, response, mu_scope, fdr = 0.1, df_smooth = 
     sign(W[jj]) * max(abs(W[idx]))
   })
   names(Wg) <- grp_ids
+  if(length(Wg) > 0){
   tg <- knockoff::knockoff.threshold(Wg, fdr = fdr, offset = 1)
+  } else {Wg <- NULL ; tg <- Inf}
   keep <- which(Wg >= tg)
   if (!length(keep)) return(character(0))
   sel_groups <- grp_ids[keep]
@@ -44,8 +54,17 @@ knockoff_filter_param <- function(data, scope, y_work, fdr = 0.1, df_smooth = 6L
   if (!requireNamespace("knockoff", quietly = TRUE)) stop("Package 'knockoff' required for knockoff filtering.")
   gd <- .param_group_design(data, attr(stats::terms(scope), "term.labels"), df_smooth = df_smooth)
   if (is.null(gd$X) || ncol(gd$X) == 0) return(character(0))
-  K <- knockoff::create.fixed(gd$X)
-  W <- knockoff::stat.glmnet_coefdiff(gd$X, K, y_work)
+  X <- gd$X
+  yw <- as.numeric(y_work)[gd$rows]
+  keep <- which(!is.na(yw) & is.finite(yw))
+  if (length(keep) == 0) return(character(0))
+  if (length(keep) < length(yw)) {
+    X <- X[keep, , drop = FALSE]
+    yw <- yw[keep]
+  }
+  if (nrow(X) == 0L) return(character(0))
+  K <- knockoff::create.fixed(X, y = yw)
+  W <- knockoff::stat.glmnet_coefdiff(X = K$X, X_k = K$Xk, y = K$y)
   t <- knockoff::knockoff.threshold(W, fdr = fdr, offset = 1)
     # group-level statistics: W_g = max_j |W_j| within group, signed by argmax
   grp_ids <- sort(unique(gd$groups))
@@ -55,7 +74,9 @@ knockoff_filter_param <- function(data, scope, y_work, fdr = 0.1, df_smooth = 6L
     sign(W[jj]) * max(abs(W[idx]))
   })
   names(Wg) <- grp_ids
-  tg <- knockoff::knockoff.threshold(Wg, fdr = fdr, offset = 1)
+  if(length(Wg) > 0){
+    tg <- knockoff::knockoff.threshold(Wg, fdr = fdr, offset = 1)
+  } else {Wg <- NULL ; tg <- Inf}
   keep <- which(Wg >= tg)
   if (!length(keep)) return(character(0))
   sel_groups <- grp_ids[keep]

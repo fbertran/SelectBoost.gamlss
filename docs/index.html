@@ -17,8 +17,8 @@
 <link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Stability-Selection via Correlated Resampling for GAMLSS Models">
-<meta name="description" content='Extends the SelectBoost approach to Generalized Additive Models for Location, Scale and Shape (gamlss). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for AICc calculation. Presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression" (Frédéric Bertrand &amp; M. Maumy), highlighting correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.'>
-<meta property="og:description" content='Extends the SelectBoost approach to Generalized Additive Models for Location, Scale and Shape (gamlss). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for AICc calculation. Presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression" (Frédéric Bertrand &amp; M. Maumy), highlighting correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.'>
+<meta name="description" content='Extends the SelectBoost approach to Generalized Additive Models for Location, Scale and Shape (gamlss). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for AICc calculation. Presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression" (Bertrand &amp; Maumy), highlighting correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.'>
+<meta property="og:description" content='Extends the SelectBoost approach to Generalized Additive Models for Location, Scale and Shape (gamlss). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for AICc calculation. Presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression" (Bertrand &amp; Maumy), highlighting correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.'>
 <meta property="og:image" content="https://fbertran.github.io/SelectBoost.gamlss/logo.svg">
 <style>
   .navbar-brand img { height: 28px; }
@@ -32,7 +32,7 @@
 
     <a class="navbar-brand me-2" href="index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,32 +76,93 @@
 </h1>
 </div>
 <!-- badges: start -->
+<!-- [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss) -->
 
-<p>With the growth of big data, variable selection has become one of the major challenges in statistics. Although many methods have been proposed in the literature their performance in terms of recall and precision are limited in a context where the number of variables by far exceeds the number of observations or in a high correlated setting.</p>
-<p>Results: This package implements an extension of the <strong>SelectBoost</strong> algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <a href="https://doi.org/10.1093/bioinformatics/btaa855" class="external-link uri">https://doi.org/10.1093/bioinformatics/btaa855</a> and <a href="https://doi.org/10.32614/CRAN.package.SelectBoost" class="external-link uri">https://doi.org/10.32614/CRAN.package.SelectBoost</a>, to <strong>GAMLSS</strong> (Generalized Additive Models for Location, Scale and Shape).</p>
+<p><strong>SelectBoost.gamlss</strong> delivers correlation-aware, bootstrap-based stability-selection for Generalized Additive Models for Location, Scale and Shape (GAMLSS) and quantile regression. It extends the <a href="https://doi.org/10.1093/bioinformatics/btaa855" class="external-link">SelectBoost</a> algorithm so that you can work with multiple distributional parameters, mix-and-match sparse penalties, and interrogate the resulting models with rich visual summaries.</p>
 <blockquote>
-<p><strong>Conference highlight.</strong> SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 in Portland, OR, in the talk <em>“An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression”</em> (Frédéric Bertrand &amp; M. Maumy). The presentation underscored how correlated resampling improves recall and precision in high-dimensional, highly correlated settings.</p>
+<p><strong>Conference highlight.</strong> SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk <em>“An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression”</em> (F. Bertrand &amp; M. Maumy). Correlation-aware resampling markedly improves recall and precision in high-dimensional, highly correlated settings.</p>
 </blockquote>
 <div class="section level2">
-<h2 id="key-features">Key features<a class="anchor" aria-label="anchor" href="#key-features"></a>
+<h2 id="why-selectboostgamlss">Why SelectBoost.gamlss?<a class="anchor" aria-label="anchor" href="#why-selectboostgamlss"></a>
 </h2>
 <ul>
 <li>
-<strong>Bootstrap stability-selection</strong> for all distribution parameters (μ, σ, ν, τ) with optional SelectBoost grouping over correlation clusters.</li>
+<strong>Stable variable selection under correlation.</strong> Group correlated predictors and sample one representative per bootstrap (c0 groups) to avoid selecting redundant surrogates.</li>
 <li>
-<strong>Multiple engines:</strong> classical stepwise via <code><a href="https://rdrr.io/pkg/gamlss/man/stepGAIC.html" class="external-link">gamlss::stepGAIC()</a></code>, lasso/ridge/elastic-net via <strong>glmnet</strong>, grouped penalties via <strong>grpreg</strong>/<strong>SGL</strong> (group lasso / sparse group lasso), and per-parameter engine choices.</li>
+<strong>Distribution-aware engines.</strong> Optimise μ, σ, ν, and τ formulas simultaneously with stepwise GAIC, glmnet penalties, grouped penalties, or sparse-group penalties.</li>
 <li>
-<strong>Effect visualisation &amp; summaries:</strong> stability tables/plots, <code><a href="reference/effect_plot.html">effect_plot()</a></code> for partial effects, and grid-based confidence summaries.</li>
+<strong>Actionable summaries.</strong> Inspect stability tables, effect plots, correlation-aware confidence functionals, and deviance benchmarks in one workflow.</li>
 <li>
-<strong>Automation helpers:</strong> <code><a href="reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid()</a></code>, <code><a href="reference/autoboost_gamlss.html">autoboost_gamlss()</a></code>, <code><a href="reference/fastboost_gamlss.html">fastboost_gamlss()</a></code>, and <code><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss()</a></code> for rapid c0/engine sweeps with progress bars.</li>
-<li>
-<strong>Fast deviance evaluation</strong> for deviance-based tuning with optimized density shortcuts across many <code>gamlss.dist</code> families plus accuracy checks.</li>
-<li>
-<strong>Parallel + compiled speedups:</strong> C++ scaling/correlation + optional <code>future.apply</code> parallelism for bootstrap replications.</li>
-<li>
-<strong>Additional tooling:</strong> approximate knockoff filters, <code><a href="reference/AICc_gamlss.html">AICc_gamlss()</a></code> helper, and reproducible benchmarking utilities.</li>
+<strong>Fast + scalable.</strong> Rcpp-backed preprocessing, optional <code>future.apply</code> parallelism, and deviance shortcuts keep large bootstrap campaigns practical.</li>
 </ul>
-<p>The SelectBoost algorithm improves the precision of existing variable-selection methods by exploiting correlation-aware resampling. It can deliver confidence indices for variable inclusion or guide the design of future experiments. This website and these examples were created by F. Bertrand.</p>
+</div>
+<div class="section level2">
+<h2 id="capabilities-at-a-glance">Capabilities at a glance<a class="anchor" aria-label="anchor" href="#capabilities-at-a-glance"></a>
+</h2>
+<table class="table">
+<colgroup>
+<col width="30%">
+<col width="33%">
+<col width="35%">
+</colgroup>
+<thead><tr>
+<th>Capability</th>
+<th>Key helpers</th>
+<th>What you get</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Stability selection with SelectBoost</td>
+<td>
+<code><a href="reference/sb_gamlss.html">sb_gamlss()</a></code>, <code><a href="reference/selection_table.html">selection_table()</a></code>, <code><a href="reference/plot_sb_gamlss.html">plot_sb_gamlss()</a></code>
+</td>
+<td>Confidence-style inclusion probabilities for each parameter.</td>
+</tr>
+<tr>
+<td>Automated c0 search</td>
+<td>
+<code><a href="reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid()</a></code>, <code><a href="reference/autoboost_gamlss.html">autoboost_gamlss()</a></code>, <code><a href="reference/fastboost_gamlss.html">fastboost_gamlss()</a></code>
+</td>
+<td>Grid, automatic, and lightweight bootstrap strategies.</td>
+</tr>
+<tr>
+<td>Flexible engines</td>
+<td>
+<code>engine</code>, <code>engine_sigma</code>, <code>engine_nu</code>, <code>engine_tau</code>, <code>glmnet_alpha</code>, <code>grpreg_penalty</code>, <code>sgl_alpha</code>
+</td>
+<td>Mix lasso/ridge, grouped penalties, or sparse-group penalties per parameter.</td>
+</tr>
+<tr>
+<td>Model interpretation</td>
+<td>
+<code><a href="reference/effect_plot.html">effect_plot()</a></code>, <code><a href="reference/plot_stability_curves.html">plot_stability_curves()</a></code>, <code><a href="reference/confidence_functionals.html">confidence_functionals()</a></code>
+</td>
+<td>Visualise partial effects and correlation-aware confidence summaries.</td>
+</tr>
+<tr>
+<td>Metric-driven tuning</td>
+<td>
+<code><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss()</a></code>, <code><a href="reference/fast_vs_generic_ll.html">fast_vs_generic_ll()</a></code>
+</td>
+<td>Compare engines via stability or fast deviance cross-validation.</td>
+</tr>
+<tr>
+<td>Knockoff-style filters</td>
+<td>
+<code><a href="reference/knockoff_filter_mu.html">knockoff_filter_mu()</a></code>, <code><a href="reference/knockoff_filter_param.html">knockoff_filter_param()</a></code>
+</td>
+<td>Approximate FDR control for μ, σ, ν, or τ working responses.</td>
+</tr>
+<tr>
+<td>Performance tooling</td>
+<td>
+<code>parallel = "auto"</code>, <code><a href="reference/check_fast_vs_generic.html">check_fast_vs_generic()</a></code>
+</td>
+<td>Parallel bootstraps and accuracy checks for deviance shortcuts.</td>
+</tr>
+</tbody>
+</table>
+<p>Each capability below is paired with runnable code. Copy the snippets into an R session to reproduce the behaviour showcased in the vignettes.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -120,17 +181,17 @@
 <h2 id="quick-start">Quick start<a class="anchor" aria-label="anchor" href="#quick-start"></a>
 </h2>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://fbertran.github.io/SelectBoost.gamlss/">SelectBoost.gamlss</a></span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">400</span></span>
 <span><span class="va">x1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">x2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span>; <span class="va">x3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span><span class="va">f</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"A"</span>,<span class="st">"B"</span>,<span class="st">"C"</span><span class="op">)</span>, <span class="va">n</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">mu</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">+</span> <span class="fl">1.5</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">f</span> <span class="op">==</span> <span class="st">"B"</span>, <span class="fl">0.6</span>, <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">f</span> <span class="op">==</span> <span class="st">"C"</span>, <span class="op">-</span><span class="fl">0.4</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">y</span>  <span class="op">&lt;-</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">rNO</a></span><span class="op">(</span><span class="va">n</span>, mu <span class="op">=</span> <span class="va">mu</span>, sigma <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">x1</span>, <span class="va">x2</span>, <span class="va">x3</span>, <span class="va">f</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
+<span><span class="va">dat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">y</span>, <span class="va">x1</span>, <span class="va">x2</span>, <span class="va">x3</span>, <span class="va">f</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
 <span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span> <span class="op">+</span> <span class="va">f</span>,</span>
 <span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">f</span>,</span>
@@ -143,23 +204,23 @@
 <span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">res</span><span class="op">$</span><span class="va">final_formula</span></span>
 <span><span class="co">#&gt; $mu</span></span>
 <span><span class="co">#&gt; y ~ x1 + f</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $sigma</span></span>
 <span><span class="co">#&gt; ~1</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x342b93b00&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x307f391c8&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $nu</span></span>
 <span><span class="co">#&gt; ~1</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x342b93b00&gt;</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x307f391c8&gt;</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $tau</span></span>
 <span><span class="co">#&gt; ~1</span></span>
-<span><span class="co">#&gt; &lt;environment: 0x342b93b00&gt;</span></span>
-<span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x307f391c8&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span>
 <span><span class="va">sel</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="va">sel</span><span class="op">$</span><span class="va">parameter</span>, <span class="op">-</span><span class="va">sel</span><span class="op">$</span><span class="va">prop</span><span class="op">)</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sel</span>, n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fl">8L</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">sel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   parameter term count prop</span></span>
@@ -171,62 +232,64 @@
 <span><span class="co">#&gt; 5     sigma   x1     3 0.06</span></span>
 <span><span class="co">#&gt; 7     sigma    f     3 0.06</span></span>
 <span><span class="va">stable</span> <span class="op">&lt;-</span> <span class="va">sel</span><span class="op">[</span><span class="va">sel</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">res</span><span class="op">$</span><span class="va">pi_thr</span>, , drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stable</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">stable</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"No terms reached the stability threshold of"</span>, <span class="va">res</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="st">"for this run.\n"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">stable</span><span class="op">)</span><span class="op">)</span> <span class="va">stable</span> <span class="kw">else</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"No terms passed the stability threshold of"</span>, <span class="va">res</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="st">"in this run."</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   parameter term count prop</span></span>
 <span><span class="co">#&gt; 1        mu   x1    50 1.00</span></span>
 <span><span class="co">#&gt; 4        mu    f    47 0.94</span></span>
 <span><span class="fu"><a href="reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-unnamed-chunk-50-1.png" alt="plot of chunk unnamed-chunk-50" width="100%"><p class="caption">
-plot of chunk unnamed-chunk-50
+<img src="reference/figures/README-unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-7
 </p>
 </div>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"ggplot2"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="reference/effect_plot.html">effect_plot</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"x1"</span>, <span class="va">dat</span>, what <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="reference/effect_plot.html">effect_plot</a></span><span class="op">(</span><span class="va">res</span>, <span class="st">"f"</span>, <span class="va">dat</span>, what <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-unnamed-chunk-50-2.png" alt="plot of chunk unnamed-chunk-50" width="100%"><p class="caption">
-plot of chunk unnamed-chunk-50
+<img src="reference/figures/README-unnamed-chunk-7-2.png" alt="plot of chunk unnamed-chunk-7" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-7
 </p>
 </div>
 <div class="figure">
-<img src="reference/figures/README-unnamed-chunk-50-3.png" alt="plot of chunk unnamed-chunk-50" width="100%"><p class="caption">
-plot of chunk unnamed-chunk-50
+<img src="reference/figures/README-unnamed-chunk-7-3.png" alt="plot of chunk unnamed-chunk-7" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-7
 </p>
 </div>
-<p><code><a href="reference/selection_table.html">selection_table()</a></code> ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. <code><a href="reference/plot_sb_gamlss.html">plot_sb_gamlss()</a></code> overlays stability vs frequency, and <code><a href="reference/effect_plot.html">effect_plot()</a></code> provides partial-effect diagnostics for the final model (numeric and factor effects; falls back to base graphics if <strong>ggplot2</strong> is unavailable).</p>
-<div class="section level3">
-<h3 id="selectboost-integration">SelectBoost integration<a class="anchor" aria-label="anchor" href="#selectboost-integration"></a>
-</h3>
 <ul>
-<li>Uses <code><a href="https://fbertran.github.io/SelectBoost/reference/group_func_2.html" class="external-link">SelectBoost::group_func_2()</a></code> to form correlation groups (c0) and sample one representative per group in each bootstrap.</li>
-<li>Wrapper <code><a href="reference/SelectBoost_gamlss.html">SelectBoost_gamlss()</a></code> mirrors SelectBoost naming and enables grouping by default.</li>
+<li>
+<code><a href="reference/selection_table.html">selection_table()</a></code> ranks the most stable terms per parameter.</li>
+<li>
+<code><a href="reference/plot_sb_gamlss.html">plot_sb_gamlss()</a></code> compares inclusion probability and (re)fit magnitude.</li>
+<li>
+<code><a href="reference/effect_plot.html">effect_plot()</a></code> offers quick diagnostics for both numeric and factor predictors.</li>
 </ul>
 </div>
+<div class="section level2">
+<h2 id="feature-tour-with-examples">Feature tour with examples<a class="anchor" aria-label="anchor" href="#feature-tour-with-examples"></a>
+</h2>
 <div class="section level3">
-<h3 id="four-parameter-example-bct-family">Four-parameter example (BCT family)<a class="anchor" aria-label="anchor" href="#four-parameter-example-bct-family"></a>
+<h3 id="four-parameter-families">Four-parameter families<a class="anchor" aria-label="anchor" href="#four-parameter-families"></a>
 </h3>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>Handle multi-parameter distributions such as Box-Cox t (BCT) or Box-Cox Power Exponential (BCPE) by supplying dedicated scopes per parameter.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">n_bct</span> <span class="op">&lt;-</span> <span class="fl">300</span></span>
 <span><span class="va">z1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n_bct</span><span class="op">)</span></span>
-<span><span class="va">z2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_bct</span><span class="op">)</span></span>
-<span><span class="va">mu_bct</span> <span class="op">&lt;-</span> <span class="fl">1</span> <span class="op">+</span> <span class="fl">0.8</span> <span class="op">*</span> <span class="va">z1</span></span>
-<span><span class="va">sigma_bct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.4</span> <span class="op">+</span> <span class="fl">0.6</span> <span class="op">*</span> <span class="va">z2</span><span class="op">)</span></span>
-<span><span class="va">nu_bct</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.2</span> <span class="op">+</span> <span class="fl">0.5</span> <span class="op">*</span> <span class="va">z1</span></span>
-<span><span class="va">tau_bct</span> <span class="op">&lt;-</span> <span class="fl">0.3</span> <span class="op">+</span> <span class="fl">0.4</span> <span class="op">*</span> <span class="va">z2</span></span>
+<span><span class="va">z2</span> <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">.5</span><span class="op">+</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_bct</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">eta_mu</span>    <span class="op">&lt;-</span> <span class="fl">0.2</span> <span class="op">+</span> <span class="fl">0.4</span><span class="op">*</span><span class="va">z1</span></span>
+<span><span class="va">mu_bct</span>    <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="va">eta_mu</span><span class="op">)</span>                 <span class="co"># &gt; 0</span></span>
+<span><span class="va">sigma_bct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.4</span> <span class="op">+</span> <span class="fl">0.6</span><span class="op">*</span><span class="va">z2</span><span class="op">)</span>          <span class="co"># &gt; 0</span></span>
+<span><span class="va">nu_bct</span>    <span class="op">&lt;-</span> <span class="op">-</span><span class="fl">0.2</span> <span class="op">+</span> <span class="fl">0.5</span><span class="op">*</span><span class="va">z1</span>               <span class="co"># real-valued OK</span></span>
+<span><span class="va">tau_bct</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="fl">0.3</span> <span class="op">+</span> <span class="fl">0.4</span><span class="op">*</span><span class="va">z2</span><span class="op">)</span>           <span class="co"># &gt; 0</span></span>
+<span></span>
 <span><span class="va">y_bct</span> <span class="op">&lt;-</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/BCt.html" class="external-link">rBCT</a></span><span class="op">(</span><span class="va">n_bct</span>, mu <span class="op">=</span> <span class="va">mu_bct</span>, sigma <span class="op">=</span> <span class="va">sigma_bct</span>, nu <span class="op">=</span> <span class="va">nu_bct</span>, tau <span class="op">=</span> <span class="va">tau_bct</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in gamlss.dist::rBCT(n_bct, mu = mu_bct, sigma = sigma_bct, nu = nu_bct, : mu must be positive </span></span>
-<span><span class="co">#&gt; </span></span>
+<span></span>
 <span><span class="va">dat_bct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">y_bct</span>, <span class="va">z1</span>, <span class="va">z2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: object 'y_bct' not found</span></span>
-<span><span class="va">fit_bct</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
+<span></span>
+<span><span class="va">fit_bct</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/warning.html" class="external-link">suppressWarnings</a></span><span class="op">(</span><span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
 <span>  <span class="va">y_bct</span> <span class="op">~</span> <span class="fl">1</span>,</span>
 <span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">z1</span> <span class="op">+</span> <span class="va">z2</span>,</span>
 <span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">z1</span> <span class="op">+</span> <span class="va">z2</span>,</span>
@@ -238,96 +301,150 @@ plot of chunk unnamed-chunk-50
 <span>  sample_fraction <span class="op">=</span> <span class="fl">0.65</span>,</span>
 <span>  pi_thr <span class="op">=</span> <span class="fl">0.55</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: object 'dat_bct' not found</span></span>
+<span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z2 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z2 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed </span></span>
+<span><span class="co">#&gt; Model with term  mu_scope__z1 has failed</span></span>
 <span><span class="va">fit_bct</span><span class="op">$</span><span class="va">final_formula</span></span>
-<span><span class="co">#&gt; Error: object 'fit_bct' not found</span></span>
+<span><span class="co">#&gt; $mu</span></span>
+<span><span class="co">#&gt; y_bct ~ z1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sigma</span></span>
+<span><span class="co">#&gt; ~z1</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x127ac05a0&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nu</span></span>
+<span><span class="co">#&gt; ~z1</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x127ac05a0&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $tau</span></span>
+<span><span class="co">#&gt; ~1</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x127ac05a0&gt;</span></span>
 <span><span class="fu"><a href="reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_bct</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_bct</span><span class="op">)</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">fit_bct</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="op">]</span></span>
-<span><span class="co">#&gt; Error: object 'fit_bct' not found</span></span></code></pre></div>
-<p>This quick-start illustrates how multi-parameter families expose additional scopes: ν and τ selections recover the simulated structure alongside μ/σ.</p>
+<span><span class="co">#&gt;   parameter term count      prop</span></span>
+<span><span class="co">#&gt; 1        mu   z1    20 0.5714286</span></span>
+<span><span class="co">#&gt; 3     sigma   z1    25 0.7142857</span></span>
+<span><span class="co">#&gt; 5        nu   z1    35 1.0000000</span></span></code></pre></div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="c0-grid--confidence--autofast">c0 grid + confidence + Auto/Fast<a class="anchor" aria-label="anchor" href="#c0-grid--confidence--autofast"></a>
-</h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># grid over c0 and plot</span></span>
-<span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid</a></span><span class="op">(</span></span>
-<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
-<span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<div class="section level3">
+<h3 id="automated-c0-search-and-confidence-summaries">Automated c0 search and confidence summaries<a class="anchor" aria-label="anchor" href="#automated-c0-search-and-confidence-summaries"></a>
+</h3>
+<p>Explore the SelectBoost grouping parameter (c0) via grids, automatic selection, and lightweight previews.</p>
+<div class="section level4">
+<h4 id="grid-over-c0-and-plot">grid over c0 and plot<a class="anchor" aria-label="anchor" href="#grid-over-c0-and-plot"></a>
+</h4>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
+<span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
+<span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">40</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  progress <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%</span></span>
-<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |============================================================================================| 100%</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span>                 <span class="co"># stable terms vs c0 + top confidence terms</span></span></code></pre></div>
+<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%  |                                                                                                    |============================================================================================| 100%</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="reference/figures/README-unnamed-chunk-52-1.png" alt="plot of chunk unnamed-chunk-52" width="100%"><p class="caption">
-plot of chunk unnamed-chunk-52
+<img src="reference/figures/README-unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-9
 </p>
 </div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/confidence_table.html">confidence_table</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span>     <span class="co"># SelectBoost-like confidence summary</span></span>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/confidence_table.html">confidence_table</a></span><span class="op">(</span><span class="va">g</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   parameter term conf_index cover</span></span>
 <span><span class="co">#&gt; 1        mu   x1        0.4     1</span></span>
 <span><span class="co">#&gt; 2     sigma   x1        0.0     0</span></span>
 <span><span class="co">#&gt; 3        mu   x2        0.0     0</span></span>
 <span><span class="co">#&gt; 4     sigma   x2        0.0     0</span></span>
-<span><span class="co">#&gt; 5        mu   x3        0.0     0</span></span>
-<span></span>
-<span><span class="co"># autoboost: pick best c0 automatically</span></span>
-<span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autoboost_gamlss.html">autoboost_gamlss</a></span><span class="op">(</span></span>
-<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
-<span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>, B <span class="op">=</span> <span class="fl">40</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%</span></span>
-<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%  |                                                                                                    |============================================================================================| 100%</span></span>
+<span><span class="co">#&gt; 5        mu   x3        0.0     0</span></span></code></pre></div>
+</div>
+<div class="section level4">
+<h4 id="autoboost-pick-best-c0-automatically">autoboost: pick best c0 automatically<a class="anchor" aria-label="anchor" href="#autoboost-pick-best-c0-automatically"></a>
+</h4>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/autoboost_gamlss.html">autoboost_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
+<span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
+<span>  c0_grid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.8</span>, by <span class="op">=</span> <span class="fl">0.2</span><span class="op">)</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">40</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%  |                                                                                                    |============================================================================================| 100%</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">ab</span>, <span class="st">"chosen_c0"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.2</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">ab</span>, <span class="st">"confidence_table"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">ab</span>, <span class="st">"confidence_table"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   parameter term conf_index cover</span></span>
 <span><span class="co">#&gt; 1        mu   x1        0.4     1</span></span>
 <span><span class="co">#&gt; 2     sigma   x1        0.0     0</span></span>
 <span><span class="co">#&gt; 3        mu   x2        0.0     0</span></span>
 <span><span class="co">#&gt; 4     sigma   x2        0.0     0</span></span>
 <span><span class="co">#&gt; 5        mu   x3        0.0     0</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ab</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'</span></span>
-<span></span>
-<span><span class="co"># fastboost: lightweight stability selection</span></span>
-<span><span class="va">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fastboost_gamlss.html">fastboost_gamlss</a></span><span class="op">(</span></span>
-<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">30</span>, sample_fraction <span class="op">=</span> <span class="fl">0.6</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="fu"><a href="reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">ab</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="reference/figures/README-unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-10
+</p>
+</div>
+</div>
+<div class="section level4">
+<h4 id="fastboost-lightweight-stability-selection">fastboost: lightweight stability selection<a class="anchor" aria-label="anchor" href="#fastboost-lightweight-stability-selection"></a>
+</h4>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fb</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fastboost_gamlss.html">fastboost_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
+<span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">30</span>,</span>
+<span>  sample_fraction <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">fb</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/plot_sb_gamlss.html">plot_sb_gamlss</a></span><span class="op">(</span><span class="va">fb</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="reference/figures/README-unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-11
+</p>
+</div>
 <p>Use <code>progress = TRUE</code> on grid/autoboost helpers to monitor c0 sweeps, and pair <code><a href="reference/fastboost_gamlss.html">fastboost_gamlss()</a></code> with smaller <code>B</code>/<code>sample_fraction</code> for rapid diagnostics.</p>
+</div>
+</div>
 <div class="section level3">
 <h3 id="confidence-functionals--plots">Confidence functionals + plots<a class="anchor" aria-label="anchor" href="#confidence-functionals--plots"></a>
 </h3>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">g</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss_c0_grid.html">sb_gamlss_c0_grid</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: '...' used in an incorrect context</span></span>
 <span><span class="va">cf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/confidence_functionals.html">confidence_functionals</a></span><span class="op">(</span><span class="va">g</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, weight_fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">c0</span><span class="op">)</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">c0</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>,</span>
 <span>                             conservative <span class="op">=</span> <span class="cn">TRUE</span>, B <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span>  <span class="co"># scatter (area_pos vs cover) + top-N bars</span></span></code></pre></div>
-<div class="figure">
-<img src="reference/figures/README-unnamed-chunk-53-1.png" alt="plot of chunk unnamed-chunk-53" width="100%"><p class="caption">
-plot of chunk unnamed-chunk-53
-</p>
-</div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_stability_curves.html">plot_stability_curves</a></span><span class="op">(</span><span class="va">g</span>, terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>,<span class="st">"x3"</span><span class="op">)</span>, parameter <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span></span></code></pre></div>
-<div class="figure">
-<img src="reference/figures/README-unnamed-chunk-53-2.png" alt="plot of chunk unnamed-chunk-53" width="100%"><p class="caption">
-plot of chunk unnamed-chunk-53
-</p>
-</div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span>  <span class="co"># scatter (area_pos vs cover) + top-N bars</span></span>
+<span><span class="fu"><a href="reference/plot_stability_curves.html">plot_stability_curves</a></span><span class="op">(</span><span class="va">g</span>, terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>,<span class="st">"x3"</span><span class="op">)</span>, parameter <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span></span></code></pre></div>
 <p>Combine these summaries with <code><a href="reference/effect_plot.html">effect_plot()</a></code> outputs (shown in the quick start) or <code><a href="reference/selection_table.html">selection_table()</a></code> to understand which effects drive the final refit.</p>
 </div>
 <div class="section level3">
@@ -337,7 +454,7 @@ plot of chunk unnamed-chunk-53
 <li>Uses <strong>RcppArmadillo</strong> for fast scaling and correlations (grouping).</li>
 <li>Optional parallel bootstraps via <strong>future.apply</strong>: <code>parallel = "auto"</code> (or set your own plan).</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span><span class="va">...</span>, B <span class="op">=</span> <span class="fl">200</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -345,14 +462,32 @@ plot of chunk unnamed-chunk-53
 <h3 id="glmnet-engines-lassoridgeelastic-net-for-μ-selection">Glmnet engines (lasso/ridge/elastic-net) for μ-selection<a class="anchor" aria-label="anchor" href="#glmnet-engines-lassoridgeelastic-net-for-%CE%BC-selection"></a>
 </h3>
 <p>Enable <code>engine = "glmnet"</code> and choose <code>glmnet_alpha</code>: - <code>glmnet_alpha = 1</code> → <strong>lasso</strong> - <code>glmnet_alpha = 0</code> → <strong>ridge</strong> - <code>0 &lt; glmnet_alpha &lt; 1</code> → <strong>elastic-net</strong> - <code>glmnet_family</code> controls the underlying glmnet path (<code>"gaussian"</code>, <code>"binomial"</code>, or <code>"poisson"</code>).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
-<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
-<span>  engine <span class="op">=</span> <span class="st">"glmnet"</span>, glmnet_alpha <span class="op">=</span> <span class="fl">1</span>,  <span class="co"># lasso</span></span>
-<span>  B <span class="op">=</span> <span class="fl">60</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>Pair these helpers with confidence functionals or stability curves to see how rankings evolve as c0 changes.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">cf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/confidence_functionals.html">confidence_functionals</a></span><span class="op">(</span></span>
+<span>  <span class="va">g</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  weight_fun <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">c0</span><span class="op">)</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="va">c0</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span>,</span>
+<span>  conservative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">30</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="reference/figures/README-unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-12
+</p>
+</div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="reference/plot_stability_curves.html">plot_stability_curves</a></span><span class="op">(</span><span class="va">g</span>, terms <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x3"</span><span class="op">)</span>, parameter <span class="op">=</span> <span class="st">"mu"</span><span class="op">)</span></span></code></pre></div>
+<div class="figure">
+<img src="reference/figures/README-unnamed-chunk-12-2.png" alt="plot of chunk unnamed-chunk-12" width="100%"><p class="caption">
+plot of chunk unnamed-chunk-12
+</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="flexible-engines-glmnet-grouped-and-sparse-group-penalties">Flexible engines: glmnet, grouped, and sparse-group penalties<a class="anchor" aria-label="anchor" href="#flexible-engines-glmnet-grouped-and-sparse-group-penalties"></a>
+</h3>
 </div>
 <div class="section level3">
 <h3 id="group-lasso--sparse-group-lasso-broader-structured-selection">Group lasso &amp; sparse group lasso (broader structured selection)<a class="anchor" aria-label="anchor" href="#group-lasso--sparse-group-lasso-broader-structured-selection"></a>
@@ -366,226 +501,177 @@ plot of chunk unnamed-chunk-53
 </ul>
 <p>Groups are built from <code>mu_scope</code> term labels via <code>model.matrix(~ 0 + terms)</code> and the column <code>assign</code> mapping: all dummy columns for a factor are one group; all spline basis columns are one group; interaction columns form a group.</p>
 <p>Use <code>options(SelectBoost.gamlss.term_converters = list(function(term, df_smooth) ...))</code> to register custom term converters if you rely on additional smoother constructors; the helpers now convert <code>pb()</code>, <code>cs()</code>, <code>pbm()</code>, and <code>lo()</code> out-of-the-box.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit_gl</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
-<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>,   <span class="co"># factors, splines, interactions</span></span>
-<span>  engine <span class="op">=</span> <span class="st">"grpreg"</span>,                      <span class="co"># or engine = "sgl"</span></span>
-<span>  B <span class="op">=</span> <span class="fl">80</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<p>Control the selection engine per parameter. Use lasso/elastic-net via <strong>glmnet</strong>, grouped penalties via <strong>grpreg</strong>, and sparse-group penalties via <strong>SGL</strong>.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_glmnet</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
+<span>  engine <span class="op">=</span> <span class="st">"glmnet"</span>,</span>
+<span>  glmnet_alpha <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">60</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="va">fit_glmnet</span><span class="op">$</span><span class="va">final_formula</span></span>
+<span><span class="co">#&gt; $mu</span></span>
+<span><span class="co">#&gt; y ~ x1 + x2 + x3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sigma</span></span>
+<span><span class="co">#&gt; ~1</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x1143f2450&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $nu</span></span>
+<span><span class="co">#&gt; ~1</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x1143f2450&gt;</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $tau</span></span>
+<span><span class="co">#&gt; ~1</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x1143f2450&gt;</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="parameter-specific-engines--penalties">Parameter-specific engines &amp; penalties<a class="anchor" aria-label="anchor" href="#parameter-specific-engines--penalties"></a>
 </h3>
 <p>You can choose different selection engines per parameter: - <code>engine</code> (μ), and <code>engine_sigma</code>, <code>engine_nu</code>, <code>engine_tau</code>. - Engines: <code>"stepGAIC"</code>, <code>"glmnet"</code>, <code>"grpreg"</code> (group lasso / MCP / SCAD via <code>grpreg_penalty</code>), <code>"sgl"</code> (sparse group lasso with <code>sgl_alpha</code>).</p>
 <p>Example:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
-<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_grouped</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  mu_scope    <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>,</span>
 <span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span>,</span>
 <span>  engine <span class="op">=</span> <span class="st">"grpreg"</span>,              <span class="co"># μ via group lasso</span></span>
 <span>  engine_sigma <span class="op">=</span> <span class="st">"sgl"</span>,           <span class="co"># σ via sparse group lasso</span></span>
 <span>  grpreg_penalty <span class="op">=</span> <span class="st">"grLasso"</span>,</span>
 <span>  sgl_alpha <span class="op">=</span> <span class="fl">0.9</span>,</span>
-<span>  B <span class="op">=</span> <span class="fl">80</span>, pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, parallel <span class="op">=</span> <span class="st">"auto"</span></span>
+<span>  B <span class="op">=</span> <span class="fl">80</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1629.75 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1629.519 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 3: Global Deviance = 1629.443 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 4: Global Deviance = 1629.418 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 5: Global Deviance = 1629.411 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 6: Global Deviance = 1629.408 </span></span>
-<span><span class="co">#&gt; GAMLSS-RS iteration 7: Global Deviance = 1629.407</span></span></code></pre></div>
+<span><span class="fu"><a href="reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_grouped</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="reference/selection_table.html">selection_table</a></span><span class="op">(</span><span class="va">fit_grouped</span><span class="op">)</span><span class="op">$</span><span class="va">prop</span> <span class="op">&gt;=</span> <span class="va">fit_grouped</span><span class="op">$</span><span class="va">pi_thr</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;   parameter term count prop</span></span>
+<span><span class="co">#&gt; 5     sigma    f    80    1</span></span>
+<span><span class="co">#&gt; 6     sigma   x1    80    1</span></span></code></pre></div>
 <p>Note: σ/ν/τ grouped engines use a <strong>working response</strong> from the current fit (on a link-like scale) for the penalized regression.</p>
 </div>
 <div class="section level3">
-<h3 id="tuning-enginespenalties-lightweight">Tuning engines/penalties (lightweight)<a class="anchor" aria-label="anchor" href="#tuning-enginespenalties-lightweight"></a>
+<h3 id="tuning-engines-and-penalties">Tuning engines and penalties<a class="anchor" aria-label="anchor" href="#tuning-engines-and-penalties"></a>
 </h3>
-<p>Use <code><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss()</a></code> to search over selection engines/penalties with a small B:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<p><code><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss()</a></code> lets you compare multiple engine configurations under either the stability metric or fast deviance cross-validation.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"stepGAIC"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"glmnet"</span>, glmnet_alpha<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"grpreg"</span>, grpreg_penalty<span class="op">=</span><span class="st">"grLasso"</span>, engine_sigma<span class="op">=</span><span class="st">"sgl"</span>, sgl_alpha<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine <span class="op">=</span> <span class="st">"stepGAIC"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine <span class="op">=</span> <span class="st">"glmnet"</span>, glmnet_alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine <span class="op">=</span> <span class="st">"grpreg"</span>, grpreg_penalty <span class="op">=</span> <span class="st">"grLasso"</span>, engine_sigma <span class="op">=</span> <span class="st">"sgl"</span>, sgl_alpha <span class="op">=</span> <span class="fl">0.9</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
-<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, sample_fraction <span class="op">=</span> <span class="fl">0.7</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="va">base_args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>,</span>
+<span>  sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  sample_fraction <span class="op">=</span> <span class="fl">0.7</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span><span class="va">cfgs</span>, base_args <span class="op">=</span> <span class="va">base</span>, B_small <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%</span></span>
-<span><span class="va">tuned</span><span class="op">$</span><span class="va">best_config</span></span>
+<span><span class="va">tuned_stab</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span><span class="va">cfgs</span>, base_args <span class="op">=</span> <span class="va">base_args</span>, B_small <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%</span></span>
+<span><span class="va">tuned_stab</span><span class="op">$</span><span class="va">best_config</span></span>
 <span><span class="co">#&gt; $engine</span></span>
-<span><span class="co">#&gt; [1] "glmnet"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $glmnet_alpha</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="va">tuned</span><span class="op">$</span><span class="va">best_fit</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] "stepGAIC"</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tuned_dev</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">cfgs</span>,</span>
+<span>  base_args <span class="op">=</span> <span class="va">base_args</span>,</span>
+<span>  B_small <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  metric <span class="op">=</span> <span class="st">"deviance"</span>,</span>
+<span>  K <span class="op">=</span> <span class="fl">3</span>,</span>
+<span>  progress <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%</span></span>
+<span><span class="va">tuned_dev</span><span class="op">$</span><span class="va">metrics</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="approximate-group-knockoffs-for-fdr-style-control">(Approximate) group knockoffs for FDR-style control<a class="anchor" aria-label="anchor" href="#approximate-group-knockoffs-for-fdr-style-control"></a>
+<h3 id="knockoff-style-filters">Knockoff-style filters<a class="anchor" aria-label="anchor" href="#knockoff-style-filters"></a>
 </h3>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># mu</span></span>
-<span><span class="va">sel_mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/knockoff_filter_mu.html">knockoff_filter_mu</a></span><span class="op">(</span><span class="va">dat</span>, response <span class="op">=</span> <span class="st">"y"</span>, mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>, fdr <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in X_k * swap.M: non-numeric argument to binary operator</span></span>
+<p>Approximate FDR control for grouped features using knockoff filters for μ or any working-response parameter.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"knockoff"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">sel_mu</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/knockoff_filter_mu.html">knockoff_filter_mu</a></span><span class="op">(</span></span>
+<span>    <span class="va">dat</span>,</span>
+<span>    response <span class="op">=</span> <span class="st">"y"</span>,</span>
+<span>    mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
+<span>    fdr <span class="op">=</span> <span class="fl">0.1</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">sel_mu</span></span>
 <span></span>
-<span><span class="co"># sigma (using a working response)</span></span>
-<span><span class="va">fit_tmp</span> <span class="op">&lt;-</span> <span class="fu">gamlss</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/gamlss.html" class="external-link">gamlss</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">fit_tmp</span> <span class="op">&lt;-</span> <span class="fu">gamlss</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss/man/gamlss.html" class="external-link">gamlss</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">ysig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">fit_tmp</span>, what <span class="op">=</span> <span class="st">"sigma"</span><span class="op">)</span></span>
+<span>  <span class="va">sel_sigma</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/knockoff_filter_param.html">knockoff_filter_param</a></span><span class="op">(</span></span>
+<span>    <span class="va">dat</span>,</span>
+<span>    <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span>,</span>
+<span>    y_work <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">ysig</span><span class="op">)</span>,</span>
+<span>    fdr <span class="op">=</span> <span class="fl">0.1</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="va">sel_sigma</span></span>
+<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">message</a></span><span class="op">(</span><span class="st">"Install the 'knockoff' package to run the knockoff filter examples."</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
 <span><span class="co">#&gt; GAMLSS-RS iteration 1: Global Deviance = 1630.118 </span></span>
 <span><span class="co">#&gt; GAMLSS-RS iteration 2: Global Deviance = 1630.118</span></span>
-<span><span class="va">ysig</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/fitted.values.html" class="external-link">fitted</a></span><span class="op">(</span><span class="va">fit_tmp</span>, what <span class="op">=</span> <span class="st">"sigma"</span><span class="op">)</span></span>
-<span><span class="va">sel_sigma</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/knockoff_filter_param.html">knockoff_filter_param</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">sigma_scope</span>, y_work <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="va">ysig</span><span class="op">)</span>, fdr <span class="op">=</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error: object 'sigma_scope' not found</span></span></code></pre></div>
+<span><span class="co">#&gt; character(0)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="tuning-metric-stability-or-deviance-cv">Tuning metric: stability or deviance (CV)<a class="anchor" aria-label="anchor" href="#tuning-metric-stability-or-deviance-cv"></a>
+<h3 id="fast-deviance-shortcuts-and-validation">Fast deviance shortcuts and validation<a class="anchor" aria-label="anchor" href="#fast-deviance-shortcuts-and-validation"></a>
 </h3>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cfgs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"stepGAIC"</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"glmnet"</span>, glmnet_alpha<span class="op">=</span><span class="fl">1</span><span class="op">)</span>,</span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>engine<span class="op">=</span><span class="st">"grpreg"</span>, grpreg_penalty<span class="op">=</span><span class="st">"grLasso"</span>, engine_sigma<span class="op">=</span><span class="st">"sgl"</span>, sgl_alpha<span class="op">=</span><span class="fl">0.9</span><span class="op">)</span></span>
+<p>Fast deviance evaluation accelerates cross-validation across dozens of <code>gamlss.dist</code> families. Validate the shortcuts against the generic density on your own data.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit_dev</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">base</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span>  formula <span class="op">=</span> <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>, data <span class="op">=</span> <span class="va">dat</span>, family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span> <span class="op">+</span> <span class="va">x1</span><span class="op">:</span><span class="va">f</span>, sigma_scope <span class="op">=</span> <span class="op">~</span> <span class="va">f</span> <span class="op">+</span> <span class="va">x1</span> <span class="op">+</span> <span class="fu">pb</span><span class="op">(</span><span class="va">x2</span><span class="op">)</span>,</span>
-<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>, pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>, sample_fraction <span class="op">=</span> <span class="fl">0.7</span>, parallel <span class="op">=</span> <span class="st">"auto"</span>, trace <span class="op">=</span> <span class="cn">FALSE</span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">tuned</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tune_sb_gamlss.html">tune_sb_gamlss</a></span><span class="op">(</span><span class="va">cfgs</span>, base_args <span class="op">=</span> <span class="va">base</span>, B_small <span class="op">=</span> <span class="fl">20</span>, metric <span class="op">=</span> <span class="st">"deviance"</span>, K <span class="op">=</span> <span class="fl">3</span>, progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%</span></span>
-<span><span class="co">#&gt; Warning in RS(): Algorithm RS has not yet converged</span></span>
-<span><span class="co">#&gt;   |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%</span></span>
-<span><span class="va">tuned</span><span class="op">$</span><span class="va">metrics</span></span>
-<span><span class="co">#&gt; NULL</span></span></code></pre></div>
-<p>The returned tibble reports mean deviance and rank per configuration, confirming the fast-path deviance shortcut agrees with the full <code>logLik</code> evaluation across the grid.</p>
+<span><span class="fu"><a href="reference/fast_vs_generic_ll.html">fast_vs_generic_ll</a></span><span class="op">(</span><span class="va">fit_dev</span>, newdata <span class="op">=</span> <span class="va">dat</span>, reps <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in get_density_fun(fit): Density function d not found in gamlss.dist</span></span>
+<span><span class="fu"><a href="reference/check_fast_vs_generic.html">check_fast_vs_generic</a></span><span class="op">(</span><span class="va">fit_dev</span>, newdata <span class="op">=</span> <span class="va">dat</span>, tol <span class="op">=</span> <span class="fl">1e-8</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in get_density_fun(fit): Density function d not found in gamlss.dist</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="progress-bars">Progress bars<a class="anchor" aria-label="anchor" href="#progress-bars"></a>
+<h3 id="parallel-bootstraps">Parallel bootstraps<a class="anchor" aria-label="anchor" href="#parallel-bootstraps"></a>
 </h3>
-<ul>
-<li>
-<code>sb_gamlss_c0_grid(..., progress = TRUE)</code> shows progress across <code>c0_grid</code>.</li>
-<li>
-<code>tune_sb_gamlss(..., progress = TRUE)</code> shows progress across configs.</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="benchmark-vignette">Benchmark vignette<a class="anchor" aria-label="anchor" href="#benchmark-vignette"></a>
-</h3>
-<p>See <code>vignettes/benchmark.Rmd</code> for an apples-to-apples timing comparison of engines on a synthetic dataset. Run times will vary by hardware and BLAS.</p>
-</div>
-<div class="section level3">
-<h3 id="fast-deviance-shortcuts-families--mappings">Fast deviance shortcuts (families &amp; mappings)<a class="anchor" aria-label="anchor" href="#fast-deviance-shortcuts-families--mappings"></a>
-</h3>
-<p>The deviance CV now has optimized paths for common families:</p>
-<table class="table">
-<colgroup>
-<col width="33%">
-<col width="33%">
-<col width="33%">
-</colgroup>
-<thead><tr>
-<th>Family</th>
-<th>Param notes</th>
-<th>Fast density mapping</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>NO</td>
-<td>μ = mean, σ = sd</td>
-<td><code>dnorm(y, mean = μ, sd = σ)</code></td>
-</tr>
-<tr>
-<td>PO</td>
-<td>μ = mean</td>
-<td><code>dpois(y, lambda = μ)</code></td>
-</tr>
-<tr>
-<td>LOGNO</td>
-<td>μ = meanlog, σ = sdlog</td>
-<td><code>dlnorm(y, meanlog = μ, sdlog = σ)</code></td>
-</tr>
-<tr>
-<td>GA</td>
-<td>Var = (σ²)(μ²)</td>
-<td><code>dgamma(y, shape = 1/σ², scale = μ·σ²)</code></td>
-</tr>
-<tr>
-<td>IG</td>
-<td>Var = σ² μ³</td>
-<td>closed-form: <code>-½log(2π) - log(σ) - 1.5log(y) - (y-μ)²/(2 μ² σ² y)</code>
-</td>
-</tr>
-<tr>
-<td>NBI</td>
-<td>Var = μ + σ μ²</td>
-<td><code>dnbinom(y, size = 1/σ, mu = μ)</code></td>
-</tr>
-<tr>
-<td>NBII</td>
-<td>Var = μ(1+σ)</td>
-<td><code>dnbinom(y, size = μ/σ, mu = μ)</code></td>
-</tr>
-<tr>
-<td>BI</td>
-<td>y = (success, failure)</td>
-<td><code>dbinom(success, size = success+failure, prob = μ)</code></td>
-</tr>
-</tbody>
-</table>
-<p>These mappings follow the <code>gamlss.dist</code> parameterizations (see GA, LOGNO/LNO, IG, BI, NBI/NBII documentation).</p>
-<div class="section level4">
-<h4 id="added-fast-paths">Added fast paths<a class="anchor" aria-label="anchor" href="#added-fast-paths"></a>
-</h4>
-<ul>
-<li>
-<strong>LO</strong> (logistic): <code>dlogis(y, location = μ, scale = σ)</code>
-</li>
-<li>
-<strong>BE</strong> (beta reparam): with <code>Var = σ² μ (1 − μ)</code>, set <code>φ = 1/σ² − 1</code>, <code>α = μ φ</code>, <code>β = (1−μ) φ</code>, then <code>dbeta(y, α, β)</code>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="native-density-fallback">Native density fallback<a class="anchor" aria-label="anchor" href="#native-density-fallback"></a>
-</h4>
-<p>Whenever a matching <code>gamlss.dist::d&lt;family&gt;()</code> function exists, the fast evaluator now calls it directly (passing along <code>μ/σ/ν/τ</code> and trial counts for binomial variants). This automatically covers zero-inflated and hurdle families such as <code>ZIP</code>, <code>ZIP2</code>, <code>ZINBI</code>, <code>ZIBB</code>, <code>ZAGA</code>, <code>ZAIG</code>, <code>ZALG</code>, as well as beta-inflated, Delaporte, Paretian, SEP, and many others—without requiring a hand-maintained whitelist. If the native density is unavailable or errors, the code falls back to the generic evaluator.</p>
-</div>
-<div class="section level4">
-<h4 id="more-fast-deviance-shortcuts">More fast deviance shortcuts<a class="anchor" aria-label="anchor" href="#more-fast-deviance-shortcuts"></a>
-</h4>
-<ul>
-<li>
-<strong>LOGITNO</strong> (logit-normal): <code>z = logit(y)</code>, <code>dnorm(z | μ, σ) − log(y) − log(1−y)</code>
-</li>
-<li>
-<strong>GEOM</strong> (geometric, mean-param.): <code>p = 1/(1+μ)</code>, then <code>dgeom(y, p)</code>
-</li>
-</ul>
-</div>
-<div class="section level4">
-<h4 id="even-more-native-routes">Even more native routes<a class="anchor" aria-label="anchor" href="#even-more-native-routes"></a>
-</h4>
-<p>Fast deviance now also tries native <strong>gamlss.dist</strong> densities for: <code>ZIPF</code>, <code>ZIPFmu</code>, <code>BCT</code>, <code>BCPE</code>, <code>SICHEL</code>, <code>GLG</code> (automatically falls back to generic density if a family is unavailable).</p>
-</div>
-<div class="section level4">
-<h4 id="added-more-native-routes-swept-set">Added more native routes (swept set)<a class="anchor" aria-label="anchor" href="#added-more-native-routes-swept-set"></a>
-</h4>
-<p>Fast deviance now attempts native <code>gamlss.dist</code> densities for: <code>BETA4</code>, <code>RS</code>, <code>WEI</code>, <code>GIG</code> (and previously added sets). If a family is unavailable in your installed <code>gamlss.dist</code>, the code falls back to the generic density resolution.</p>
+<p>Speed up heavy bootstrap campaigns with the <code>future</code> ecosystem (you can also manage the plan manually).</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">future</span><span class="fu">::</span><span class="fu"><a href="https://future.futureverse.org/reference/plan.html" class="external-link">plan</a></span><span class="op">(</span><span class="va">multisession</span>, workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">fit_parallel</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/sb_gamlss.html">sb_gamlss</a></span><span class="op">(</span></span>
+<span>  <span class="va">y</span> <span class="op">~</span> <span class="fl">1</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">dat</span>,</span>
+<span>  family <span class="op">=</span> <span class="fu">gamlss.dist</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/gamlss.dist/man/NO.html" class="external-link">NO</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  mu_scope <span class="op">=</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>,</span>
+<span>  B <span class="op">=</span> <span class="fl">200</span>,</span>
+<span>  pi_thr <span class="op">=</span> <span class="fl">0.6</span>,</span>
+<span>  pre_standardize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  parallel <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  trace <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
-<div class="section level3">
-<h3 id="fast-deviance-benchmark">Fast deviance benchmark<a class="anchor" aria-label="anchor" href="#fast-deviance-benchmark"></a>
-</h3>
-<ul>
-<li>Helper: <code>fast_vs_generic_ll(fit, newdata, reps=100)</code> compares the fast evaluator to the generic route.</li>
-<li>Vignette: <strong>Fast Deviance: Microbenchmarks</strong> reproduces timing comparisons across multiple families.</li>
-</ul>
-</div>
+<div class="section level2">
+<h2 id="learn-more">Learn more<a class="anchor" aria-label="anchor" href="#learn-more"></a>
+</h2>
 <div class="section level3">
 <h3 id="fast-deviance-accuracy">Fast deviance: accuracy<a class="anchor" aria-label="anchor" href="#fast-deviance-accuracy"></a>
 </h3>
@@ -593,19 +679,22 @@ plot of chunk unnamed-chunk-53
 <li>Helper: <code>check_fast_vs_generic(fit, newdata, tol)</code> verifies that fast and generic log-likelihoods agree.</li>
 <li>Vignette: <strong>Fast Deviance: Numerical Equality Checks</strong> shows pass/fail with absolute differences for several families.</li>
 </ul>
-</div>
-<div class="section level3">
-<h3 id="cran-friendly-long-tests--tolerances">CRAN-friendly long tests &amp; tolerances<a class="anchor" aria-label="anchor" href="#cran-friendly-long-tests--tolerances"></a>
-</h3>
+<p>The vignettes expand on each capability with richer datasets and diagnostics:</p>
 <ul>
 <li>
-<p>Enable long tests locally via either:</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>SelectBoost.gamlss.run_long_tests <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>  <span class="co"># or</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/Sys.setenv.html" class="external-link">Sys.setenv</a></span><span class="op">(</span>RUN_LONG_TESTS <span class="op">=</span> <span class="st">"true"</span><span class="op">)</span></span></code></pre></div>
-</li>
-<li><p>Equality checks use <strong>per-family tolerances</strong> (see <code><a href="reference/dot-family_tolerance.html">.family_tolerance()</a></code>); heavier-tailed/complex families have slightly looser defaults.</p></li>
+<strong>Stability-Selection for GAMLSS</strong> (<code>vignettes/selectboost-gamlss.Rmd</code>) – core workflow, grouped penalties, and SelectBoost integrations.</li>
+<li>
+<strong>Confidence Functionals</strong> (<code>vignettes/confidence-functionals.Rmd</code>) – deeper dive into ranking stability across c0 values.</li>
+<li>
+<strong>Benchmark</strong> (<code>vignettes/benchmark.Rmd</code>) – wall-time comparisons between engines on synthetic data.</li>
+<li>
+<strong>Fast Deviance (Benchmark &amp; Equality)</strong> (<code>vignettes/fast-deviance-benchmark.Rmd</code>, <code>vignettes/fast-deviance-equality.Rmd</code>) – timing and accuracy checks for fast deviance evaluation.</li>
+<li>
+<strong>Real Data &amp; Advanced Examples</strong> (<code>vignettes/real-data-examples.Rmd</code>, <code>vignettes/advanced-real-data-examples.Rmd</code>) – end-to-end modelling case studies.</li>
+<li>
+<strong>Algorithm Pseudocode &amp; Comparisons</strong> (<code>vignettes/algorithm-pseudocode.Rmd</code>, <code>vignettes/comparison.Rmd</code>) – algorithmic details and comparisons with SelectBoost for other models.</li>
 </ul>
+<p>The <a href="https://fbertran.github.io/SelectBoost.gamlss/">pkgdown site</a> mirrors these resources with rendered HTML examples.</p>
 </div>
 </div>
 </div>
@@ -642,9 +731,7 @@ plot of chunk unnamed-chunk-53
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss" class="external-link"><img src="https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg" alt="DOI"></a></li>
 <li><a href="https://github.com/fbertran/SelectBoost.gamlss/actions" class="external-link"><img src="https://github.com/fbertran/SelectBoost.gamlss/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://cran.r-project.org/package=SelectBoost.gamlss" class="external-link"><img src="https://www.r-pkg.org/badges/version/SelectBoost.gamlss" alt="CRAN status"></a></li>
 </ul>
 </div>
 

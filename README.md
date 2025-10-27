@@ -10,22 +10,30 @@
 <!-- [![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss) -->
 <!-- badges: end -->
 
-With the growth of big data, variable selection has become one of the major challenges in statistics. Although many methods have been proposed in the literature their performance in terms of recall and precision are limited in a context where the number of variables by far exceeds the number of observations or in a high correlated setting. 
+**SelectBoost.gamlss** delivers correlation-aware, bootstrap-based stability-selection for Generalized Additive Models for Location, Scale and Shape (GAMLSS) and quantile regression. It extends the [SelectBoost](https://doi.org/10.1093/bioinformatics/btaa855) algorithm so that you can work with multiple distributional parameters, mix-and-match sparse penalties, and interrogate the resulting models with rich visual summaries.
 
-Results: This package implements an extension of the **SelectBoost** algorithm, F. Bertrand, I. Aouadi, N. Jung, R. Carapito, L. Vallat, S. Bahram, M. Maumy-Bertrand (2015) <https://doi.org/10.1093/bioinformatics/btaa855> and <https://doi.org/10.32614/CRAN.package.SelectBoost>, to **GAMLSS** (Generalized Additive Models for Location, Scale and Shape).
+> **Conference highlight.** SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (F. Bertrand & M. Maumy). Correlation-aware resampling markedly improves recall and precision in high-dimensional, highly correlated settings.
 
-> **Conference highlight.** SelectBoost for GAMLSS and quantile regression was presented at the Joint Statistics Meetings 2024 in Portland, OR, in the talk *"An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression"* (F. Bertrand & M. Maumy). The presentation underscored how correlated resampling improves recall and precision in high-dimensional, highly correlated settings.
+## Why SelectBoost.gamlss?
 
-## Key features
-- **Bootstrap stability-selection** for all distribution parameters (μ, σ, ν, τ) with optional SelectBoost grouping over correlation clusters.
-- **Multiple engines:** classical stepwise via `gamlss::stepGAIC()`, lasso/ridge/elastic-net via **glmnet**, grouped penalties via **grpreg**/**SGL** (group lasso / sparse group lasso), and per-parameter engine choices.
-- **Effect visualisation & summaries:** stability tables/plots, `effect_plot()` for partial effects, and grid-based confidence summaries.
-- **Automation helpers:** `sb_gamlss_c0_grid()`, `autoboost_gamlss()`, `fastboost_gamlss()`, and `tune_sb_gamlss()` for rapid c0/engine sweeps with progress bars.
-- **Fast deviance evaluation** for deviance-based tuning with optimized density shortcuts across many `gamlss.dist` families plus accuracy checks.
-- **Parallel + compiled speedups:** C++ scaling/correlation + optional `future.apply` parallelism for bootstrap replications.
-- **Additional tooling:** approximate knockoff filters, `AICc_gamlss()` helper, and reproducible benchmarking utilities.
+* **Stable variable selection under correlation.** Group correlated predictors and sample one representative per bootstrap (c0 groups) to avoid selecting redundant surrogates.
+* **Distribution-aware engines.** Optimise μ, σ, ν, and τ formulas simultaneously with stepwise GAIC, glmnet penalties, grouped penalties, or sparse-group penalties.
+* **Actionable summaries.** Inspect stability tables, effect plots, correlation-aware confidence functionals, and deviance benchmarks in one workflow.
+* **Fast + scalable.** Rcpp-backed preprocessing, optional `future.apply` parallelism, and deviance shortcuts keep large bootstrap campaigns practical.
 
-The SelectBoost algorithm improves the precision of existing variable-selection methods by exploiting correlation-aware resampling. It can deliver confidence indices for variable inclusion or guide the design of future experiments. This website and these examples were created by F. Bertrand.
+## Capabilities at a glance
+
+| Capability | Key helpers | What you get |
+|------------|-------------|--------------|
+| Stability selection with SelectBoost | `sb_gamlss()`, `selection_table()`, `plot_sb_gamlss()` | Confidence-style inclusion probabilities for each parameter. |
+| Automated c0 search | `sb_gamlss_c0_grid()`, `autoboost_gamlss()`, `fastboost_gamlss()` | Grid, automatic, and lightweight bootstrap strategies. |
+| Flexible engines | `engine`, `engine_sigma`, `engine_nu`, `engine_tau`, `glmnet_alpha`, `grpreg_penalty`, `sgl_alpha` | Mix lasso/ridge, grouped penalties, or sparse-group penalties per parameter. |
+| Model interpretation | `effect_plot()`, `plot_stability_curves()`, `confidence_functionals()` | Visualise partial effects and correlation-aware confidence summaries. |
+| Metric-driven tuning | `tune_sb_gamlss()`, `fast_vs_generic_ll()` | Compare engines via stability or fast deviance cross-validation. |
+| Knockoff-style filters | `knockoff_filter_mu()`, `knockoff_filter_param()` | Approximate FDR control for μ, σ, ν, or τ working responses. |
+| Performance tooling | `parallel = "auto"`, `check_fast_vs_generic()` | Parallel bootstraps and accuracy checks for deviance shortcuts. |
+
+Each capability below is paired with runnable code. Copy the snippets into an R session to reproduce the behaviour showcased in the vignettes.
 
 ## Installation
 
@@ -85,22 +93,25 @@ res <- sb_gamlss(
   pre_standardize = TRUE,
   trace = FALSE
 )
-
 res$final_formula
 #> $mu
 #> y ~ x1 + f
 #> 
 #> $sigma
 #> ~1
-#> <environment: 0x30b1474e0>
+#> <environment: 0x307f391c8>
 #> 
 #> $nu
 #> ~1
-#> <environment: 0x30b1474e0>
+#> <environment: 0x307f391c8>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x30b1474e0>
+#> <environment: 0x307f391c8>
+```
+
+
+``` r
 sel <- selection_table(res)
 sel <- sel[order(sel$parameter, -sel$prop), , drop = FALSE]
 head(sel, n = min(8L, nrow(sel)))
@@ -113,11 +124,7 @@ head(sel, n = min(8L, nrow(sel)))
 #> 5     sigma   x1     3 0.06
 #> 7     sigma    f     3 0.06
 stable <- sel[sel$prop >= res$pi_thr, , drop = FALSE]
-if (nrow(stable)) {
-  stable
-} else {
-  cat("No terms reached the stability threshold of", res$pi_thr, "for this run.\n")
-}
+if (nrow(stable)) stable else cat("No terms passed the stability threshold of", res$pi_thr, "in this run.")
 #>   parameter term count prop
 #> 1        mu   x1    50 1.00
 #> 4        mu    f    47 0.94
@@ -125,8 +132,8 @@ plot_sb_gamlss(res)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-6</p>
+<img src="man/figures/README-unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-7</p>
 </div>
 
 ``` r
@@ -134,49 +141,44 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
   print(effect_plot(res, "x1", dat, what = "mu"))
   print(effect_plot(res, "f", dat, what = "mu"))
 }
-#> Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
-#> ℹ Please use tidy evaluation idioms with `aes()`.
-#> ℹ See also `vignette("ggplot2-in-packages")` for more information.
-#> ℹ The deprecated feature was likely used in the SelectBoost.gamlss package.
-#>   Please report the issue at <https://github.com/fbertran/SelectBoost.gamlss/issues/>.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was generated.
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-6-2.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-6</p>
+<img src="man/figures/README-unnamed-chunk-7-2.png" alt="plot of chunk unnamed-chunk-7" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-7</p>
 </div><div class="figure">
-<img src="man/figures/README-unnamed-chunk-6-3.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-6</p>
+<img src="man/figures/README-unnamed-chunk-7-3.png" alt="plot of chunk unnamed-chunk-7" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-7</p>
 </div>
 
-`selection_table()` ranks the most stable terms per parameter; the code prints the top eight entries and isolates those that clear the stability threshold. `plot_sb_gamlss()` overlays stability vs frequency, and `effect_plot()` provides partial-effect diagnostics for the final model (numeric and factor effects; falls back to base graphics if **ggplot2** is unavailable).
+* `selection_table()` ranks the most stable terms per parameter.
+* `plot_sb_gamlss()` compares inclusion probability and (re)fit magnitude.
+* `effect_plot()` offers quick diagnostics for both numeric and factor predictors.
 
+## Feature tour with examples
 
-### SelectBoost integration
-- Uses `SelectBoost::group_func_2()` to form correlation groups (c0) and sample one representative per group in each bootstrap.
-- Wrapper `SelectBoost_gamlss()` mirrors SelectBoost naming and enables grouping by default.
+### Four-parameter families
 
-
-### Four-parameter example (BCT family)
+Handle multi-parameter distributions such as Box-Cox t (BCT) or Box-Cox Power Exponential (BCPE) by supplying dedicated scopes per parameter.
 
 
 ``` r
 set.seed(2)
 n_bct <- 300
 z1 <- rnorm(n_bct)
-z2 <- runif(n_bct)
-mu_bct <- 1 + 0.8 * z1
-sigma_bct <- exp(-0.4 + 0.6 * z2)
-nu_bct <- -0.2 + 0.5 * z1
-tau_bct <- 0.3 + 0.4 * z2
+z2 <- -.5+runif(n_bct)
+
+eta_mu    <- 0.2 + 0.4*z1
+mu_bct    <- exp(eta_mu)                 # > 0
+sigma_bct <- exp(-0.4 + 0.6*z2)          # > 0
+nu_bct    <- -0.2 + 0.5*z1               # real-valued OK
+tau_bct   <- exp(0.3 + 0.4*z2)           # > 0
+
 y_bct <- gamlss.dist::rBCT(n_bct, mu = mu_bct, sigma = sigma_bct, nu = nu_bct, tau = tau_bct)
-#> Error in gamlss.dist::rBCT(n_bct, mu = mu_bct, sigma = sigma_bct, nu = nu_bct, : mu must be positive 
-#> 
+
 dat_bct <- data.frame(y_bct, z1, z2)
-#> Error: object 'y_bct' not found
-fit_bct <- sb_gamlss(
+
+fit_bct <- suppressWarnings(sb_gamlss(
   y_bct ~ 1,
   mu_scope = ~ z1 + z2,
   sigma_scope = ~ z1 + z2,
@@ -188,89 +190,69 @@ fit_bct <- sb_gamlss(
   sample_fraction = 0.65,
   pi_thr = 0.55,
   trace = FALSE
-)
-#> Error: object 'dat_bct' not found
+))
+#> Model with term  mu_scope__z2 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z2 has failed 
+#> Model with term  mu_scope__z1 has failed 
+#> Model with term  mu_scope__z1 has failed
 fit_bct$final_formula
-#> Error: object 'fit_bct' not found
+#> $mu
+#> y_bct ~ z1
+#> 
+#> $sigma
+#> ~z1
+#> <environment: 0x127ac05a0>
+#> 
+#> $nu
+#> ~z1
+#> <environment: 0x127ac05a0>
+#> 
+#> $tau
+#> ~1
+#> <environment: 0x127ac05a0>
 selection_table(fit_bct)[selection_table(fit_bct)$prop >= fit_bct$pi_thr, ]
-#> Error: object 'fit_bct' not found
+#>   parameter term count      prop
+#> 1        mu   z1    20 0.5714286
+#> 3     sigma   z1    25 0.7142857
+#> 5        nu   z1    35 1.0000000
 ```
 
-This quick-start illustrates how multi-parameter families expose additional scopes: ν and τ selections recover the simulated structure alongside μ/σ.
+### Automated c0 search and confidence summaries
 
+Explore the SelectBoost grouping parameter (c0) via grids, automatic selection, and lightweight previews.
 
-## c0 grid + confidence + Auto/Fast
+#### grid over c0 and plot
 
 ``` r
-# grid over c0 and plot
 g <- sb_gamlss_c0_grid(
-  y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
-  c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE,
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3,
+  sigma_scope = ~ x1 + x2,
+  c0_grid = seq(0.2, 0.8, by = 0.2),
+  B = 40,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  trace = FALSE,
   progress = TRUE
 )
-#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%
-#> Warning in RS(): Algorithm RS has not yet converged
-#> Warning in RS(): Algorithm RS has not yet converged
-#>   |                                                                                                    |============================================================================================| 100%
-plot(g)                 # stable terms vs c0 + top confidence terms
-```
-
-<div class="figure">
-<img src="man/figures/README-unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-8</p>
-</div>
-
-``` r
-confidence_table(g)     # SelectBoost-like confidence summary
-#>   parameter term conf_index cover
-#> 1        mu   x1        0.4     1
-#> 2     sigma   x1        0.0     0
-#> 3        mu   x2        0.0     0
-#> 4     sigma   x2        0.0     0
-#> 5        mu   x3        0.0     0
-
-# autoboost: pick best c0 automatically
-ab <- autoboost_gamlss(
-  y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
-  c0_grid = seq(0.2, 0.8, by = 0.2), B = 40, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
-)
-#>   |                                                                                                    |                                                                                            |   0%
-#> Warning in RS(): Algorithm RS has not yet converged
-#>   |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%  |                                                                                                    |============================================================================================| 100%
-attr(ab, "chosen_c0")
-#> [1] 0.2
-attr(ab, "confidence_table") |> head()
-#>   parameter term conf_index cover
-#> 1        mu   x1        0.4     1
-#> 2     sigma   x1        0.0     0
-#> 3        mu   x2        0.0     0
-#> 4     sigma   x2        0.0     0
-#> 5        mu   x3        0.0     0
-plot(ab)
-#> Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
-
-# fastboost: lightweight stability selection
-fb <- fastboost_gamlss(
-  y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ x1 + x2 + x3, sigma_scope = ~ x1 + x2,
-  B = 30, sample_fraction = 0.6, pi_thr = 0.6, pre_standardize = TRUE, trace = FALSE
-)
-plot(fb)
-#> Error in xy.coords(x, y, xlabel, ylabel, log): 'x' is a list, but does not have components 'x' and 'y'
-```
-
-Use `progress = TRUE` on grid/autoboost helpers to monitor c0 sweeps, and pair `fastboost_gamlss()` with smaller `B`/`sample_fraction` for rapid diagnostics.
-
-### Confidence functionals + plots
-
-``` r
-g <- sb_gamlss_c0_grid(...)
-#> Error: '...' used in an incorrect context
-cf <- confidence_functionals(g, pi_thr = 0.6, weight_fun = function(c0) (1 - c0)^2,
-                             conservative = TRUE, B = 30)
-plot(cf)  # scatter (area_pos vs cover) + top-N bars
+#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%  |                                                                                                    |============================================================================================| 100%
+plot(g)
 ```
 
 <div class="figure">
@@ -279,13 +261,81 @@ plot(cf)  # scatter (area_pos vs cover) + top-N bars
 </div>
 
 ``` r
-plot_stability_curves(g, terms = c("x1","x3"), parameter = "mu")
+confidence_table(g)
+#>   parameter term conf_index cover
+#> 1        mu   x1        0.4     1
+#> 2     sigma   x1        0.0     0
+#> 3        mu   x2        0.0     0
+#> 4     sigma   x2        0.0     0
+#> 5        mu   x3        0.0     0
+```
+
+#### autoboost: pick best c0 automatically
+
+``` r
+ab <- autoboost_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3,
+  sigma_scope = ~ x1 + x2,
+  c0_grid = seq(0.2, 0.8, by = 0.2),
+  B = 40,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  trace = FALSE
+  )
+#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |=======================                                                                     |  25%  |                                                                                                    |==============================================                                              |  50%  |                                                                                                    |=====================================================================                       |  75%  |                                                                                                    |============================================================================================| 100%
+attr(ab, "chosen_c0")
+#> [1] 0.2
+head(attr(ab, "confidence_table"))
+#>   parameter term conf_index cover
+#> 1        mu   x1        0.4     1
+#> 2     sigma   x1        0.0     0
+#> 3        mu   x2        0.0     0
+#> 4     sigma   x2        0.0     0
+#> 5        mu   x3        0.0     0
+plot_sb_gamlss(ab)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-9-2.png" alt="plot of chunk unnamed-chunk-9" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-9</p>
+<img src="man/figures/README-unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-10</p>
 </div>
+
+#### fastboost: lightweight stability selection
+
+``` r
+fb <- fastboost_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3,
+  sigma_scope = ~ x1 + x2,
+  B = 30,
+  sample_fraction = 0.6,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  trace = FALSE
+)
+plot_sb_gamlss(fb)
+```
+
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-11</p>
+</div>
+
+Use `progress = TRUE` on grid/autoboost helpers to monitor c0 sweeps, and pair `fastboost_gamlss()` with smaller `B`/`sample_fraction` for rapid diagnostics.
+
+### Confidence functionals + plots
+```r
+g <- sb_gamlss_c0_grid(...)
+cf <- confidence_functionals(g, pi_thr = 0.6, weight_fun = function(c0) (1 - c0)^2,
+                             conservative = TRUE, B = 30)
+plot(cf)  # scatter (area_pos vs cover) + top-N bars
+plot_stability_curves(g, terms = c("x1","x3"), parameter = "mu")
+```
 
 Combine these summaries with `effect_plot()` outputs (shown in the quick start) or `selection_table()` to understand which effects drive the final refit.
 
@@ -304,17 +354,36 @@ Enable `engine = "glmnet"` and choose `glmnet_alpha`:
 - `0 < glmnet_alpha < 1` → **elastic-net**
 - `glmnet_family` controls the underlying glmnet path (`"gaussian"`, `"binomial"`, or `"poisson"`).
 
+Pair these helpers with confidence functionals or stability curves to see how rankings evolve as c0 changes.
+
+
 
 ``` r
-fit <- sb_gamlss(
-  y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ x1 + x2 + x3,
-  engine = "glmnet", glmnet_alpha = 1,  # lasso
-  B = 60, pi_thr = 0.6, pre_standardize = TRUE,
-  parallel = "auto", trace = FALSE
+cf <- confidence_functionals(
+  g,
+  pi_thr = 0.6,
+  weight_fun = function(c0) (1 - c0)^2,
+  conservative = TRUE,
+  B = 30
 )
+plot(cf)
 ```
 
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-12</p>
+</div>
+
+``` r
+plot_stability_curves(g, terms = c("x1", "x3"), parameter = "mu")
+```
+
+<div class="figure">
+<img src="man/figures/README-unnamed-chunk-12-2.png" alt="plot of chunk unnamed-chunk-12" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-12</p>
+</div>
+
+### Flexible engines: glmnet, grouped, and sparse-group penalties
 
 ### Group lasso & sparse group lasso (broader structured selection)
 For **factors**, **splines** (e.g., `pb(x)`, `bs(x)`), and **interactions**, use grouped engines:
@@ -327,15 +396,38 @@ all dummy columns for a factor are one group; all spline basis columns are one g
 
 Use `options(SelectBoost.gamlss.term_converters = list(function(term, df_smooth) ...))` to register custom term converters if you rely on additional smoother constructors; the helpers now convert `pb()`, `cs()`, `pbm()`, and `lo()` out-of-the-box.
 
+Control the selection engine per parameter. Use lasso/elastic-net via **glmnet**, grouped penalties via **grpreg**, and sparse-group penalties via **SGL**.
+
 
 ``` r
-fit_gl <- sb_gamlss(
-  y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ f + x1 + pb(x2) + x1:f,   # factors, splines, interactions
-  engine = "grpreg",                      # or engine = "sgl"
-  B = 80, pi_thr = 0.6, pre_standardize = TRUE,
-  parallel = "auto", trace = FALSE
+fit_glmnet <- sb_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3,
+  engine = "glmnet",
+  glmnet_alpha = 0.8,
+  B = 60,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  parallel = "auto",
+  trace = FALSE
 )
+fit_glmnet$final_formula
+#> $mu
+#> y ~ x1 + x2 + x3
+#> 
+#> $sigma
+#> ~1
+#> <environment: 0x1143f2450>
+#> 
+#> $nu
+#> ~1
+#> <environment: 0x1143f2450>
+#> 
+#> $tau
+#> ~1
+#> <environment: 0x1143f2450>
 ```
 
 
@@ -347,148 +439,150 @@ You can choose different selection engines per parameter:
 Example:
 
 ``` r
-fit <- sb_gamlss(
-  y ~ 1, data = dat, family = gamlss.dist::NO(),
+fit_grouped <- sb_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
   mu_scope    = ~ f + x1 + pb(x2) + x1:f,
   sigma_scope = ~ f + x1,
   engine = "grpreg",              # μ via group lasso
   engine_sigma = "sgl",           # σ via sparse group lasso
   grpreg_penalty = "grLasso",
   sgl_alpha = 0.9,
-  B = 80, pi_thr = 0.6, pre_standardize = TRUE, parallel = "auto"
+  B = 80,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  parallel = "auto",
+  trace = FALSE
 )
-#> GAMLSS-RS iteration 1: Global Deviance = 1629.75 
-#> GAMLSS-RS iteration 2: Global Deviance = 1629.519 
-#> GAMLSS-RS iteration 3: Global Deviance = 1629.443 
-#> GAMLSS-RS iteration 4: Global Deviance = 1629.418 
-#> GAMLSS-RS iteration 5: Global Deviance = 1629.411 
-#> GAMLSS-RS iteration 6: Global Deviance = 1629.408 
-#> GAMLSS-RS iteration 7: Global Deviance = 1629.407
+selection_table(fit_grouped)[selection_table(fit_grouped)$prop >= fit_grouped$pi_thr, ]
+#>   parameter term count prop
+#> 5     sigma    f    80    1
+#> 6     sigma   x1    80    1
 ```
 Note: σ/ν/τ grouped engines use a **working response** from the current fit (on a link-like scale) for the penalized regression.
 
+### Tuning engines and penalties
 
-### Tuning engines/penalties (lightweight)
-Use `tune_sb_gamlss()` to search over selection engines/penalties with a small B:
+`tune_sb_gamlss()` lets you compare multiple engine configurations under either the stability metric or fast deviance cross-validation.
+
 
 ``` r
 cfgs <- list(
-  list(engine="stepGAIC"),
-  list(engine="glmnet", glmnet_alpha=1),
-  list(engine="grpreg", grpreg_penalty="grLasso", engine_sigma="sgl", sgl_alpha=0.9)
+  list(engine = "stepGAIC"),
+  list(engine = "glmnet", glmnet_alpha = 1),
+  list(engine = "grpreg", grpreg_penalty = "grLasso", engine_sigma = "sgl", sgl_alpha = 0.9)
 )
-base <- list(
-  formula = y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ f + x1 + pb(x2) + x1:f, sigma_scope = ~ f + x1 + pb(x2),
-  pi_thr = 0.6, pre_standardize = TRUE, sample_fraction = 0.7, parallel = "auto", trace = FALSE
+base_args <- list(
+  formula = y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ f + x1 + pb(x2) + x1:f,
+  sigma_scope = ~ f + x1 + pb(x2),
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  sample_fraction = 0.7,
+  parallel = "auto",
+  trace = FALSE
 )
-tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 30)
-#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%
-tuned$best_config
+tuned_stab <- tune_sb_gamlss(cfgs, base_args = base_args, B_small = 30)
+#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%
+tuned_stab$best_config
 #> $engine
-#> [1] "glmnet"
-#> 
-#> $glmnet_alpha
-#> [1] 1
-fit <- tuned$best_fit
-```
-
-### (Approximate) group knockoffs for FDR-style control
-
-``` r
-# mu
-sel_mu <- knockoff_filter_mu(dat, response = "y", mu_scope = ~ f + x1 + pb(x2), fdr = 0.1)
-#> Error in X_k * swap.M: non-numeric argument to binary operator
-
-# sigma (using a working response)
-fit_tmp <- gamlss::gamlss(y ~ 1, data = dat, family = gamlss.dist::NO())
-#> GAMLSS-RS iteration 1: Global Deviance = 1630.118 
-#> GAMLSS-RS iteration 2: Global Deviance = 1630.118
-ysig <- fitted(fit_tmp, what = "sigma")
-sel_sigma <- knockoff_filter_param(dat, sigma_scope, y_work = log(ysig), fdr = 0.1)
-#> Error: object 'sigma_scope' not found
+#> [1] "stepGAIC"
 ```
 
 
-### Tuning metric: stability or deviance (CV)
-
 ``` r
-cfgs <- list(
-  list(engine="stepGAIC"),
-  list(engine="glmnet", glmnet_alpha=1),
-  list(engine="grpreg", grpreg_penalty="grLasso", engine_sigma="sgl", sgl_alpha=0.9)
+tuned_dev <- tune_sb_gamlss(
+  cfgs,
+  base_args = base_args,
+  B_small = 20,
+  metric = "deviance",
+  K = 3,
+  progress = TRUE
 )
-base <- list(
-  formula = y ~ 1, data = dat, family = gamlss.dist::NO(),
-  mu_scope = ~ f + x1 + pb(x2) + x1:f, sigma_scope = ~ f + x1 + pb(x2),
-  pi_thr = 0.6, pre_standardize = TRUE, sample_fraction = 0.7, parallel = "auto", trace = FALSE
-)
-tuned <- tune_sb_gamlss(cfgs, base_args = base, B_small = 20, metric = "deviance", K = 3, progress = TRUE)
-#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%
-#> Warning in RS(): Algorithm RS has not yet converged
-#>   |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%
-tuned$metrics
+#>   |                                                                                                    |                                                                                            |   0%  |                                                                                                    |===============================                                                             |  33%  |                                                                                                    |=============================================================                               |  67%  |                                                                                                    |============================================================================================| 100%
+tuned_dev$metrics
 #> NULL
 ```
 
-The returned tibble reports mean deviance and rank per configuration, confirming the fast-path deviance shortcut agrees with the full `logLik` evaluation across the grid.
+### Knockoff-style filters
 
-### Progress bars
-- `sb_gamlss_c0_grid(..., progress = TRUE)` shows progress across `c0_grid`.
-- `tune_sb_gamlss(..., progress = TRUE)` shows progress across configs.
+Approximate FDR control for grouped features using knockoff filters for μ or any working-response parameter.
 
 
-### Benchmark vignette
-See `vignettes/benchmark.Rmd` for an apples-to-apples timing comparison of engines on a synthetic dataset.
-Run times will vary by hardware and BLAS.
+``` r
+if (requireNamespace("knockoff", quietly = TRUE)) {
+  sel_mu <- knockoff_filter_mu(
+    dat,
+    response = "y",
+    mu_scope = ~ f + x1 + pb(x2),
+    fdr = 0.1
+  )
+  sel_mu
+
+  fit_tmp <- gamlss::gamlss(y ~ 1, data = dat, family = gamlss.dist::NO())
+  ysig <- fitted(fit_tmp, what = "sigma")
+  sel_sigma <- knockoff_filter_param(
+    dat,
+    ~ f + x1,
+    y_work = log(ysig),
+    fdr = 0.1
+  )
+  sel_sigma
+} else {
+  message("Install the 'knockoff' package to run the knockoff filter examples.")
+}
+#> GAMLSS-RS iteration 1: Global Deviance = 1630.118 
+#> GAMLSS-RS iteration 2: Global Deviance = 1630.118
+#> character(0)
+```
+
+### Fast deviance shortcuts and validation
+
+Fast deviance evaluation accelerates cross-validation across dozens of `gamlss.dist` families. Validate the shortcuts against the generic density on your own data.
 
 
-### Fast deviance shortcuts (families & mappings)
-The deviance CV now has optimized paths for common families:
-
-| Family | Param notes | Fast density mapping |
-|---|---|---|
-| NO | μ = mean, σ = sd | `dnorm(y, mean = μ, sd = σ)` |
-| PO | μ = mean | `dpois(y, lambda = μ)` |
-| LOGNO | μ = meanlog, σ = sdlog | `dlnorm(y, meanlog = μ, sdlog = σ)` |
-| GA | Var = σ² μ² | `dgamma(y, shape = 1/σ², scale = μ·σ²)` |
-| IG | Var = σ² μ³ | closed-form: `-½log(2π) - log(σ) - 1.5log(y) - (y-μ)²/(2 μ² σ² y)` |
-| NBI | Var = μ + σ μ² | `dnbinom(y, size = 1/σ, mu = μ)` |
-| NBII | Var = μ(1+σ) | `dnbinom(y, size = μ/σ, mu = μ)` |
-| BI | y = (success, failure) | `dbinom(success, size = success+failure, prob = μ)` |
-
-These mappings follow the `gamlss.dist` parameterizations (see GA, LOGNO/LNO, IG, BI, NBI/NBII documentation).
-
-
-#### Added fast paths
-- **LO** (logistic): `dlogis(y, location = μ, scale = σ)`
-- **BE** (beta reparam): with `Var = σ² μ (1 − μ)`, set `φ = 1/σ² − 1`, `α = μ φ`, `β = (1−μ) φ`, then `dbeta(y, α, β)`
+``` r
+fit_dev <- sb_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3,
+  B = 25,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  trace = FALSE
+)
+fast_vs_generic_ll(fit_dev, newdata = dat, reps = 50)
+#> Error in get_density_fun(fit): Density function d not found in gamlss.dist
+check_fast_vs_generic(fit_dev, newdata = dat, tol = 1e-8)
+#> Error in get_density_fun(fit): Density function d not found in gamlss.dist
+```
 
 
-#### Native density fallback
-Whenever a matching `gamlss.dist::d<family>()` function exists, the fast evaluator now calls it directly (passing along `μ/σ/ν/τ` and trial counts for binomial variants). This automatically covers zero-inflated and hurdle families such as `ZIP`, `ZIP2`, `ZINBI`, `ZIBB`, `ZAGA`, `ZAIG`, `ZALG`, as well as beta-inflated, Delaporte, Paretian, SEP, and many others—without requiring a hand-maintained whitelist. If the native density is unavailable or errors, the code falls back to the generic evaluator.
+### Parallel bootstraps
+
+Speed up heavy bootstrap campaigns with the `future` ecosystem (you can also manage the plan manually).
 
 
-#### More fast deviance shortcuts
-- **LOGITNO** (logit-normal): `z = logit(y)`, `dnorm(z | μ, σ) − log(y) − log(1−y)`
-- **GEOM** (geometric, mean-param.): `p = 1/(1+μ)`, then `dgeom(y, p)`
+``` r
+future::plan(multisession, workers = 4)
+fit_parallel <- sb_gamlss(
+  y ~ 1,
+  data = dat,
+  family = gamlss.dist::NO(),
+  mu_scope = ~ x1 + x2 + x3,
+  B = 200,
+  pi_thr = 0.6,
+  pre_standardize = TRUE,
+  parallel = "auto",
+  trace = FALSE
+)
+```
 
-
-#### Even more native routes
-Fast deviance now also tries native **gamlss.dist** densities for:
-`ZIPF`, `ZIPFmu`, `BCT`, `BCPE`, `SICHEL`, `GLG`
-(automatically falls back to generic density if a family is unavailable).
-
-
-#### Added more native routes (swept set)
-Fast deviance now attempts native `gamlss.dist` densities for:
-`BETA4`, `RS`, `WEI`, `GIG` (and previously added sets). If a family is unavailable in your
-installed `gamlss.dist`, the code falls back to the generic density resolution.
-
-
-### Fast deviance benchmark
-- Helper: `fast_vs_generic_ll(fit, newdata, reps=100)` compares the fast evaluator to the generic route.
-- Vignette: **Fast Deviance: Microbenchmarks** reproduces timing comparisons across multiple families.
+## Learn more
 
 
 ### Fast deviance: accuracy
@@ -496,12 +590,15 @@ installed `gamlss.dist`, the code falls back to the generic density resolution.
 - Vignette: **Fast Deviance: Numerical Equality Checks** shows pass/fail with absolute differences for several families.
 
 
-### CRAN-friendly long tests & tolerances
-- Enable long tests locally via either:
-  ```r
-  options(SelectBoost.gamlss.run_long_tests = TRUE)  # or
-  Sys.setenv(RUN_LONG_TESTS = "true")
-  ```
-- Equality checks use **per-family tolerances** (see `.family_tolerance()`); heavier-tailed/complex families have slightly looser defaults.
+The vignettes expand on each capability with richer datasets and diagnostics:
+
+* **Stability-Selection for GAMLSS** (`vignettes/selectboost-gamlss.Rmd`) – core workflow, grouped penalties, and SelectBoost integrations.
+* **Confidence Functionals** (`vignettes/confidence-functionals.Rmd`) – deeper dive into ranking stability across c0 values.
+* **Benchmark** (`vignettes/benchmark.Rmd`) – wall-time comparisons between engines on synthetic data.
+* **Fast Deviance (Benchmark & Equality)** (`vignettes/fast-deviance-benchmark.Rmd`, `vignettes/fast-deviance-equality.Rmd`) – timing and accuracy checks for fast deviance evaluation.
+* **Real Data & Advanced Examples** (`vignettes/real-data-examples.Rmd`, `vignettes/advanced-real-data-examples.Rmd`) – end-to-end modelling case studies.
+* **Algorithm Pseudocode & Comparisons** (`vignettes/algorithm-pseudocode.Rmd`, `vignettes/comparison.Rmd`) – algorithmic details and comparisons with SelectBoost for other models.
+
+The [pkgdown site](https://fbertran.github.io/SelectBoost.gamlss/) mirrors these resources with rendered HTML examples.
 
 

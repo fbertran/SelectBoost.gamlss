@@ -29,7 +29,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,7 @@ Bertrand</h4>
 Paris<br><a class="author_email" href="mailto:#"></a><a href="mailto:frederic.bertrand@lecnam.net" class="email">frederic.bertrand@lecnam.net</a>
       </address>
                   
-            <h4 data-toc-skip class="date">2025-10-25</h4>
+            <h4 data-toc-skip class="date">2025-10-27</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/fbertran/SelectBoost.gamlss/blob/HEAD/vignettes/advanced-real-data-examples.Rmd" class="external-link"><code>vignettes/advanced-real-data-examples.Rmd</code></a></small>
       <div class="d-none name"><code>advanced-real-data-examples.Rmd</code></div>
@@ -94,6 +94,17 @@ counts</strong> (<code><a href="https://rdrr.io/pkg/pscl/man/bioChemists.html" c
 <strong>Semicontinuous</strong> (<code><a href="https://rdrr.io/r/datasets/airquality.html" class="external-link">datasets::airquality</a></code>
 Ozone): ZAGA - <strong>Longitudinal growth with random effects</strong>
 (<code><a href="https://rdrr.io/pkg/nlme/man/Orthodont.html" class="external-link">nlme::Orthodont</a></code>): random intercepts</p>
+<div class="section level2">
+<h2 id="what-youll-learn">What you’ll learn<a class="anchor" aria-label="anchor" href="#what-youll-learn"></a>
+</h2>
+<ul>
+<li>How to fit <code><a href="../reference/sb_gamlss.html">sb_gamlss()</a></code> with grouped penalties on real
+zero-inflated data sets.</li>
+<li>How to adapt SelectBoost scopes to semicontinuous responses (ZAGA)
+and longitudinal models with random effects.</li>
+<li>How to interpret <code><a href="../reference/selection_table.html">selection_table()</a></code> outputs when
+categorical terms are represented by grouped dummy variables.</li>
+</ul>
 <blockquote>
 <p><strong>Conference highlight.</strong> These examples build on the
 communication <em>“An Improvement for Variable Selection for Generalized
@@ -123,6 +134,7 @@ through resampling-intensive benchmarking.</p>
 <p>Optional engines:
 <code>install.packages(c("glmnet","grpreg","SGL","future.apply"))</code></p>
 </blockquote>
+</div>
 <div class="section level2">
 <h2 id="zero-inflated-counts-psclbiochemists-zipzinb">1. Zero-inflated counts — <code>pscl::bioChemists</code>
 (ZIP/ZINB)<a class="anchor" aria-label="anchor" href="#zero-inflated-counts-psclbiochemists-zipzinb"></a>
