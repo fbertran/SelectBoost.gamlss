@@ -69,13 +69,6 @@ You can install the development version of SelectBoost.gamlss from [github](http
 devtools::install_github("fbertran/SelectBoost.gamlss")
 ```
 
-If you are a Linux/Unix or a Macos user, you can install a version of SelectBoost.gamlss with support for `doMC` from [github](https://github.com) with:
-
-```{r, eval = FALSE}
-devtools::install_github("fbertran/SelectBoost.gamlss", ref = "doMC")
-```
-
-
 ## Quick start
 
 ```{r}

@@ -51,14 +51,6 @@ You can install the development version of SelectBoost.gamlss from [github](http
 devtools::install_github("fbertran/SelectBoost.gamlss")
 ```
 
-If you are a Linux/Unix or a Macos user, you can install a version of SelectBoost.gamlss with support for `doMC` from [github](https://github.com) with:
-
-
-``` r
-devtools::install_github("fbertran/SelectBoost.gamlss", ref = "doMC")
-```
-
-
 ## Quick start
 
 
@@ -99,15 +91,15 @@ res$final_formula
 #> 
 #> $sigma
 #> ~1
-#> <environment: 0x307f391c8>
+#> <environment: 0x32caed4f0>
 #> 
 #> $nu
 #> ~1
-#> <environment: 0x307f391c8>
+#> <environment: 0x32caed4f0>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x307f391c8>
+#> <environment: 0x32caed4f0>
 ```
 
 
@@ -132,8 +124,8 @@ plot_sb_gamlss(res)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-7-1.png" alt="plot of chunk unnamed-chunk-7" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-7</p>
+<img src="man/figures/README-unnamed-chunk-6-1.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
 </div>
 
 ``` r
@@ -144,11 +136,11 @@ if (requireNamespace("ggplot2", quietly = TRUE)) {
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-7-2.png" alt="plot of chunk unnamed-chunk-7" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-7</p>
+<img src="man/figures/README-unnamed-chunk-6-2.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
 </div><div class="figure">
-<img src="man/figures/README-unnamed-chunk-7-3.png" alt="plot of chunk unnamed-chunk-7" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-7</p>
+<img src="man/figures/README-unnamed-chunk-6-3.png" alt="plot of chunk unnamed-chunk-6" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-6</p>
 </div>
 
 * `selection_table()` ranks the most stable terms per parameter.
@@ -215,15 +207,15 @@ fit_bct$final_formula
 #> 
 #> $sigma
 #> ~z1
-#> <environment: 0x127ac05a0>
+#> <environment: 0x333759918>
 #> 
 #> $nu
 #> ~z1
-#> <environment: 0x127ac05a0>
+#> <environment: 0x333759918>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x127ac05a0>
+#> <environment: 0x333759918>
 selection_table(fit_bct)[selection_table(fit_bct)$prop >= fit_bct$pi_thr, ]
 #>   parameter term count      prop
 #> 1        mu   z1    20 0.5714286
@@ -256,8 +248,8 @@ plot(g)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-9</p>
+<img src="man/figures/README-unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-8</p>
 </div>
 
 ``` r
@@ -299,8 +291,8 @@ plot_sb_gamlss(ab)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-10</p>
+<img src="man/figures/README-unnamed-chunk-9-1.png" alt="plot of chunk unnamed-chunk-9" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-9</p>
 </div>
 
 #### fastboost: lightweight stability selection
@@ -322,8 +314,8 @@ plot_sb_gamlss(fb)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-11</p>
+<img src="man/figures/README-unnamed-chunk-10-1.png" alt="plot of chunk unnamed-chunk-10" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-10</p>
 </div>
 
 Use `progress = TRUE` on grid/autoboost helpers to monitor c0 sweeps, and pair `fastboost_gamlss()` with smaller `B`/`sample_fraction` for rapid diagnostics.
@@ -370,8 +362,8 @@ plot(cf)
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-12-1.png" alt="plot of chunk unnamed-chunk-12" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-12</p>
+<img src="man/figures/README-unnamed-chunk-11-1.png" alt="plot of chunk unnamed-chunk-11" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-11</p>
 </div>
 
 ``` r
@@ -379,8 +371,8 @@ plot_stability_curves(g, terms = c("x1", "x3"), parameter = "mu")
 ```
 
 <div class="figure">
-<img src="man/figures/README-unnamed-chunk-12-2.png" alt="plot of chunk unnamed-chunk-12" width="100%" />
-<p class="caption">plot of chunk unnamed-chunk-12</p>
+<img src="man/figures/README-unnamed-chunk-11-2.png" alt="plot of chunk unnamed-chunk-11" width="100%" />
+<p class="caption">plot of chunk unnamed-chunk-11</p>
 </div>
 
 ### Flexible engines: glmnet, grouped, and sparse-group penalties
@@ -419,15 +411,15 @@ fit_glmnet$final_formula
 #> 
 #> $sigma
 #> ~1
-#> <environment: 0x1143f2450>
+#> <environment: 0x30827cc50>
 #> 
 #> $nu
 #> ~1
-#> <environment: 0x1143f2450>
+#> <environment: 0x30827cc50>
 #> 
 #> $tau
 #> ~1
-#> <environment: 0x1143f2450>
+#> <environment: 0x30827cc50>
 ```
 
 
