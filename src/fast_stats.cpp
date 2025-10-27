@@ -18,13 +18,18 @@ List cs_scale(arma::mat X) {
 // fast Pearson correlation (like cor(X))
 // [[Rcpp::export]]
 arma::mat cs_cor(const arma::mat& X) {
+  if (X.n_rows < 2) {
+    arma::mat S(X.n_cols, X.n_cols);
+    S.fill(NA_REAL);
+    return S;
+  }
   arma::rowvec mu = arma::mean(X,0);
   arma::mat C = X.each_row() - mu;
   arma::mat S = (C.t() * C) / (X.n_rows - 1.0);
   arma::vec d = arma::sqrt(S.diag());
   for (arma::uword i=0;i<S.n_rows;++i)
     for (arma::uword j=0;j<S.n_cols;++j)
-      S(i,j) = (d(i)==0 || d(j)==0) ? 0.0 : S(i,j)/(d(i)*d(j));
+      S(i,j) = (d(i)==0 || d(j)==0) ? NA_REAL : S(i,j)/(d(i)*d(j));
   return S;
 }
 
