@@ -6,7 +6,7 @@
 \alias{SelectBoost.gamlss}
 \title{SelectBoost.gamlss: Stability-Selection via Correlated Resampling for 'GAMLSS' Models}
 \description{
-Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape ('gamlss'). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for 'AICc' calculation. Presented at the Joint Statistics Meetings 2024 (Portland, OR) in the talk "An Improvement for Variable Selection for Generalized Additive Models for Location, Shape and Scale and Quantile Regression" ('Bertrand' & 'Maumy'), highlighting correlation-aware resampling to improve variable selection for 'GAMLSS' and quantile regression when predictors are numerous and highly correlated.
+Extends the 'SelectBoost' approach to Generalized Additive Models for Location, Scale and Shape (GAMLSS). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for corrected AIC calculation. More details can be found in Bertrand and Maumy (2024) \url{https://hal.science/hal-05352041} that highlights correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.
 }
 \examples{
 \dontshow{if (requireNamespace("gamlss.dist", quietly = TRUE)) withAutoprint(\{ # examplesIf}
