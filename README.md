@@ -592,6 +592,6 @@ The vignettes expand on each capability with richer datasets and diagnostics:
 * **Real Data & Advanced Examples** (`vignettes/real-data-examples.Rmd`, `vignettes/advanced-real-data-examples.Rmd`) – end-to-end modelling case studies.
 * **Algorithm Pseudocode & Comparisons** (`vignettes/algorithm-pseudocode.Rmd`, `vignettes/comparison.Rmd`) – algorithmic details and comparisons with SelectBoost for other models.
 
-The [pkgdown site](https://fbertran.github.io/SelectBoost.gamlss) mirrors these resources with rendered HTML examples.
+The [pkgdown site](https://fbertran.github.io/SelectBoost.gamlss/) mirrors these resources with rendered HTML examples.
 
 

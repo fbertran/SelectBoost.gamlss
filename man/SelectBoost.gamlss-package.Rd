@@ -39,7 +39,7 @@ are numerous and highly correlated.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://fbertran.github.io/SelectBoost.gamlss}
+  \item \url{https://fbertran.github.io/SelectBoost.gamlss/}
   \item \url{https://github.com/fbertran/SelectBoost.gamlss}
   \item Report bugs at \url{https://github.com/fbertran/SelectBoost.gamlss/issues}
 }

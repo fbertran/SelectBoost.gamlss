@@ -56,7 +56,7 @@ LazyData: true
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://fbertran.github.io/SelectBoost.gamlss, https://github.com/fbertran/SelectBoost.gamlss
+URL: https://fbertran.github.io/SelectBoost.gamlss/, https://github.com/fbertran/SelectBoost.gamlss
 BugReports: https://github.com/fbertran/SelectBoost.gamlss/issues
 Config/testthat/edition: 3
 SystemRequirements: C++17
