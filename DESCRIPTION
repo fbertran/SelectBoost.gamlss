@@ -2,7 +2,7 @@ Package: SelectBoost.gamlss
 Type: Package
 Title: Stability-Selection via Correlated Resampling for 'GAMLSS' Models
 Version: 0.2.1
-Date: 2025-10-26
+Date: 2025-11-16
 Depends: 
     R (>= 4.1.0)
 Imports:
@@ -56,7 +56,7 @@ LazyData: true
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
-URL: https://fbertran.github.io/SelectBoost.gamlss/, https://github.com/fbertran/SelectBoost.gamlss/
-BugReports: https://github.com/fbertran/SelectBoost.gamlss/issues/
+URL: https://fbertran.github.io/SelectBoost.gamlss, https://github.com/fbertran/SelectBoost.gamlss
+BugReports: https://github.com/fbertran/SelectBoost.gamlss/issues
 Config/testthat/edition: 3
 SystemRequirements: C++17
