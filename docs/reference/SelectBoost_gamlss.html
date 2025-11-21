@@ -9,7 +9,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SelectBoost.gamlss</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -21,6 +21,7 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/advanced-real-data-examples.html">Advanced Real Data Examples: Zero-Inflation, Semicontinuous, and Longitudinal Growth</a></li>
+    <li><a class="dropdown-item" href="../articles/algorithm-pseudocode.html">Algorithmic Pseudocode for SelectBoost.gamlss</a></li>
     <li><a class="dropdown-item" href="../articles/benchmark.html">Benchmark: Stepwise vs Grouped vs Glmnet Engines</a></li>
     <li><a class="dropdown-item" href="../articles/comparison.html">Comparing SelectBoost-GAMLSS Variants</a></li>
     <li><a class="dropdown-item" href="../articles/confidence-functionals.html">Confidence Functionals for SelectBoost-GAMLSS</a></li>
@@ -72,7 +73,13 @@
 <span>  c0 <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  trace <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'SelectBoost_gamlss'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">object</span>, prop.level <span class="op">=</span> <span class="fl">0.6</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'summary.SelectBoost_gamlss'</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -146,6 +153,8 @@
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class c("SelectBoost_gamlss"), with slots similar to sb_gamlss.</p>
+<p>A list with selection, threshold and confidence.</p>
+<p>Invisibly returns <code>x</code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

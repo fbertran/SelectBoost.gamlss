@@ -6,6 +6,9 @@
 \usage{
 .family_defaults()
 }
+\value{
+List of list of default values for parameters for each supported distribution.
+}
 \description{
 Adjust as needed per family docs
 }

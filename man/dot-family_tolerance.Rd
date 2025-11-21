@@ -6,6 +6,9 @@
 \usage{
 .family_tolerance()
 }
+\value{
+List of numerical values, the default tolerance, for each supported distribution.
+}
 \description{
 Per-family numeric tolerance for equality checks
 }

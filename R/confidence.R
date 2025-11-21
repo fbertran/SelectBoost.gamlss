@@ -170,6 +170,8 @@ plot.sb_confidence <- function(x, top = 15, label_top = 10, ...) {
 #' @param terms Character vector of term names to plot.
 #' @param parameter Optional parameter name ('mu','sigma','nu','tau'); if NULL, all.
 #' @param ncol Columns in the multi-panel layout.
+#' 
+#' @return Invisibly returns grid the plotted object. 
 #' @export
 plot_stability_curves <- function(grid, terms, parameter = NULL, ncol = 2L) {
   stopifnot(inherits(grid, "SelectBoost_gamlss_grid"))

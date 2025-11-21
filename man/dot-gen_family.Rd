@@ -2,7 +2,7 @@
 % Please edit documentation in R/family-defaults.R
 \name{.gen_family}
 \alias{.gen_family}
-\title{Try to generate y for a family}
+\title{Try to generate values for a family}
 \usage{
 .gen_family(fam, n)
 }
@@ -14,6 +14,11 @@ constructing \code{r<family>} generator functions (for example, \verb{NO'' or }L
 \item{n}{Positive integer giving the number of observations to generate for
 the requested family.}
 }
+\value{
+If successful, a umerical vector of \code{n} values randomly generated
+for the requested family. If the generator is not available or fails, then
+returns NULL.
+}
 \description{
-Returns NULL if generator not available or fails
+Try to generate values for a family
 }

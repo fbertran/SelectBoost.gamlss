@@ -17,6 +17,9 @@ knockoff_filter_param(data, scope, y_work, fdr = 0.1, df_smooth = 6L)
 
 \item{df_smooth}{df for smoother proxies}
 }
+\value{
+character vector of selected term names
+}
 \description{
 Knockoff filter for sigma/nu/tau (approximate group control)
 }

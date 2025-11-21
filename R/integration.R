@@ -1,5 +1,6 @@
 
 #' SelectBoost-style wrapper for GAMLSS
+#' 
 #' @description A thin wrapper around \code{sb_gamlss()} with SelectBoost-flavored arguments.
 #' @param c0 Correlation threshold for grouping (as in SelectBoost::group_func_2).
 #' @param use_groups Logical; enable SelectBoost grouping.
@@ -26,6 +27,9 @@ SelectBoost_gamlss <- function(
   res
 }
 
+#' @rdname SelectBoost_gamlss
+#' 
+#' @return A list with selection, threshold and confidence.
 #' @export
 summary.SelectBoost_gamlss <- function(object, prop.level = 0.6, ...) {
   sel <- selection_table(object)
@@ -38,7 +42,9 @@ summary.SelectBoost_gamlss <- function(object, prop.level = 0.6, ...) {
   out
 }
 
-
+#' @rdname SelectBoost_gamlss
+#' 
+#' @return Invisibly returns `x`.
 #' @export
 plot.summary.SelectBoost_gamlss <- function(x, ...) {
   # Simple 2-panel: selection proportions and confidence index
@@ -67,8 +73,11 @@ plot.summary.SelectBoost_gamlss <- function(x, ...) {
 }
 
 #' Plot selection proportions for a single sb_gamlss
+#' 
 #' @param x An `sb_gamlss` object.
 #' @param ... Graphical parameters.
+#' 
+#' @return Invisibly returns x the plotted `sb_gamlss` object.
 #' @export
 plot.SelectBoost_gamlss <- function(x, ...) {
   plot_sb_gamlss(x, ...)

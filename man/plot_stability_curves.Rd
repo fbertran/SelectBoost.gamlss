@@ -15,6 +15,9 @@ plot_stability_curves(grid, terms, parameter = NULL, ncol = 2L)
 
 \item{ncol}{Columns in the multi-panel layout.}
 }
+\value{
+Invisibly returns grid the plotted object.
+}
 \description{
 Plot stability curves p(c0) for selected terms
 }

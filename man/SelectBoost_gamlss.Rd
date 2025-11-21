@@ -2,6 +2,8 @@
 % Please edit documentation in R/integration.R
 \name{SelectBoost_gamlss}
 \alias{SelectBoost_gamlss}
+\alias{summary.SelectBoost_gamlss}
+\alias{plot.summary.SelectBoost_gamlss}
 \title{SelectBoost-style wrapper for GAMLSS}
 \usage{
 SelectBoost_gamlss(
@@ -26,6 +28,10 @@ SelectBoost_gamlss(
   trace = TRUE,
   ...
 )
+
+\method{summary}{SelectBoost_gamlss}(object, prop.level = 0.6, ...)
+
+\method{plot}{summary.SelectBoost_gamlss}(x, ...)
 }
 \arguments{
 \item{formula}{Base formula for the location \eqn{\mu} parameter (in the main model call).}
@@ -62,6 +68,10 @@ SelectBoost_gamlss(
 }
 \value{
 An object of class c("SelectBoost_gamlss"), with slots similar to sb_gamlss.
+
+A list with selection, threshold and confidence.
+
+Invisibly returns \code{x}.
 }
 \description{
 A thin wrapper around \code{sb_gamlss()} with SelectBoost-flavored arguments.

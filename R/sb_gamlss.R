@@ -739,6 +739,8 @@ selection_table <- function(x) {
 #' @param x An sb_gamlss object
 #' @param top Show only the top N terms per-parameter (default all)
 #' @param ... Graphical parameters.
+#' 
+#' @return Invisibly returns x the plotted `sb_gamlss` object.
 #' @export
 plot_sb_gamlss <- function(x, top = Inf, ...) {
   stopifnot(inherits(x, "sb_gamlss"))

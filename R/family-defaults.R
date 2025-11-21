@@ -1,10 +1,10 @@
-
 # Internal helpers for generating synthetic data across many gamlss families
 
 #' Reasonable defaults
 #' 
 #' Adjust as needed per family docs
 #' 
+#' @return List of list of default values for parameters for each supported distribution.
 #' @export
 .family_defaults <- function() {
   # Reasonable defaults; adjust as needed per family docs
@@ -42,9 +42,7 @@
   )
 }
 
-#' Try to generate y for a family
-#' 
-#' Returns NULL if generator not available or fails
+#' Try to generate values for a family
 #' 
 #' @param fam Character scalar naming the family. This should correspond to a
 #'   distribution available in the \code{gamlss.dist} package, as used when
@@ -52,7 +50,10 @@
 #'   ``LOGNO'').
 #' @param n Positive integer giving the number of observations to generate for
 #'   the requested family.
-#'   
+#' 
+#' @return If successful, a umerical vector of \code{n} values randomly generated 
+#'   for the requested family. If the generator is not available or fails, then 
+#'   returns NULL.
 #' @export
 .gen_family <- function(fam, n) {
   rname <- paste0("r", fam)
@@ -68,7 +69,8 @@
 
 #' Per-family numeric tolerance for equality checks
 #' 
-#' @export
+#' @return List of numerical values, the default tolerance, for each supported distribution.
+#' @export 
 .family_tolerance <- function() {
   # Defaults are conservative; heavier-tailed / complex families get looser tol
   tol <- list(

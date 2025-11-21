@@ -26,6 +26,8 @@ effect_plot(fit, var, data, what = "mu", grid = 100)
 }
 \value{
 a ggplot object if ggplot2 present; otherwise draws base plot and returns NULL
+
+Invisibly returns \code{x}.
 }
 \description{
 Varies one variable and holds others at typical values (median/mode) to plot the

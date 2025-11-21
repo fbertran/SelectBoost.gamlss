@@ -49,6 +49,7 @@ knockoff_filter_mu <- function(data, response, mu_scope, fdr = 0.1, df_smooth = 
 #' @param y_work working response (numeric)
 #' @param fdr target FDR level
 #' @param df_smooth df for smoother proxies
+#' @return character vector of selected term names
 #' @export
 knockoff_filter_param <- function(data, scope, y_work, fdr = 0.1, df_smooth = 6L) {
   if (!requireNamespace("knockoff", quietly = TRUE)) stop("Package 'knockoff' required for knockoff filtering.")

@@ -11,6 +11,9 @@
 
 \item{...}{Graphical parameters.}
 }
+\value{
+Invisibly returns x the plotted \code{sb_gamlss} object.
+}
 \description{
 Plot selection proportions for a single sb_gamlss
 }

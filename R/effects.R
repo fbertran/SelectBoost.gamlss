@@ -100,6 +100,8 @@ effect_plot <- function(fit, var, data, what = "mu", grid = 100) {
 #' @rdname effect_plot
 #' @param x object returned by \code{effect_plot()} when prediction fails
 #' @param ... unused
+#' 
+#' @return Invisibly returns `x`.
 #' @export
 print.effect_plot_failure <- function(x, ...) {
   msg <- x$message

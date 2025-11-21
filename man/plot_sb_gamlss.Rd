@@ -13,6 +13,9 @@ plot_sb_gamlss(x, top = Inf, ...)
 
 \item{...}{Graphical parameters.}
 }
+\value{
+Invisibly returns x the plotted \code{sb_gamlss} object.
+}
 \description{
 Plot selection frequencies for sb_gamlss
 }
