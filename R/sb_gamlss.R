@@ -727,7 +727,7 @@ AICc_gamlss <- function(object) {
 }
 
 #' Selection table accessor
-#' @param x An sb_gamlss object
+#' @param x A sb_gamlss object
 #' @return data.frame with parameter, term, count, prop
 #' @export
 selection_table <- function(x) {
@@ -736,7 +736,7 @@ selection_table <- function(x) {
 }
 
 #' Plot selection frequencies for sb_gamlss
-#' @param x An sb_gamlss object
+#' @param x A sb_gamlss object
 #' @param top Show only the top N terms per-parameter (default all)
 #' @param ... Graphical parameters.
 #' 

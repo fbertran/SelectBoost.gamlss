@@ -29,6 +29,10 @@ SelectBoost_gamlss <- function(
 
 #' @rdname SelectBoost_gamlss
 #' 
+#' @param object A a`sb_gamlss` object.
+#' @param prop.level A target proportion level.
+#' @param ... Not used.
+#' 
 #' @return A list with selection, threshold and confidence.
 #' @export
 summary.SelectBoost_gamlss <- function(object, prop.level = 0.6, ...) {
@@ -43,6 +47,9 @@ summary.SelectBoost_gamlss <- function(object, prop.level = 0.6, ...) {
 }
 
 #' @rdname SelectBoost_gamlss
+#' 
+#' @param x A summary of a`sb_gamlss` object.
+#' @param ... Not used.
 #' 
 #' @return Invisibly returns `x`.
 #' @export
@@ -74,7 +81,7 @@ plot.summary.SelectBoost_gamlss <- function(x, ...) {
 
 #' Plot selection proportions for a single sb_gamlss
 #' 
-#' @param x An `sb_gamlss` object.
+#' @param x A `sb_gamlss` object.
 #' @param ... Graphical parameters.
 #' 
 #' @return Invisibly returns x the plotted `sb_gamlss` object.

@@ -7,7 +7,7 @@
 plot_sb_gamlss(x, top = Inf, ...)
 }
 \arguments{
-\item{x}{An sb_gamlss object}
+\item{x}{A sb_gamlss object}
 
 \item{top}{Show only the top N terms per-parameter (default all)}
 

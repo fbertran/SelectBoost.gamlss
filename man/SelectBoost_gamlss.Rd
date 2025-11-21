@@ -64,7 +64,13 @@ SelectBoost_gamlss(
 
 \item{trace}{Logical; print progress messages.}
 
-\item{...}{Passed to underlying engines (e.g., to \code{gamlss::gamlss}, \code{glmnet}, etc.).}
+\item{...}{Not used.}
+
+\item{object}{A a\code{sb_gamlss} object.}
+
+\item{prop.level}{A target proportion level.}
+
+\item{x}{A summary of a\code{sb_gamlss} object.}
 }
 \value{
 An object of class c("SelectBoost_gamlss"), with slots similar to sb_gamlss.

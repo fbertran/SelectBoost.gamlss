@@ -7,7 +7,7 @@
 selection_table(x)
 }
 \arguments{
-\item{x}{An sb_gamlss object}
+\item{x}{A sb_gamlss object}
 }
 \value{
 data.frame with parameter, term, count, prop

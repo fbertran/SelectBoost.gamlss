@@ -7,7 +7,7 @@
 \method{plot}{SelectBoost_gamlss}(x, ...)
 }
 \arguments{
-\item{x}{An \code{sb_gamlss} object.}
+\item{x}{A \code{sb_gamlss} object.}
 
 \item{...}{Graphical parameters.}
 }
