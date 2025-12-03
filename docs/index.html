@@ -19,7 +19,6 @@
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Stability-Selection via Correlated Resampling for GAMLSS Models">
 <meta name="description" content="Extends the SelectBoost approach to Generalized Additive Models for Location, Scale and Shape (GAMLSS). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for corrected AIC calculation. More details can be found in Bertrand and Maumy (2024) &lt;https://hal.science/hal-05352041&gt; that highlights correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.">
 <meta property="og:description" content="Extends the SelectBoost approach to Generalized Additive Models for Location, Scale and Shape (GAMLSS). Implements bootstrap stability-selection across parameter-specific formulas (mu, sigma, nu, tau) via gamlss::stepGAIC(). Includes optional standardization of predictors and helper functions for corrected AIC calculation. More details can be found in Bertrand and Maumy (2024) &lt;https://hal.science/hal-05352041&gt; that highlights correlation-aware resampling to improve variable selection for GAMLSS and quantile regression when predictors are numerous and highly correlated.">
-<meta property="og:image" content="https://fbertran.github.io/SelectBoost.gamlss/logo.svg">
 <style>
   .navbar-brand img { height: 28px; }
 </style>
@@ -71,13 +70,10 @@
 </nav><div class="container template-home">
 <div class="row">
   <main id="main" class="col-md-9"><div class="section level1">
-<div class="page-header">
-<img src="logo.svg" class="logo" alt=""><h1 id="selectboostgamlss-">SelectBoost.gamlss <a class="anchor" aria-label="anchor" href="#selectboostgamlss-"></a>
-</h1>
-</div>
+<div class="page-header"><h1 id="selectboostgamlss-">SelectBoost.gamlss <img src="reference/figures/logo_sbgamlss.svg" align="right" width="200"><a class="anchor" aria-label="anchor" href="#selectboostgamlss-"></a>
+</h1></div>
+<p><a href="https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss" class="external-link uri">https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss</a></p>
 <!-- badges: start -->
-<!-- [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss) -->
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss) -->
 
 <p><strong>SelectBoost.gamlss</strong> delivers correlation-aware, bootstrap-based stability-selection for Generalized Additive Models for Location, Scale and Shape (GAMLSS) and quantile regression. It extends the <a href="https://doi.org/10.1093/bioinformatics/btaa855" class="external-link">SelectBoost</a> algorithm so that you can work with multiple distributional parameters, mix-and-match sparse penalties, and interrogate the resulting models with rich visual summaries.</p>
 <blockquote>
@@ -699,6 +695,7 @@ plot of chunk unnamed-chunk-11
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=SelectBoost.gamlss" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/fbertran/SelectBoost.gamlss/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/fbertran/SelectBoost.gamlss/issues" class="external-link">Report a bug</a></li>
 </ul>
@@ -729,6 +726,8 @@ plot of chunk unnamed-chunk-11
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
+<li><a href="https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss" class="external-link"><img src="https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg" alt="DOI"></a></li>
+<li><a href="https://cran.r-project.org/package=SelectBoost.gamlss" class="external-link"><img src="https://www.r-pkg.org/badges/version/SelectBoost.gamlss" alt="CRAN status"></a></li>
 <li><a href="https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/rhub.yaml" class="external-link"><img src="https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/rhub.yaml/badge.svg" alt="R-hub"></a></li>
 </ul>

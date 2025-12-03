@@ -15,8 +15,8 @@ template:
 url: https://fbertran.github.io/SelectBoost.gamlss/
 title: "SelectBoost.gamlss"
 lang: en
-favicon: man/figures/logo.svg
-logo: man/figures/logo.svg
+favicon: man/figures/logo_sbgamlss.svg
+logo: man/figures/logo_sbgamlss.svg
 
 news:
   one_page: true

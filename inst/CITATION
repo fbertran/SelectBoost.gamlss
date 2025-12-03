@@ -11,13 +11,12 @@ bibentry(bibtype = "Manual",
          author = c(person(given = "Frederic", family = "Bertrand")),
          year = year,
          note = vers,
-#         url = "https://CRAN.R-project.org/package=SelectBoost.gamlss",
-#         doi = doi,
+         url = "https://CRAN.R-project.org/package=SelectBoost.gamlss",
+         doi = doi,
          textVersion =
            paste(
              "Frederic Bertrand (", year, "). ",
-             titl, ", ", vers, ".",
-#               titl, ", ", vers, ". doi:", doi, ".",
+             titl, ", ", vers, ". doi:", doi, ".",
              sep=""
            )
 )

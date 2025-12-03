@@ -2,11 +2,13 @@
 
 
 
-# SelectBoost.gamlss <img src="man/figures/logo.png" align="right" width="200"/>
+# SelectBoost.gamlss <img src="man/figures/logo_sbgamlss.svg" align="right" width="200"/>
+
+<https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss>
 
 <!-- badges: start -->
-<!-- [![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss) -->
-<!-- [![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss) -->
+[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.SelectBoost.gamlss-blue.svg)](https://doi.org/10.32614/CRAN.package.SelectBoost.gamlss)
+[![CRAN status](https://www.r-pkg.org/badges/version/SelectBoost.gamlss)](https://cran.r-project.org/package=SelectBoost.gamlss)
 [![R-CMD-check](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/R-CMD-check.yaml)
 [![R-hub](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/rhub.yaml/badge.svg)](https://github.com/fbertran/SelectBoost.gamlss/actions/workflows/rhub.yaml)
 <!-- badges: end -->
